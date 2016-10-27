@@ -1,0 +1,133 @@
+{% extends "_base.html" %}
+
+{% block body %}
+
+<body class='page-login'>
+
+  <style>
+
+    body.page-login {
+        background: #e9e9e9;
+        margin: 20px 0;
+    }
+
+    .login-container {
+        margin: 10px auto 0 auto;
+        text-align: center;
+    }
+
+    .login-image {
+      width: 240px;
+      height: 240px;
+      background-size: 240px 240px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .login-form {
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: 400;
+        margin: 20px 0;
+        padding: 0;
+    }
+
+    .login-google {
+        display: block;
+        margin-top: 40px;
+    }
+
+    .login-click {
+        cursor: pointer;
+        color: #bbb;
+        border-bottom: 1px dashed #bbb;
+        text-decoration: none;
+    }
+  </style>
+
+  <div>
+
+    <div class='login-container' style="margin-top:10%"></div>
+
+    <div class='login-container'>
+      <img class='login-image' src="static/images/login.png">
+    </div>
+
+    <h1 class='login-container'> Welcome Snipster </h1>
+
+    <span class='login-container login-google'>
+      Login with
+      <span class='login-container login-click' id='google_span'>
+        The Google
+      </span>
+    </span>
+
+  </div>
+
+  <script src="/static/scripts/vendors/jquery.min.js"></script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=setSignin" async defer></script>
+
+  <script type="text/javascript">
+    function setSignin() {
+      document.getElementById("google_span")
+              .addEventListener(
+                'click',
+                function() {
+                  gapi.auth.signIn({
+                      'callback': 'signInCallback',
+                      'clientid': '{{CLIENT_ID}}',
+                      'cookiepolicy': 'single_host_origin',
+                      'redirecturi': 'postmessage',
+                      'accesstype': 'offline',
+                      'scope': 'profile https://www.googleapis.com/auth/plus.profile.emails.read'
+                  });
+                }
+            );
+    }
+
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    function signInCallback(authResult) {
+        if (authResult['code']) {
+            var url = '/googleauth?storeToken&state={{STATE}}';
+            var redirect_url = getParameterByName('next');
+            if (redirect_url != null) {
+                url += '&next=' + encodeURIComponent(
+                  redirect_url + window.location.hash
+                );
+            }
+            $.ajax({
+                type: 'POST',
+                url: url,
+                contentType: 'application/octet-stream; charset=utf-8',
+                error: function(e){
+                    var response = JSON.parse(e.responseText)
+                    console.log("error", e)
+                    if (response.success === false) {
+                      alert("error with the snipster connection: \n" + response.reason)
+                    }
+                },
+                success: function(e) {
+                    console.log(e)
+                    if (e.success) {
+                        window.location.href = e.redirect_url;
+                    }
+                },
+                processData: false,
+                data: authResult['code']
+            });
+          }
+      }
+  </script>
+
+</body>
+
+{% endblock %}

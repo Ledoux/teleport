@@ -1,0 +1,21 @@
+FROM $(webrouterBaseImage)
+MAINTAINER $(maintainer)
+
+ADD . /opt/docker/
+
+RUN cd scripts && python mv_symlinks.py /opt/docker/webrouter
+
+ENV DEPLOY staging
+ENV DOCKER_HOST $(stagingWebrouterHost)
+ENV SITE_NAME $(siteName)
+ENV TYPE prod
+ENV WEB on
+ENV WEBROUTER_URL $(stagingWebrouterUrl)
+
+ENV WEBSOCKETER_URL $(stagingWebsocketerUrl)
+
+EXPOSE $(stagingWebrouterPort)
+
+RUN pip install -r config/webrouter_requirements.txt
+
+CMD uwsgi --ini config/staging_uwsgi.ini

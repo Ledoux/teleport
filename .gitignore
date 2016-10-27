@@ -1,0 +1,6 @@
+.DS_store
+.git
+*.pyc
+node_modules/
+yarn.lock
+yarn-error.log
