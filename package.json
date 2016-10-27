@@ -1,0 +1,37 @@
+{
+  "author": "Francois Blas & Erwan Ledoux",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.9.0"
+  },
+  "devDependencies": {
+    "ava": "^0.15.2",
+    "ttab": "^0.5.0"
+  },
+  "main": "lib/index.js",
+  "name": "teleport",
+  "scripts": {
+    "postinstall": "source bin/link.sh && node bin/index.js --configure"
+  },
+  "teleport": {
+    "buildPushDockerHost": "prod1.corp.snips.ai",
+    "dockerPort": "4243",
+    "kubernetesUrl": "http://infra2.corp.snips.ai:8080/api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard/",
+    "localhostWebrouterHost": "localhost",
+    "localhostWebsocketerHost": "localhost",
+    "localhostWebrouterPort": "5000",
+    "localhostWebsocketerPort": "5001",
+    "maintainer": "Erwan Ledoux erwan.ledoux@snips.ai",
+    "masterServer": "infra2.corp.snips.ai",
+    "prodDockerHost": "prod2.corp.snips.ai",
+    "python": "/usr/local/bin/python",
+    "registryServer": "registry.corp.snips.ai:5000",
+    "stagingDockerHost": "dev3.corp.snips.ai",
+    "unnameDockerHost": "dev3.corp.snips.ai",
+    "webrouterBaseTag": "flask-wbr",
+    "webrouterBaseDockerVersion": "0.1",
+    "websocketerBaseTag": "flask-wbs",
+    "websocketerBaseDockerVersion": "0.1"
+  },
+  "version": "0.0.1"
+}

@@ -1,0 +1,21 @@
+FROM $(websocketerBaseImage)
+MAINTAINER $(maintainer)
+
+ADD . /opt/docker/
+
+RUN cd scripts && python mv_symlinks.py /opt/docker/websocketer
+
+ENV DEPLOY unname
+ENV DOCKER_HOST $(unnameWebsocketerHost)
+ENV SITE_NAME $(siteName)
+ENV TYPE prod
+ENV WEB on
+ENV WEBROUTER_URL $(unnameWebrouterUrl)
+
+ENV WEBSOCKETER_URL $(unnameWebsocketerUrl)
+
+EXPOSE $(unnameWebsocketerPort)
+
+RUN pip install -r config/websocketer_requirements.txt
+
+CMD gunicorn --config config/unname_guwsgi.ini websocketer:app

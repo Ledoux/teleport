@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: $(prodWebrouterTag)
+  namespace: default
+  labels:
+    k8s-app: $(prodWebrouterTag)
+spec:
+  replicas: 1
+  selector:
+    k8s-app: $(prodWebrouterTag)
+  template:
+    metadata:
+      labels:
+        k8s-app: $(prodWebrouterTag)
+    spec:
+      nodeName: $(prodDockerHost)
+      containers:
+        - name: $(prodWebrouterTag)
+          image: $(registryServer)/$(prodWebrouterTag):$(dockerVersion)
+          imagePullPolicy: Always
+          ports:
+            - name: server
+              containerPort: $(prodWebrouterPort)
+          env:
+            - name: APP_NAME
+              value: "$(prodWebrouterTag)"
+            - name: VIRTUAL_HOST
+              value: "$(prodWebrouterHost)"
+            - name: VIRTUAL_PORT
+              value: "$(prodWebrouterPort)"
+            - name: VIRTUAL_NAME
+              value: "$(prodWebrouterVirtualName)"
+          resources:
+            limits:
+              memory: 1G

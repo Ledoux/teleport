@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: $(stagingWebrouterTag)
+  namespace: default
+  labels:
+    k8s-app: $(stagingWebrouterTag)
+spec:
+  replicas: 1
+  selector:
+    k8s-app: $(stagingWebrouterTag)
+  template:
+    metadata:
+      labels:
+        k8s-app: $(stagingWebrouterTag)
+    spec:
+      nodeName: $(stagingDockerHost)
+      containers:
+        - name: $(stagingWebrouterTag)
+          image: $(registryServer)/$(stagingWebrouterTag):$(dockerVersion)
+          imagePullPolicy: Always
+          ports:
+            - name: server
+              containerPort: $(stagingWebrouterPort)
+          env:
+            - name: APP_NAME
+              value: "$(stagingWebrouterTag)"
+            - name: VIRTUAL_HOST
+              value: "$(stagingWebrouterHost)"
+            - name: VIRTUAL_PORT
+              value: "$(stagingWebrouterPort)"
+            - name: VIRTUAL_NAME
+              value: "$(stagingWebrouterVirtualName)"
+          resources:
+            limits:
+              memory: 1G
