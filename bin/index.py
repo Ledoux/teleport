@@ -21,62 +21,59 @@ def cli():
     print "Welcome to teleport python-side !"
     pass
 
-@cli.group(invoke_without_command=False)
-def service():
-    """Control all services registered in the infra"""
-    pass
+@cli.command('ports')
+@click.option('--filter', help='filter ports given the used ones or the available ones', default='used')
+@click.option('--server', help='name of the server')
+def service_ports(filter):
+    """Return ports"""
+    print kubectl_used_ports(server) if filter == 'used' else kubectl_available_ports(server)
 
-@service.command('ports')
-def service_ports():
-    """Return available ports"""
-    print kubectl_ports()
-
-@service.command('register')
+@cli.command('register')
 @click.argument('servicepath')
 def service_register(servicepath):
     """Register a service into the database"""
     kubectl_register(servicepath)
 
-@service.command('status')
+@cli.command('status')
 @click.option('--ressources', help='List of ressources to display', default='rc, pods')
 @click.option('--all-namespaces', help='Looking at all namespaces', default=True)
 def service_status(ressources, all_namespaces):
     """Prints the status of all services"""
     print kubectl_status(ressources, all_namespaces)
 
-@service.command('logs')
+@cli.command('logs')
 @click.argument('servicename')
 @click.option('-f', is_flag=True, help='Follow logs, like tail -f', default=False)
 def service_logs(servicename, f):
     """Get the full log of a service"""
     print kubectl_logs(servicename, f)
 
-@service.command('restart')
+@cli.command('restart')
 @click.argument('servicename')
 def service_restart(servicename):
     """Restarts a service"""
     kubectl_stop(servicename)
     kubectl_start(servicename)
 
-@service.command('stop')
+@cli.command('stop')
 @click.argument('servicename')
 def service_stop(servicename):
     """Stops a service"""
     kubectl_stop(servicename)
 
-@service.command('start')
+@cli.command('start')
 @click.argument('servicename')
 def service_start(servicename):
     """Starts a service"""
     kubectl_start(servicename)
 
-@service.command('connect')
+@cli.command('connect')
 @click.argument('servicename')
 def service_connect(servicename):
     """Connect into a running service container"""
     kubectl_connect(servicename)
 
-@service.command('inspect')
+@cli.command('inspect')
 @click.argument('servicename')
 def service_inspect(servicename):
     """Get the running configuration of a service container"""

@@ -1,93 +1,109 @@
-const childProcess = require('child_process')
-const fs = require('fs')
-const path = require('path')
+import childProcess from 'child_process'
+import fs from 'fs'
+import { merge, values } from 'lodash'
+import path from 'path'
+import stringify from 'json-stable-stringify'
 
-module.exports.getCopyTemplateCommand = function () {
-  if (typeof this.program.template !== 'string') {
-    this.consoleWarn('You didn\'t mention any particular template, please add --template <your_template_name> in your command')
+import { getPackage, sleep } from '../utils'
+
+export function getCopyTemplatesCommand () {
+  const { program: { name, templates }, project } = this
+  if (typeof templates !== 'string') {
+    this.consoleWarn('You didn\'t mention any particular templates, please add --templates <template1>,<template2>  in your command')
     return
   }
-  if (typeof this.program.name !== 'string') {
+  if (typeof name !== 'string') {
     this.consoleWarn('You didn\'t mention any particular name, please add --name <your_app_name> in your command')
     return
   }
-  const templateDir = path.join(this.appTemplatesDir, this.program.template)
-  return `cp -R ${templateDir}/ ${this.program.name}`
+  return values(project.templatesByName).map(template =>
+    // we exclude package.json and config file because we want to merge them
+    `rsync -rv --exclude=package.json --exclude=.${name}.json ${template.dir}/ ${project.dir}`
+  ).join(' && ')
 }
 
-module.exports.createPackage = function () {
-  this.projectPackage.name = this.program.name
-  this.projectName = this.projectPackage.name
-  // like available ports
-  const [webrouterPort, websocketerPort] = this.getAvailablePorts()
-  this.projectAppConfig.unnameWebrouterPort = webrouterPort
-  this.projectAppConfig.unnameWebsocketerPort = websocketerPort
-  this.projectAppConfig.stagingWebrouterPort = webrouterPort
-  this.projectAppConfig.stagingWebsocketerPort = websocketerPort
-  this.projectAppConfig.prodWebrouterPort = webrouterPort
-  this.projectAppConfig.prodWebsocketerPort = websocketerPort
-  // like app version
-  this.projectAppConfig.version = this.appPackage.version
-  // set maybe the python command
-  if (fs.existsSync(this.webrouterRequirementsDir) || fs.existsSync(this.websocketerRequirementsDir)) {
-    if (typeof this.projectAppConfig.python === 'undefined') {
-      this.projectAppConfig.python = childProcess.execSync('which python').toString('utf-8').trim()
-    }
-  }
-  // write
-  fs.writeFileSync(this.projectPackageDir, JSON.stringify(this.projectPackage, null, 2))
+export function copyTemplates () {
+  const { program } = this
+  this.consoleInfo(`Let\'s copy the templates in ${program.name}`)
+  const command = this.getCopyTemplatesCommand()
+  this.consoleLog(command)
+  const buffer = childProcess.execSync(command)
+  // console.log(buffer.toString('utf-8'))
+  // sleep(1000)
 }
 
-module.exports.getCreateVenvCommand = function () {
-  return `cd ${this.projectName} && virtualenv -p ${this.projectAppConfig.python} venv`
+export function createPackage () {
+  const { program, project } = this
+  this.consoleInfo(`Let\'s create package in ${program.name}`)
+  project.package = merge(
+    {
+      name: program.name,
+      version: '0.0.1'
+    },
+    ...values(project.templatesByName)
+      .map(template => getPackage(template.dir)
+    ))
+  project.packageDir = path.join(project.dir, 'package.json')
+  fs.writeFileSync(project.packageDir, stringify(project.package, {space: '\t'}))
+  this.consoleInfo('package written')
 }
 
-module.exports.createVenv = function () {
+export function createConfig () {
+  const { app, project } = this
+  this.consoleInfo(`Let\'s create config in ${project.name}`)
+  project.config = merge(
+    app.config,
+    ...values(project.templatesByName)
+      .map(template => this.getConfig(template.dir))
+    )
+  project.configDir = path.join(project.dir, `.${app.package.name}.json`)
+  fs.writeFileSync(project.configDir, stringify(project.config, {space: '\t'}))
+  this.consoleInfo('config written')
+}
+
+export function getCreateVenvCommand () {
+  const { project } = this
+  return `cd ${project.name} && virtualenv -p ${project.config.python} venv`
+}
+
+export function createVenv () {
   const command = this.getCreateVenvCommand()
   this.consoleInfo('... Installing a python venv for our backend')
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
-module.exports.create = function () {
+export function create () {
+  const { app, program } = this
   // copy the boilerplate
-  if (typeof this.program.name !== 'string') {
+  if (typeof program.name !== 'string') {
     this.consoleWarn('You didn\'t mention any particular name, please add --name <your_app_name> in your command')
     return
   }
-  this.consoleInfo(`wait a second... We create your ${this.program.name} project !`)
-  this.projectDir = path.join(process.cwd(), this.program.name)
-  if (fs.existsSync(this.projectDir)) {
-    this.consoleWarn(`There is already a ${this.program.name} here...`)
+  this.consoleInfo(`wait a second... We create your ${program.name} project !`)
+  // env
+  const project = this.project = { dir: path.join(process.cwd(), program.name) }
+  if (fs.existsSync(project.dir)) {
+    this.consoleWarn(`There is already a ${program.name} here...`)
     return
   }
-  const command = this.getCopyTemplateCommand()
-  console.log(childProcess.execSync(command).toString('utf-8'))
-  this.projectPackageDir = path.join(this.projectDir, 'package.json')
-  this.projectPackage = JSON.parse(fs.readFileSync(this.projectPackageDir))
-  this.projectAppConfig = this.projectPackage[this.appName]
-  this.backendDir = path.join(this.projectDir, 'backend')
-  this.backendConfigDir = path.join(this.backendDir, 'config')
-  this.webrouterRequirementsDir = path.join(this.backendConfigDir, 'webrouter_requirements.txt')
-  this.websocketerRequirementsDir = path.join(this.backendConfigDir, 'websocketer_requirements.txt')
-  // update the package with some specific attributes like name
+  // copy merge from templates
+  project.templateNames = program.templates.split(',')
+  project.templatesByName = {}
+  project.templateNames.forEach(templateName => {
+    const appTemplate = app.templatesByName[templateName]
+    project.templatesByName[templateName] = appTemplate
+  })
+  this.copyTemplates()
+  // create package config
   this.createPackage()
+  this.createConfig()
   // set backend end
-  this.setBackendEnvironment()
-  // replace
-  this.specify()
-  // create a constants.json if not
-  if (fs.existsSync(this.backendConfigDir)) {
-    if (!fs.existsSync(this.backendConstantsDir)) {
-      fs.writeFileSync(this.backendConstantsDir, '{}')
-    }
-  }
-  // maybe create a venv python
-  if (fs.existsSync(this.webrouterRequirementsDir) || fs.existsSync(this.websocketerRequirementsDir)) {
-    this.createVenv()
-  }
+  this.setProjectEnvironment()
+  // configure
+  this.configure()
   // install
-  this.install()
+  // this.install()
   // console
-  this.consoleInfo(`Your ${this.projectName} was successfully created, go inside with \'cd ${this.projectName}\' !`)
+  this.consoleInfo(`Your ${program.name} was successfully created, go inside with \'cd ${program.name}\' !`)
 }

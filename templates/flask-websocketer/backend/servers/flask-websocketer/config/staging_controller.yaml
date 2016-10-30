@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: $(tag)
+  namespace: default
+  labels:
+    k8s-app: $(tag)
+spec:
+  replicas: 1
+  selector:
+    k8s-app: $(tag)
+  template:
+    metadata:
+      labels:
+        k8s-app: $(tag)
+    spec:
+      nodeName: $(dockerHost)
+      containers:
+        - name: $(tag)
+          image: $(registryServer)/$(tag):$(dockerVersion)
+          imagePullPolicy: Always
+          ports:
+            - name: server
+              containerPort: $(port)
+          env:
+            - name: APP_NAME
+              value: "$(tag)"
+            - name: VIRTUAL_HOST
+              value: "$(host)"
+            - name: VIRTUAL_PORT
+              value: "$(port)"
+            - name: VIRTUAL_NAME
+              value: "$(virtualName)"
+          resources:
+            limits:
+              memory: 1G

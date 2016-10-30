@@ -23,7 +23,7 @@ def port_parser(ports):
         res.append(d)
     return res
 
-def get_ports(server='prod2'):
+def get_ports(server):
     """
     Get ports for all services related to an infra server
         - server: the server name ('prod2', 'dev3', ...)
@@ -61,8 +61,8 @@ def get_ports(server='prod2'):
             results[selector] = port_parser(ports)
     return results
 
-def get_used_ports():
-    res = get_ports()
+def get_used_ports(server):
+    res = get_ports(server)
     used_ports = []
     for service_name, service_configs in res.items():
         for  service_config in service_configs:
@@ -72,8 +72,8 @@ def get_used_ports():
                 used_ports.append(service_config['externalPort'])
     return used_ports
 
-def get_available_webservices_ports():
-    available_ports = list(set(range(9700, 9800)) - set(get_used_ports()))
+def get_available_ports(server):
+    available_ports = list(set(range(9700, 9800)) - set(get_used_ports(server)))
     available_ports.sort()
     random.shuffle(available_ports)
-    return available_ports[:2]
+    return available_ports

@@ -1,17 +1,21 @@
-const childProcess = require('child_process')
+import childProcess from 'child_process'
 
-module.exports.getConfigureKubernetesCommand = function () {
-  let commands = [`cd ${this.appBinDir}`]
-  commands.push(`export MASTER_SERVER=${this.appConfig.masterServer}`)
+export function getConfigureKubernetesCommand () {
+  const { backend, app } = this
+  let commands = [`cd ${app.binDir}`]
+  commands.push(`export MASTER_SERVER=${backend.masterServer}`)
   commands.push('make configure-kubectl')
   return commands.join(' && ')
 }
 
-module.exports.configureKubernetes = function () {
+export function configureKubernetes () {
+  this.consoleInfo('Let\'s configure kubernetes')
   const command = this.getConfigureKubernetesCommand()
+  this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
+  console.log('kubernetes is configured !')
 }
 
-module.exports.configure = function () {
+export function configure () {
   this.configureKubernetes()
 }

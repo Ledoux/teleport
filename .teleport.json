@@ -1,1 +1,56 @@
-{}
+{
+  "python": "/usr/local/bin/python",
+  "backend": {
+    "buildPushDockerHost": "prod1.corp.snips.ai",
+    "dockerPort": "4243",
+    "domainName": "corp.snips.ai",
+    "kubernetesUrl": "http://infra2.corp.snips.ai:8080/api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard/",
+    "masterServer": "infra2.corp.snips.ai",
+    "registryServer": "registry.corp.snips.ai:5000",
+    "serversByName": {
+      "flask-webrouter": {
+        "baseDockerVersion": "0.1",
+        "baseTag": "flask-wbr",
+        "isMain": true,
+        "typesByName": {
+          "localhost": {
+            "host": "localhost",
+            "port": "5000"
+          }
+        },
+        "maintainer": "Erwan Ledoux erwan.ledoux@snips.ai",
+        "imageAbbreviation": "wbr"
+      },
+      "flask-websocketer": {
+        "baseTag": "flask-wbs",
+        "baseDockerVersion": "0.1",
+        "typesByName": {
+          "localhost": {
+            "host": "localhost",
+            "port": "5001"
+          }
+        },
+        "maintainer": "Erwan Ledoux erwan.ledoux@snips.ai",
+        "imageAbbreviation": "wbs"
+      }
+    },
+    "smtpHost": "smtp.corp.snips.net"
+  },
+  "typesByName": {
+    "localhost": {},
+    "unname": {
+      "dockerHost": "dev3.corp.snips.ai",
+      "imageAbbreviation": "unm"
+    },
+    "staging": {
+      "dockerHost": "dev3.corp.snips.ai",
+      "imageAbbreviation": "stg",
+      "hasDns": true
+    },
+    "prod": {
+      "dockerHost": "prod2.corp.snips.ai",
+      "imageAbbreviation": "prod",
+      "hasDns": true
+    }
+  }
+}
