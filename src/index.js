@@ -1,5 +1,11 @@
-// to add colors in console
-require('colors')
+// regeneratorRuntime is needed for async await
+import 'babel-polyfill'
+import 'colors'
+import fs from 'fs'
+import { merge } from 'lodash'
+import path from 'path'
+
+import { getPackage } from './utils'
 
 const globalCommands = [
   'configure',
@@ -10,8 +16,7 @@ const globalCommands = [
   'install',
   'kill',
   'log',
-  'run',
-  'specify'
+  'run'
 ]
 const globalModules = globalCommands.map(command => require(`./commands/${command}`))
 
@@ -28,16 +33,18 @@ class Teleport {
 
   start () {
     // welcome
-    console.log('\n\n** Welcome to teleport node-side ! **\n'.black.bold.bgCyan)
+    console.log('\n\n** Welcome to teleport node-side ! **\n'.bold)
+    // unpack
+    const { program } = this
     // we can pass args to the cli, either object, or direct values or nothing
     this.kwarg = null
-    if (typeof this.program.kwarg === 'string') {
-      this.kwarg = this.program.kwarg[0] === '{'
-      ? JSON.parse(this.program.kwarg)
-      : this.program.kwarg
+    if (typeof program.kwarg === 'string') {
+      this.kwarg = program.kwarg[0] === '{'
+      ? JSON.parse(program.kwarg)
+      : program.kwarg
     }
     // it is maye a generic global task
-    const programmedCommand = globalCommands.find(command => this.program[command])
+    const programmedCommand = globalCommands.find(command => program[command])
     if (this[programmedCommand]) {
       this[programmedCommand]()
       return
@@ -46,9 +53,33 @@ class Teleport {
     this.consoleWarn('Welcome to teleport... But you didn\'t specify any particular command !')
   }
 
+  getConfig (dir) {
+    const { app: { package: {name} } } = this
+    let config
+    // check first for some attributes in package.json
+    const localPackage = getPackage(dir)
+    if (localPackage && localPackage[name]) {
+      config = merge({}, localPackage[name])
+    }
+    // then merge the config if it already exists
+    const configDir = path.join(dir, `.${name}.json`)
+    if (fs.existsSync(configDir)) {
+      config = merge(config, JSON.parse(fs.readFileSync(configDir)))
+    }
+    // return
+    return config
+  }
+
   checkProject () {
-    if (typeof this.projectDir !== 'string') {
+    if (typeof this.project.dir !== 'string') {
       this.consoleWarn('you need to go inside a project for this command')
+      process.exit()
+    }
+  }
+
+  checkWeb () {
+    if (this.program.web === 'off') {
+      this.consoleError('you need to have internet for this')
       process.exit()
     }
   }
@@ -66,9 +97,9 @@ class Teleport {
   }
 
   consoleError (string) {
-    console.err(string.red)
+    console.error(string.red)
   }
 
 }
 
-module.exports = Teleport
+export default Teleport

@@ -1,7 +1,0 @@
-{
-  "teleport": {
-    "dockerVersion": 0.1,
-    "webrouterBaseTag": "flask-wbr",
-    "websocketerBaseTag": "flask-wbs"
-  }
-}

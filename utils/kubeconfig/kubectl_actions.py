@@ -27,8 +27,11 @@ def sub_stop(service_name, data, kube_type):
 '''
 Actions
 '''
-def kubectl_ports():
-    return get_available_webservices_ports()
+def kubectl_used_ports(server):
+    return get_used_ports(server)
+
+def kubectl_available_ports(server):
+    return get_available_ports(server)
 
 def kubectl_register(filepath):
   data = get_data_yaml(filepath)

@@ -1,8 +1,8 @@
-module.exports.log = function () {
+export function log () {
   if (typeof this.program.method !== 'string') {
-    console.log('You need to mention a method with the --method option')
+    this.consoleWarn('You need to mention a method with the --method option')
     return
   }
   const log = this[this.program.method](this.kwarg)
-  console.log(log)
+  this.consoleLog(log)
 }
