@@ -1,57 +1,57 @@
-const childProcess = require('child_process')
+import childProcess from 'child_process'
 
-module.exports.getPsDatabaseCommand = function () {
+export function getPsDatabaseCommand () {
   return 'ps -ax | grep -v grep | grep rethinkdb | awk \'{print $$1}\''
 }
 
-module.exports.psDatabase = function () {
+export function psDatabase () {
   console.log(childProcess.execSync(this.getPsDatabaseCommand()).toString('utf-8'))
 }
 
-module.exports.getKillDatabaseCommand = function () {
+export function getKillDatabaseCommand () {
   const command = this.getPsDatabaseCommand()
   return command === '' ? '' : `kill -9 ${command}`
 }
 
-module.exports.killDatabase = function () {
+export function killDatabase () {
   const command = this.getKillDatabaseCommand()
   command === ''
   ? console.log(childProcess.execSync(command).toString('utf-8'))
   : console.log('There is no rethink database to kill')
 }
 
-module.exports.getPsUwsgiCommand = function () {
+export function getPsUwsgiCommand () {
   return 'ps aux | grep -ie [u]wsgi | awk \'{print $2}\''
 }
 
-module.exports.psUwsgi = function () {
+export function psUwsgi () {
   const command = this.getPsUwsgiCommand()
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
-module.exports.getKillUwsgiCommand = function () {
+export function getKillUwsgiCommand () {
   const command = this.psUwsgi()
   return command === ''
   ? ''
   : `kill -9 ${command.split('\n').slice(0, -1)}`
 }
 
-module.exports.getPsGunicornCommand = function () {
+export function getPsGunicornCommand () {
   return 'ps aux | grep -ie [g]unicorn | awk \'{print $2}\''
 }
 
-module.exports.psGunicorn = function () {
+export function psGunicorn () {
   const command = this.getPsGunicornCommand()
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
-module.exports.getKillGunicornCommand = function () {
+export function getKillGunicornCommand () {
   const command = this.psGunicorn()
   return command === ''
   ? ''
   : `kill -9 ${command.split('\n').slice(0, -1)}`
 }
 
-module.exports.kill = function () {
+export function kill () {
   this.killDatabase()
 }
