@@ -1,18 +1,10 @@
-const childProcess = require('child_process')
+import childProcess from 'child_process'
+
+import { sleep } from '../utils'
 
 const devHosts = ['localhost', '']
 
-const sleep = function (milliseconds) {
-  var start = new Date().getTime()
-  var isSleep = true
-  while (isSleep) {
-    if ((new Date().getTime() - start) > milliseconds) {
-      isSleep = false
-    }
-  }
-}
-
-module.exports.getRunRethinkCommand = function () {
+export function getRunRethinkCommand () {
   let command = `cd ${this.rethinkDbDataDir} && rethinkdb`
   if (this.program.user === 'me') {
     command = `${this.ttabDir} \"${command}\"`
@@ -20,7 +12,7 @@ module.exports.getRunRethinkCommand = function () {
   return command
 }
 
-module.exports.startDatabase = function () {
+export function startDatabase () {
   if (this.program.data === 'localhost') {
     this.databaseState = childProcess.execSync(
       this.getPsDatabaseCommand()
@@ -34,7 +26,7 @@ module.exports.startDatabase = function () {
   }
 }
 
-module.exports.getWebrouterBackendDevRunCommand = function () {
+export function getWebrouterBackendDevRunCommand () {
   this.checkProject()
   let commands = [`cd ${this.pythonScriptsDir}`]
   if (this.runOptionsCommand && this.runOptionsCommand !== '') {
@@ -48,46 +40,46 @@ module.exports.getWebrouterBackendDevRunCommand = function () {
   return command
 }
 
-module.exports.webrouterBackendDevRun = function () {
+export function webrouterBackendDevRun () {
   this.checkProject()
   const command = this.getWebrouterBackendDevRunCommand()
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
-module.exports.getWebrouterBackendProdRunCommand = function () {
+export function getWebrouterBackendProdRunCommand () {
   this.checkProject()
   let commands = [`cd ${this.backendDir}`]
   if (this.runOptionsCommand && this.runOptionsCommand !== '') {
     commands.push(this.runOptionsCommand)
   }
-  commands.push(`uwsgi --ini config/${this.program.host}_uwsgi.ini`)
+  commands.push(`uwsgi --ini config/${this.program.type}_uwsgi.ini`)
   let command = commands.join(' && ')
   if (this.program.user === 'me') {
     command = `${this.ttabDir} \"${command}\"`
   }
 }
 
-module.exports.getWebsocketerBackendProdRunCommand = function () {
+export function getWebsocketerBackendProdRunCommand () {
   this.checkProject()
   let commands = [`cd ${this.backendDir}`]
   if (this.runOptionsCommand && this.runOptionsCommand !== '') {
     commands.push(this.runOptionsCommand)
   }
-  commands.push(`gunicorn -c config/${this.program.host}_guwsgi.ini websocketer:app`)
+  commands.push(`gunicorn -c config/${this.program.type}_guwsgi.ini websocketer:app`)
   let command = commands.join(' && ')
   if (this.program.user === 'me') {
     command = `${this.ttabDir} \"${command}\"`
   }
 }
 
-module.exports.setRunOptionsCommand = function () {
+export function setRunOptionsCommand () {
   this.checkProject()
   this.runOptionsCommand = Object.keys(this.runConfig).map(key => {
     return `export ${key}=${this.runConfig[key]}`
   }).join(' && ')
 }
 
-module.exports.backendDevRun = function () {
+export function backendDevRun () {
   this.checkProject()
   this.webrouterBackendDevRun()
   if (this.isWebsocketer) {
@@ -95,7 +87,7 @@ module.exports.backendDevRun = function () {
   }
 }
 
-module.exports.backendProdRun = function () {
+export function backendProdRun () {
   this.checkProject()
   this.webrouterBackendProdRun()
   if (this.isWebsocketer) {
@@ -104,29 +96,28 @@ module.exports.backendProdRun = function () {
   return this
 }
 
-module.exports.getOpenWebrouterWindowCommand = function () {
+export function getOpenWebrouterWindowCommand () {
   return `open -a Google\\ Chrome \'${this.runConfig['WEBROUTER_URL']}\'`
 }
 
-module.exports.openWebrouterWindowCommand = function () {
+export function openWebrouterWindowCommand () {
   const command = this.getOpenWebrouterWindowCommand()
   childProcess.execSync(command)
 }
 
-module.exports.backendRun = function () {
+export function backendRun () {
   this.checkProject()
   this.runConfig = {
     DATA: this.program.data,
     SITE_NAME: this.siteName,
-    WEB: this.program.web
+    SMTP_HOST: this.smtpHost,
+    TYPE: this.program.type,
+    WEB: this.program.web,
+    WEBROUTER_URL: this[`${this.program.type}WebrouterUrl`],
+    WEBSOCKETER_URL: this[`${this.program.type}WebsocketerUrl`]
   }
-  Object.assign(this.runConfig, {
-    DEPLOY: this.program.host,
-    WEBROUTER_URL: this[`${this.program.host}WebrouterUrl`],
-    WEBSOCKETER_URL: this[`${this.program.host}WebsocketerUrl`]
-  })
   this.setRunOptionsCommand()
-  devHosts.includes(this.program.host)
+  devHosts.includes(this.program.type)
   ? this.backendDevRun()
   : this.backendProdRun()
   console.log(`Go now to ${this.runConfig['WEBROUTER_URL']} to see your app`)
@@ -135,7 +126,7 @@ module.exports.backendRun = function () {
   this.openWebrouterWindowCommand()
 }
 
-module.exports.run = function () {
+export function run () {
   this.checkProject()
   this.startDatabase()
   this.backendRun()

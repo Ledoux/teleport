@@ -2,15 +2,32 @@ const childProcess = require('child_process')
 
 const {toTitleCase} = require('../utils')
 
-module.exports.getAvailablePorts = function () {
-  const command = `python ${this.appPythonBinDir} service ports`
+export function getUsedPorts () {
+  this.checkWeb()
+  const command = `python ${this.appPythonBinDir} ports --server ${this.projectServerType.serverSubDomain}`
   const rep = childProcess.execSync(command).toString('utf-8')
   const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])
   return ports
 }
 
-module.exports.getBuildDockerCommand = function (config) {
+export function checkPort () {
+  if (typeof this.usedPorts === 'undefined') {
+    this.usedPorts = this.getUsedPorts()
+  }
+  // const server = this.projectConfig.serversByName[this.program.server]
+}
+
+export function getAvailablePorts () {
+  this.checkWeb()
+  const command = `python ${this.appPythonBinDir} ports --filter available --server ${this.projectServerType.serverSubDomain}`
+  const rep = childProcess.execSync(command).toString('utf-8')
+  const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])
+  return ports
+}
+
+export function getBuildDockerCommand (config) {
   this.checkProject()
+  const { backend, project, program } = this
   if (typeof config === 'undefined') { config = {} }
   config = Object.assign(
     {
@@ -21,31 +38,33 @@ module.exports.getBuildDockerCommand = function (config) {
   )
   const serverName = typeof this.program.server === 'undefined'
     ? config.server
-    : this.program.server
+    : program.server
   const dir = config.isBase
-    ? this.webrouteBaseImageDir
-    : this.backendDir
-  const hostName = this.program.host === 'localhost'
+    ? this.webrouterBaseImageDir
+    : backend.dir
+  const type = program.type === 'localhost'
   ? 'staging'
-  : this.program.host
+  : this.program.type
   const imageName = config.isBase
             ? this[`${serverName}BaseImage`]
-            : this[`${hostName}${toTitleCase(serverName)}Image`]
-  const cache = this.program.cache === 'false'
+            : this[`${type}${toTitleCase(serverName)}Image`]
+  const cache = program.cache === 'false'
     ? '--no-cache'
     : (config.isNoCache ? '--no-cache' : '')
   const file = config.isBase
           ? ''
-          : `-f ${hostName}_${serverName}_Dockerfile`
+          : `-f ${type}_${serverName}_Dockerfile`
   var socket = this.buildPushSocket
   return [
     `cd ${dir}`,
     `docker ${socket} build ${file} -t ${imageName} ${cache} .`,
-    `cd ${this.projectDir}`
+    `cd ${project.dir}`
   ].join(' && ')
 }
 
-module.exports.buildDocker = function () {
+export function buildDocker () {
+  this.checkWeb()
+  this.checkPort()
   const command = this.getBuildDockerCommand()
   console.log(
     `Ok we build your docker image... can take a little of time ...
@@ -54,7 +73,7 @@ module.exports.buildDocker = function () {
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
-module.exports.getPushDockerCommand = function (config) {
+export function getPushDockerCommand (config) {
   this.checkProject()
   if (typeof config === 'undefined') { config = {} }
   config = Object.assign({
@@ -67,12 +86,12 @@ module.exports.getPushDockerCommand = function (config) {
   const dir = config.isBase
             ? this[`${config.server}BaseImageDir`]
             : this.backendDir
-  const hostName = this.program.host === 'localhost'
+  const type = this.program.type === 'localhost'
   ? 'staging'
-  : this.program.host
+  : this.program.type
   const imageName = config.isBase
             ? this[`${serverName}BaseImage`]
-            : this[`${hostName}${toTitleCase(serverName)}Image`]
+            : this[`${type}${toTitleCase(serverName)}Image`]
   const socket = this.buildPushSocket
   return [
     `cd ${dir}`,
@@ -81,7 +100,9 @@ module.exports.getPushDockerCommand = function (config) {
   ].join(' && ')
 }
 
-module.exports.pushDocker = function () {
+export function pushDocker () {
+  this.checkWeb()
+  this.checkPort()
   const command = this.getPushDockerCommand()
   console.log(
     `Ok we push your docker image... can take a little of time ...
@@ -90,7 +111,7 @@ module.exports.pushDocker = function () {
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
-module.exports.getRegisterDockerCommand = function (config) {
+export function getRegisterDockerCommand (config) {
   this.checkProject()
   if (typeof config === 'undefined') { config = {} }
   config = Object.assign({
@@ -99,11 +120,11 @@ module.exports.getRegisterDockerCommand = function (config) {
   const serverName = typeof this.program.server === 'undefined'
                   ? config.server
                   : this.program.server
-  const hostName = this.program.host === 'localhost'
+  const type = this.program.type === 'localhost'
   ? 'staging'
-  : this.program.host
-  const serviceYamlPath = `${this.backendConfigDir}/${hostName}_${serverName}_service.yaml`
-  const controllerYamlPath = `${this.backendConfigDir}/${hostName}_${serverName}_controller.yaml`
+  : this.program.type
+  const serviceYamlPath = `${this.backendConfigDir}/${type}_${serverName}_service.yaml`
+  const controllerYamlPath = `${this.backendConfigDir}/${type}_${serverName}_controller.yaml`
   return [
     `python ${this.appPythonBinDir} service register ${serviceYamlPath}`,
     `python ${this.appPythonBinDir} service register ${controllerYamlPath}`,
@@ -111,7 +132,9 @@ module.exports.getRegisterDockerCommand = function (config) {
   ].join(' && ')
 }
 
-module.exports.registerDocker = function () {
+export function registerDocker () {
+  this.checkWeb()
+  this.checkPort()
   const command = this.getRegisterDockerCommand()
   console.log(
     `Ok we register your docker image... can take a little of time ...
@@ -120,7 +143,7 @@ module.exports.registerDocker = function () {
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
-module.exports.getRestartDockerCommand = function (config) {
+export function getRestartDockerCommand (config) {
   this.checkProject()
   if (typeof config === 'undefined') { config = {} }
   config = Object.assign({
@@ -132,19 +155,19 @@ module.exports.getRestartDockerCommand = function (config) {
                   : this.program.server
   const titleWebserverName = toTitleCase(serverName)
   const dir = this.backendDir
-  const hostName = this.program.host === 'localhost'
+  const type = this.program.type === 'localhost'
   ? 'staging'
-  : this.program.host
-  let tag = this[`${hostName}${titleWebserverName}Tag`]
+  : this.program.type
+  let tag = this[`${type}${titleWebserverName}Tag`]
   const imageName = config.isBase
             ? this[`${serverName}BaseImage`]
-            : this[`${hostName}${titleWebserverName}Image`]
-  var url = this[`${hostName}${titleWebserverName}Url`]
-  if (hostName === 'unname') {
+            : this[`${type}${titleWebserverName}Image`]
+  var url = this[`${type}${titleWebserverName}Url`]
+  if (type === 'unname') {
     tag = '--name ' + tag
-    var portNumber = this[`${hostName}${titleWebserverName}Port`]
+    var portNumber = this[`${type}${titleWebserverName}Port`]
     var port = `-p ${portNumber}:${portNumber}`
-    var socket = this[`${hostName}Socket`]
+    var socket = this[`${type}Socket`]
     var command = `docker ${socket} run -d ${port} ${tag} ${imageName}`
   } else {
     command = `python ${this.appPythonBinDir} service restart ${tag}`
@@ -157,7 +180,9 @@ module.exports.getRestartDockerCommand = function (config) {
   ].join(' && ')
 }
 
-module.exports.restartDocker = function () {
+export function restartDocker () {
+  this.checkWeb()
+  this.checkPort()
   const command = this.getRestartDockerCommand()
   console.log(
     `Ok we restart your docker container... can take a little of time ...
@@ -167,7 +192,7 @@ module.exports.restartDocker = function () {
   console.log(`If you have some trouble, go to ${this.appConfig.kubernetesUrl}`)
 }
 
-module.exports.deploy = function () {
+export function deploy () {
   this.buildDocker()
   this.pushDocker()
   this.registerDocker()

@@ -2,36 +2,24 @@
   "author": "Francois Blas & Erwan Ledoux",
   "dependencies": {
     "colors": "^1.1.2",
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "json-stable-stringify": "^1.0.1"
   },
   "devDependencies": {
     "ava": "^0.15.2",
+    "babel-cli": "^6.16.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-stage-3": "^6.17.0",
+    "nodemon": "^1.11.0",
     "ttab": "^0.5.0"
   },
   "main": "lib/index.js",
   "name": "teleport",
   "scripts": {
-    "postinstall": "source bin/link.sh && node bin/index.js --configure"
-  },
-  "teleport": {
-    "buildPushDockerHost": "prod1.corp.snips.ai",
-    "dockerPort": "4243",
-    "kubernetesUrl": "http://infra2.corp.snips.ai:8080/api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard/",
-    "localhostWebrouterHost": "localhost",
-    "localhostWebsocketerHost": "localhost",
-    "localhostWebrouterPort": "5000",
-    "localhostWebsocketerPort": "5001",
-    "maintainer": "Erwan Ledoux erwan.ledoux@snips.ai",
-    "masterServer": "infra2.corp.snips.ai",
-    "prodDockerHost": "prod2.corp.snips.ai",
-    "python": "/usr/local/bin/python",
-    "registryServer": "registry.corp.snips.ai:5000",
-    "stagingDockerHost": "dev3.corp.snips.ai",
-    "unnameDockerHost": "dev3.corp.snips.ai",
-    "webrouterBaseTag": "flask-wbr",
-    "webrouterBaseDockerVersion": "0.1",
-    "websocketerBaseTag": "flask-wbs",
-    "websocketerBaseDockerVersion": "0.1"
+    "compile": "rm -rf lib && ./node_modules/.bin/babel --presets es2015,stage-3 -d lib/ src/",
+    "postinstall": "source bin/link.sh && node bin/index.js --configure",
+    "watch": "./node_modules/nodemon/bin/nodemon.js src/index.js --watch src --exec babel-node --presets es2015,stage-3"
   },
   "version": "0.0.1"
 }
