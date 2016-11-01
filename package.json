@@ -1,24 +1,26 @@
 {
-  "author": "Francois Blas & Erwan Ledoux",
+  "author": "The Snips Tooling Team",
   "dependencies": {
-    "colors": "^1.1.2",
-    "commander": "^2.9.0",
-    "json-stable-stringify": "^1.0.1"
-  },
-  "devDependencies": {
     "ava": "^0.15.2",
     "babel-cli": "^6.16.0",
     "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-stage-3": "^6.17.0",
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "json-stable-stringify": "^1.0.1",
     "nodemon": "^1.11.0",
+    "pluralize": "^3.0.0",
     "ttab": "^0.5.0"
   },
   "main": "lib/index.js",
-  "name": "teleport",
+  "name": "teleport.js",
+  "publishConfig": {
+    "registry": "https://npm-registry.corp.snips.net"
+  },
   "scripts": {
     "compile": "rm -rf lib && ./node_modules/.bin/babel --presets es2015,stage-3 -d lib/ src/",
-    "postinstall": "source bin/link.sh && node bin/index.js --configure",
+    "postinstall": "source bin/link.sh",
     "watch": "./node_modules/nodemon/bin/nodemon.js src/index.js --watch src --exec babel-node --presets es2015,stage-3"
   },
   "version": "0.0.1"
