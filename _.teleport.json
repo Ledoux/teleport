@@ -1,0 +1,55 @@
+{
+  "python": "</usr/local/bin/python>",
+  "backend": {
+    "buildPushDockerHost": "<prod.foo.org>",
+    "dockerPort": "<4243>",
+    "domainName": "<foo.org>",
+    "kubernetesUrl": "<http://infra.foo.ai:8080/api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard/>",
+    "masterHost": "<infra.foo.org>",
+    "registryServer": "<registry.foo.ai:5000>",
+    "serversByName": {
+      "<flask-webrouter>": {
+        "baseDockerVersion": "<0.1>",
+        "baseTag": "<flask-wbr>",
+        "isMain": true,
+        "typesByName": {
+          "localhost": {
+            "host": "<localhost>",
+            "port": "<5000>"
+          }
+        },
+        "maintainer": "<Erwan Ledoux erwan.ledoux@snips.ai>",
+        "imageAbbreviation": "<wbr>"
+      },
+      "<flask-websocketer>": {
+        "baseTag": "<flask-wbs>",
+        "baseDockerVersion": "<0.1>",
+        "typesByName": {
+          "localhost": {
+            "host": "<localhost>",
+            "port": "<5001>"
+          }
+        },
+        "maintainer": "<Erwan Ledoux erwan.ledoux@snips.ai>",
+        "imageAbbreviation": "<wbs>"
+      }
+    }
+  },
+  "typesByName": {
+    "localhost": {},
+    "unname": {
+      "dockerHost": "<dev.foo.org>",
+      "imageAbbreviation": "<unm>"
+    },
+    "staging": {
+      "dockerHost": "<dev.foo.org>",
+      "imageAbbreviation": "<stg>",
+      "hasDns": true
+    },
+    "prod": {
+      "dockerHost": "<prod.foo.org>",
+      "imageAbbreviation": "<prod>",
+      "hasDns": true
+    }
+  }
+}
