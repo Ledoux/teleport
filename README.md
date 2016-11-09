@@ -22,7 +22,12 @@
     sudo make install
     ```
 
-  - virtualenv
+  - pip > 9 (use --upgrade if you already have an older version)
+    ```
+    sudo pip install pip
+    ```
+
+  - virtualenv > 15.0.3 (use --upgrade if you already have an older version)
     ```
     sudo pip install virtualenv
     ```
@@ -48,14 +53,14 @@
   git clone git@github.com:Ledoux/teleport.git && cd teleport && yarn
   ```
 
-3. you need to create or anchor to a scope where are defined all of your backend and frontend configs so as your templates
+3. you need to create and install your scope where are defined all of your backend and frontend configs so as your templates
   - create a new scope
     ```
     tpt -c --scope myTeleport
     ```
-  - anchor to an already created scope
+  - install the scope
     ```
-    tpt -a --scope myTeleport
+    cd myTeleport && tpt -i
     ```
 
 4. create a new project as a test
@@ -63,12 +68,17 @@
   tpt -c --project myApp --templates flask-webrouter
   ```
 
-5. run it localhost first
+5. install the project
   ```
-  cd myApp & tpt -r
+  cd myApp & tpt -i
   ```
 
-6. run it
+5. Inside of the project you can run it localhost, first
+  ```
+  tpt -r
+  ```
+
+6. And you can deploy
   ```
   tpt -d
   ```
