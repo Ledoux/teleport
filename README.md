@@ -64,8 +64,9 @@
     cd myTeleport && tpt -i
     ```
     ** NOTE ** : you might have an error install if you are ElCaptain OSX (10.11) with Xcode 8 (https://root.cern.ch/phpBB3/viewtopic.php?t=22376) for the uwsgi venv install.
-    In that case for now, until you upgrade to Sierra (10.12) do a `tpt -i --lib global --permission sudo`, it will actually install or use your global dependencies for now...
-    https://developer.apple.com/download/more/
+    In that case for now, you may ... upgrade to Sierra (10.12), or find
+    a https://developer.apple.com/download/more/
+
 
 4. create a new project as a test
   ```
