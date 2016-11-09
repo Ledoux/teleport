@@ -8,6 +8,10 @@ export function toTitleCase (string) {
     function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase() })
 }
 
+export function toDashCase (string) {
+  return string.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase()
+}
+
 export function toCapitalRegularCase (string) {
   return string.replace(/-/g, '_').toUpperCase()
 }
