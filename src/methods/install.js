@@ -19,9 +19,31 @@ export function install () {
 export function installScope () {
   const { scope: { package: { name } } } = this
   this.consoleInfo(`Let\'s install this ${name} scope !`)
+  // this.installDocker()
   this.installKubernetes()
   this.installInApp()
   this.consoleInfo('scope install done !')
+}
+
+export function installDocker () {
+  const { scope } = this
+  const dockerVersionDigit = parseInt(childProcess
+    .execSync('docker version --format \'{{.Client.Version}}\'')
+    .toString('utf-8')
+    .replace(/(\.+)/g, ''))
+  const scopeDockerVersionDigit = parseInt(scope.dockerVersion
+    .replace(/(\.+)/g, ''))
+  if (dockerVersionDigit > scopeDockerVersionDigit) {
+    const dockerFile = `docker-${scope.dockerVersion}`
+    const command = [
+      `exec wget https://get.docker.com/builds/Darwin/x86_64/${scope.dockerVersion}`,
+      `cp ${dockerFile} $(which docker)`,
+      `rm ${dockerFile}`
+    ].join(' && ')
+    this.consoleInfo(`Let\'s install a good docker version, that one : ${scope.dockerVersion}`)
+    this.consoleLog(command)
+    childProcess.execSync(command)
+  }
 }
 
 export function getInstallKubernetesCommand () {
