@@ -2,7 +2,7 @@ import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
-import { getPackage } from '../utils'
+import { getPackage, toDashCase } from '../utils'
 
 export function setAppEnvironment () {
   const { app } = this
@@ -122,7 +122,8 @@ export function setServerEnvironment () {
   server.dockerEnv = server.dockerEnv || {}
   server.isNoCache = false
   server.baseImage = `${backend.registryServer}/${server.baseTag}:${server.baseDockerVersion}`
-  server.tag = `${backend.siteName}-${server.imageAbbreviation}`
+  server.regularSiteName = toDashCase(backend.siteName)
+  server.tag = `${server.regularSiteName}-${server.imageAbbreviation}`
   if (typeof server.runsByTypeName === 'undefined') {
     server.runsByTypeName = {}
   }
@@ -132,13 +133,6 @@ export function setServerEnvironment () {
   server.scopeServerDir = path.join(server.scopeServersDir, server.name)
   server.scopeConfigDir = path.join(server.scopeServerDir, 'config')
   server.scopeScriptsDir = path.join(server.scopeServerDir, 'scripts')
-  /*
-  if (type) {
-    const run = server.runsByTypeName[type.name]
-    if (run) {
-      this.serverUrlsByName[`${toCapitalRegularCase(server.name)}_URL`] = run.url
-    }
-  }*/
   this.setRunEnvironment()
 }
 
