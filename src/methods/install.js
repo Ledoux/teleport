@@ -47,15 +47,15 @@ export function installInApp () {
   this.checkScope()
   const { app, scope } = this
   // register maybe
-  if (typeof app.config.scopesByName[scope.package.name] === 'undefined') {
-    app.config.scopesByName[scope.package.name] = {
-      dir: scope.dir
-    }
+  app.config.scopesByName[scope.package.name] = {
+    dir: scope.dir
   }
   // set current
   app.config.currentScopeName = scope.package.name
   // write
-  this.writeConfig(app.dir, app.config)
+  const writtenConfig = Object.assign({}, app.config)
+  delete writtenConfig.scopesByName.default
+  this.writeConfig(app.dir, writtenConfig)
 }
 
 export function installProject () {
@@ -82,13 +82,17 @@ export function installBackend () {
 
 export function getInstallVenvCommand () {
   this.checkProject()
-  const { project } = this
-  return `cd ${project.dir} && virtualenv -p ${project.config.python} venv`
+  const { project, program } = this
+  let option = ''
+  if (program.lib === 'global') {
+    option = '--system-site-packages'
+  }
+  return `cd ${project.dir} && virtualenv -p ${project.config.python} venv ${option}`
 }
 
 export function installPythonVenv () {
   const { program, project } = this
-  if (typeof project.config.python === 'undefined' || program.venv === 'false') {
+  if (typeof project.config.python === 'undefined' || program.lib === 'global') {
     return
   }
   this.consoleInfo('... Installing a python venv for our backend')
@@ -98,10 +102,9 @@ export function installPythonVenv () {
 }
 
 export function installAppPythonLib () {
-  this.setActivatedPythonVenv()
   const { program, project } = this
-  if (typeof project.config.python === 'undefined' || program.venv === 'false') {
-    return
+  if (program.lib === 'local') {
+    this.setActivatedPythonVenv()
   }
   this.consoleInfo('... Installing the python lib necessary for the teleport app')
   const command = `cd ${project.dir} && ${project.config.pip} install -r requirements.txt`
@@ -141,16 +144,18 @@ export function installBaseServers () {
 
 export function installServer () {
   const { program, server } = this
-  if (program.pip === 'false') return
-  this.setActivatedPythonVenv()
-  // for some reason, some python lib requires sudo install even if we are in venv mode
+  if (program.lib === 'local') {
+    this.setActivatedPythonVenv()
+  }
   let fileName = 'install.sh'
   if (program.image && typeof program.image !== 'undefined') {
     fileName = `${program.image}_${fileName}`
   }
   fileName = `localhost_${fileName}`
   this.consoleInfo(`Let\'s launch the ${fileName} needed in the docker server... it can\'t take a long time`)
-  const installCommand = `cd ${server.dir} && sudo sh scripts/${fileName}`
+  // for now for settings like Xcode8 with ElCaptai uwsgi in venv install breaks, and only solution is
+  // to do that with sudo
+  const installCommand = `cd ${server.dir} && ${program.permission} sh scripts/${fileName}`
   this.consoleLog(installCommand)
   console.log(childProcess.execSync(installCommand).toString('utf-8'))
 }
