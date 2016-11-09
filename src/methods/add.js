@@ -73,7 +73,8 @@ export function addUpdatedGitignore () {
   const { project } = this
   project.gitignore = merge(
     {
-      'secret.json': ''
+      'secret.json': '',
+      'venv': ''
     },
     ...values(project.templatesByName)
       .map(template => getGitignore(template.dir)
