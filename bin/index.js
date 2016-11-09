@@ -27,6 +27,7 @@ program
   .option('--kwarg [type]', 'Kwarg', '')
   .option('--image [type]', 'Image')
   .option('--lang [type]', 'Language', 'js')
+  .option('--lib [type]', 'Lib', /^(local|global)$/i, 'local')
   .option('--method [type]', 'Method')
   .option('--permission [type]', 'Permission', '')
   .option('--pip [type]', 'Pip', /^(true|false)$/i, 'true')

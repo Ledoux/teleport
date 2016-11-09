@@ -18,9 +18,8 @@ export function setAppEnvironment () {
   app.configDir = path.join(app.dir, app.configFile)
   app.config = this.getConfig(app.dir)
   app.defaultDir = path.join(app.dir, 'default')
-  if (app.config.scopesByName.default.dir !== app.defaultDir) {
-    app.config.scopesByName.default.dir = app.defaultDir
-    this.writeConfig(app.dir, app.config)
+  app.config.scopesByName.default = {
+    dir: app.defaultDir
   }
   app.currentScope = app.config.scopesByName[app.config.currentScopeName]
   this.ttabDir = path.join(app.nodeModulesDir, 'ttab/bin/ttab')
@@ -48,13 +47,11 @@ export function setProjectEnvironment () {
       .execSync('which python')
       .toString('utf-8').trim()
   }
-  if (program.venv !== 'false') {
-    project.config.pip = path.join(project.dir, 'venv/bin/pip')
-  } else if (typeof project.config.pip === 'undefined') {
-    project.config.pip = childProcess
-      .execSync('which pip')
-      .toString('utf-8').trim()
-  }
+  project.config.pip = program.global === 'local'
+  ? path.join(project.dir, 'venv/bin/pip')
+  : childProcess
+    .execSync('which pip')
+    .toString('utf-8').trim()
 }
 
 export function setTypeEnvironment () {

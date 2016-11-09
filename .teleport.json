@@ -4,9 +4,6 @@
 		"click": "5.1"
 	},
 	"scopesByName": {
-		"default": {
-			"dir": "/Users/ledoux/Documents/Git/snipsco/teleport/default"
-		},
 		"snips-teleport": {
 			"dir": "/Users/ledoux/Documents/Git/snipsco/snips-teleport"
 		}
