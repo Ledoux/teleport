@@ -2,44 +2,40 @@ import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
-import { getPackage, toDashCase } from '../utils'
+import { getPackage, toCapitalUnderscoreCase, toDashCase } from '../utils'
 
 export function setAppEnvironment () {
   const { app } = this
   app.dir = path.join(__dirname, '../../')
-  app.binDir = path.join(app.dir, 'bin')
-  app.nodeModulesDir = path.join(app.dir, 'node_modules')
-  app.utilsDir = path.join(app.dir, 'utils')
-  app.defaultScopeDir = path.join(app.dir, 'default')
-  app.pythonBinDir = path.join(app.binDir, 'index.py')
-  app.packageDir = path.join(app.dir, 'package.json')
   app.package = getPackage(app.dir)
   app.configFile = `.${app.package.name.split('.js')[0]}.json`
-  app.configDir = path.join(app.dir, app.configFile)
   app.config = this.getConfig(app.dir)
-  app.defaultDir = path.join(app.dir, 'default')
   app.config.scopesByName.default = {
-    dir: app.defaultDir
+    dir: path.join(app.dir, 'default')
   }
   app.currentScope = app.config.scopesByName[app.config.currentScopeName]
-  this.ttabDir = path.join(app.nodeModulesDir, 'ttab/bin/ttab')
+  app.ttabDir = path.join(app.dir, 'node_modules/ttab/bin/ttab')
+  app.pythonDir = path.join(app.dir, 'bin/index.py')
 }
 
 export function setScopeEnvironment () {
-  const { app: { configFile }, scope } = this
+  const { scope } = this
+  console.log('scope.dir', scope.dir)
   this.read(scope)
-  scope.packageDir = path.join(scope.dir, 'package.json')
-  scope.nodeModulesDir = path.join(scope.dir, 'node_modules')
-  scope.templatesDir = path.join(scope.dir, 'templates')
-  scope.configDir = path.join(scope.dir, configFile)
 }
 
 export function setProjectEnvironment () {
-  const { program, project } = this
-  project.packageDir = path.join(project.dir, 'package.json')
-  project.gitignoreDir = path.join(project.dir, '.gitignore')
-  project.secretDir = path.join(project.dir, 'secret.json')
+  const { app, program, project, scope } = this
   this.read(project)
+  // version
+  Object.assign(project.config, {
+    appVersion: app.package.name,
+    scope: {
+      name: scope.package.name,
+      version: scope.package.version
+    }
+  })
+  // sub entities
   this.setTypeEnvironment()
   this.setBackendEnvironment()
   if (typeof project.config.python === 'undefined') {
@@ -74,16 +70,14 @@ export function setBackendEnvironment () {
     this.backend = null
     return
   }
-  const backend = this.backend = project.config.backend
+  const backend = this.backend = Object.assign({}, project.config.backend)
   backend.dir = path.join(project.dir, 'backend')
-  backend.dataDir = path.join(backend.dir, 'data')
-  backend.serversDir = path.join(backend.dir, 'servers')
-  backend.pythonScriptsDir = path.join(backend.dir, 'scripts')
   backend.dockerEnv = backend.dockerEnv || {}
   backend.buildPushDockerServer = `${backend.buildPushDockerHost}:${backend.dockerPort}`
   backend.buildPushSocket = `-H tcp://${backend.buildPushDockerServer}`
   backend.siteName = backend.siteName || project.package.name
-  backend.capitalSiteName = backend.siteName.toUpperCase()
+  backend.capitalUnderscoreSiteName = toCapitalUnderscoreCase(backend.siteName)
+  backend.dashSiteName = toDashCase(backend.siteName)
   backend.serverNames = Object.keys(project.config.backend.serversByName)
   // this.serverUrlsByName = {}
   if (type && type.dockerHost) {
@@ -114,25 +108,19 @@ export function setServerEnvironment () {
   }
   const server = this.server = Object.assign({}, backend.serversByName[program.server])
   server.name = program.server
-  server.dir = path.join(backend.serversDir, server.name)
+  server.dir = path.join(backend.dir, 'servers', server.name)
   server.configDir = path.join(server.dir, 'config')
-  server.requirementsDir = path.join(server.configDir, 'requirements.txt')
-  server.scriptsDir = path.join(server.dir, 'scripts')
-  // server.depBases = this.getDepBases(server)
-  server.dockerEnv = server.dockerEnv || {}
-  server.isNoCache = false
-  server.baseImage = `${backend.registryServer}/${server.baseTag}:${server.baseDockerVersion}`
-  server.regularSiteName = toDashCase(backend.siteName)
-  server.tag = `${server.regularSiteName}-${server.imageAbbreviation}`
-  if (typeof server.runsByTypeName === 'undefined') {
-    server.runsByTypeName = {}
-  }
-  server.scopeTemplateDir = path.join(scope.templatesDir, server.templateName)
+  server.scopeTemplateDir = path.join(scope.dir, 'templates', server.templateName)
   server.scopeBackendDir = path.join(server.scopeTemplateDir, 'backend')
   server.scopeServersDir = path.join(server.scopeBackendDir, 'servers')
   server.scopeServerDir = path.join(server.scopeServersDir, server.name)
-  server.scopeConfigDir = path.join(server.scopeServerDir, 'config')
-  server.scopeScriptsDir = path.join(server.scopeServerDir, 'scripts')
+  server.dockerEnv = server.dockerEnv || {}
+  server.isNoCache = false
+  server.baseImage = `${backend.registryServer}/${server.baseTag}:${server.baseDockerVersion}`
+  server.tag = `${backend.dashSiteName}-${server.imageAbbreviation}`
+  if (typeof server.runsByTypeName === 'undefined') {
+    server.runsByTypeName = {}
+  }
   this.setRunEnvironment()
 }
 
@@ -165,7 +153,7 @@ export function setRunEnvironment () {
     const virtualNamePrefix = type.name === 'prod'
     ? ''
     : `${type.imageAbbreviation.toUpperCase()}_`
-    run.virtualName = `${virtualNamePrefix}${backend.capitalSiteName}_${server.imageAbbreviation.toUpperCase()}_SERVICE_HOST`
+    run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.imageAbbreviation.toUpperCase()}_SERVICE_HOST`
   }
   // set the url
   run.url = `http://${run.host}`
@@ -178,7 +166,7 @@ export function setRunEnvironment () {
     ? ''
     : `${type.name}-`
     // subdomain
-    let subDomainName = `${dnsPrefix}${backend.siteName}`
+    let subDomainName = `${dnsPrefix}${backend.dashSiteName}`
     if (!server.isMain) {
       subDomainName = `${subDomainName}-${server.imageAbbreviation}`
     }
