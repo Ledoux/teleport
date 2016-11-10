@@ -191,18 +191,22 @@ export function setAllTypesAndServersEnvironment () {
   }
 }
 
-export function setActivatedPythonVenv () {
+export function getActivatedPythonVenvCommand () {
   this.checkProject()
+  const { project } = this
+  const fileName = 'venv/bin/activate'
+  if (!fs.existsSync(path.join(project.dir, fileName))) {
+    this.consoleError('You need to define a python venv')
+    return
+  }
+  this.consoleInfo('Let\'s activate the venv')
+  return `cd ${project.dir} && source ${fileName}`
+}
+
+export function setActivatedPythonVenv () {
   if (typeof this.isPythonVenvActivated === 'undefined' || !this.isPythonVenvActivated
   ) {
-    const { project } = this
-    const fileName = 'venv/bin/activate'
-    if (!fs.existsSync(path.join(project.dir, fileName))) {
-      this.consoleError('You need to define a python venv')
-      return
-    }
-    this.consoleInfo('Let\'s activate the venv')
-    const command = `cd ${project.dir} && source ${fileName}`
+    const command = this.getActivatedPythonVenvCommand()
     this.consoleLog(command)
     console.log(childProcess.execSync(command).toString('utf-8'))
     this.isPythonVenvActivated = true
