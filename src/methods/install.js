@@ -3,7 +3,7 @@ import fs from 'fs'
 import { values } from 'lodash'
 import path from 'path'
 
-import { formatString, toTitleCase } from '../utils'
+import { formatString } from '../utils'
 
 const notLocalhostPlaceholderFiles = [
   'controller.yaml',
@@ -48,7 +48,7 @@ export function installDocker () {
 
 export function getInstallKubernetesCommand () {
   const { app, scope } = this
-  let commands = [`cd ${app.binDir}`]
+  let commands = [`cd ${path.join(app, 'bin')}`]
   commands.push(`kubectl config set-cluster master --server=http://${scope.config.backend.masterHost}:8080`)
   commands.push('kubectl config set-context master --cluster=master')
   commands.push('kubectl config use-context master')
@@ -113,8 +113,8 @@ export function getInstallVenvCommand () {
 }
 
 export function installPythonVenv () {
-  const { program, project } = this
-  if (typeof project.config.python === 'undefined' || program.lib === 'global') {
+  const { program } = this
+  if (program.lib === 'global') {
     return
   }
   this.consoleInfo('... Installing a python venv for our backend')
@@ -139,14 +139,6 @@ export function installBasePlaceholderFiles () {
   program.image = 'base'
   program.method = null
   program.methods = [
-    {
-      folder: 'scripts',
-      file: 'install.sh'
-    },
-    {
-      folder: 'server',
-      file: 'Dockerfile'
-    }
   ].map(newProgram => () => {
     Object.assign(program, newProgram)
     this.installPlaceholderFile()
@@ -173,7 +165,6 @@ export function installServer () {
   if (program.image && typeof program.image !== 'undefined') {
     fileName = `${program.image}_${fileName}`
   }
-  fileName = `localhost_${fileName}`
   this.consoleInfo(`Let\'s launch the ${fileName} needed in the docker server... it can\'t take a long time`)
   // for now for settings like Xcode8 with ElCaptai uwsgi in venv install breaks, and only solution is
   // to do that with sudo
@@ -269,8 +260,9 @@ export function installPlaceholderFile () {
   // look first if there is no specific <type>_<image>_<script> template
   let templateFile
   let templateFileName = installedFileName
-  const templateFolderDirKey = `scope${toTitleCase(program.folder)}Dir`
-  const templateFolderDir = server[templateFolderDirKey]
+  const templateFolderDir = program.folder === 'server'
+  ? server.scopeServerDir
+  : path.join(server.scopeServerDir, program.folder)
   templateFileName = `${templatePrefix}${templateFileName}`
   let templateFileDir = path.join(templateFolderDir, templateFileName)
   if (fs.existsSync(templateFileDir)) {
@@ -286,10 +278,9 @@ export function installPlaceholderFile () {
       return
     }
   }
-  const installedFolderDirKey = program.folder === 'server'
-  ? 'dir'
-  : `${program.folder}Dir`
-  const installedFolderDir = server[installedFolderDirKey]
+  const installedFolderDir = program.folder === 'server'
+  ? server.dir
+  : path.join(server.dir, program.folder)
   const installedFileDir = path.join(installedFolderDir, installedFileName)
   // prepare the dockerExtraConfig
   const extraConfig = Object.assign(
@@ -337,7 +328,7 @@ export function installSecrets () {
 export function installSecret () {
   const { server } = this
   // add maybe an empty secret
-  const secretDir = path.join(server.configDir, 'secret.json')
+  const secretDir = path.join(server.dir, 'config/secret.json')
   if (!fs.existsSync(secretDir)) {
     fs.writeFileSync(secretDir, '{}')
   }

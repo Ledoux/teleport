@@ -7,7 +7,7 @@ export function exec () {
     return
   }
   const command = program.lang === 'py'
-  ? `python ${app.pythonBinDir} ${program.method.replace(/[ ]*,[ ]*|[ ]+/g, ' ')}`
+  ? `python ${app.pythonDir} ${program.method.replace(/[ ]*,[ ]*|[ ]+/g, ' ')}`
   : this[program.method]()
   console.log(
     childProcess.execSync(command).toString('utf-8'))

@@ -23,8 +23,8 @@ export function deployBaseServers () {
 }
 
 export function deployServerInNewTab () {
-  const { server, type } = this
-  const command = `${this.ttabDir} tpt -d --server ${server.name} --type ${type.name}`
+  const { app, server, type } = this
+  const command = `${app.ttabDir} tpt -d --server ${server.name} --type ${type.name}`
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
@@ -53,7 +53,7 @@ export function getUsedPorts () {
   this.checkWeb()
   const { app, run } = this
   if (!run) return
-  const command = `python ${app.pythonBinDir} ports --docker ${run.dockerName}`
+  const command = `python ${app.pythonDir} ports --docker ${run.dockerName}`
   const rep = childProcess.execSync(command).toString('utf-8')
   const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])
   return ports
@@ -134,8 +134,8 @@ export function getRegisterDockerCommand (config) {
   const serviceYamlPath = `${server.configDir}/${type.name}_service.yaml`
   const controllerYamlPath = `${server.configDir}/${type.name}_controller.yaml`
   return [
-    `python ${app.pythonBinDir} register ${serviceYamlPath}`,
-    `python ${app.pythonBinDir} register ${controllerYamlPath}`,
+    `python ${app.pythonDir} register ${serviceYamlPath}`,
+    `python ${app.pythonDir} register ${controllerYamlPath}`,
     `cd ${project.dir}`
   ].join(' && ')
 }
@@ -160,7 +160,7 @@ export function getRestartDockerCommand (config) {
     const socket = this[`${type}Socket`]
     command = `docker ${socket} run -d ${port} ${tag} ${run.image}`
   } else {
-    command = `python ${app.pythonBinDir} restart ${run.tag}`
+    command = `python ${app.pythonDir} restart ${run.tag}`
   }
   return [
     `cd ${server.dir}`,
