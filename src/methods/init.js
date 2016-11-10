@@ -35,11 +35,17 @@ export function init (program) {
       scope.dir = this.currentDir
       this.setScopeEnvironment()
     } else if (getPackage(this.currentDir)) {
-      scope.dir = this.currentConfig.scope.dir
-      this.setScopeEnvironment()
-      this.level = 'project'
-      project.dir = this.currentDir
-      this.setProjectEnvironment()
+      const scopeName = this.currentConfig.scope.name
+      const appScope = app.config.scopesByName[this.currentConfig.scope.name]
+      if (scope) {
+        scope.dir = appScope.dir
+        this.setScopeEnvironment()
+        this.level = 'project'
+        project.dir = this.currentDir
+        this.setProjectEnvironment()
+      } else {
+        this.consoleWarn(`weird this project is attached to ${scopeName} but there is no such scope in the app`)
+      }
     }
   }
   // exit else

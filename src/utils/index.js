@@ -12,8 +12,8 @@ export function toDashCase (string) {
   return string.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase()
 }
 
-export function toCapitalRegularCase (string) {
-  return string.replace(/-/g, '_').toUpperCase()
+export function toCapitalUnderscoreCase (string) {
+  return string.replace( /([a-z])([A-Z])/g, '$1_$2' ).replace(/-/g, '_').toUpperCase()
 }
 
 // from http://stackoverflow.com/questions/4920383/javascript-string-replace

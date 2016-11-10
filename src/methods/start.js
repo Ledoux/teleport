@@ -45,10 +45,10 @@ export function getPsProviderCommand () {
 }
 
 export function getStartProviderCommand () {
-  const { program, provider } = this
+  const { app, program, provider } = this
   let command = `cd ${provider.dataDir} && sh start.sh`
   if (program.user === 'me') {
-    command = `${this.ttabDir} \"${command}\"`
+    command = `${app.ttabDir} \"${command}\"`
   }
   return command
 }
@@ -74,14 +74,14 @@ export function startServer () {
 }
 
 export function getStartServerCommand () {
-  const { program, server, type } = this
+  const { app, program, server, type } = this
   const typeName = !type
   ? 'localhost'
   : type.name
   const fileName = `${typeName}_start.sh`
   let command = `cd ${server.dir} && sh scripts/${fileName}`
   if (program.user === 'me') {
-    command = `${this.ttabDir} \"${command}\"`
+    command = `${app.ttabDir} \"${command}\"`
   }
   return command
 }

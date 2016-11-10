@@ -49,7 +49,7 @@ export function getAvailablePorts (docker) {
   docker = docker || run.docker
   this.checkWeb()
   const { app } = this
-  const command = `python ${app.pythonBinDir} ports --filter available --docker ${docker}`
+  const command = `python ${app.pythonDir} ports --filter available --docker ${docker}`
   const rep = childProcess.execSync(command).toString('utf-8')
   const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])
   return ports
