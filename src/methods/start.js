@@ -75,11 +75,16 @@ export function startServer () {
 
 export function getStartServerCommand () {
   const { app, program, server, type } = this
+  const commands = []
+  if (program.lib === 'local') {
+    commands.push(this.getActivatedPythonVenvCommand())
+  }
   const typeName = !type
   ? 'localhost'
   : type.name
   const fileName = `${typeName}_start.sh`
-  let command = `cd ${server.dir} && sh scripts/${fileName}`
+  commands.push(`cd ${server.dir} && sh scripts/${fileName}`)
+  let command = commands.join(' && ')
   if (program.user === 'me') {
     command = `${app.ttabDir} \"${command}\"`
   }
