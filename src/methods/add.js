@@ -24,9 +24,12 @@ export function addScope () {
 
 export function addUpdatedPackage () {
   const { project, program } = this
+  const name = project.package
+  ? project.package.name
+  : program.project
   project.package = merge(
     {
-      name: program.project,
+      name,
       version: '0.0.1'
     },
     ...values(project.templatesByName)
@@ -52,7 +55,7 @@ export function addUpdatedConfig () {
     project.config,
     ...templateNames
       .map(templateName => {
-        const templateDir = path.join(scope.templatesDir, templateName)
+        const templateDir = path.join(scope.dir, 'templates', templateName)
         const templateConfig = this.getConfig(templateDir)
         if (templateConfig) {
           // set the parent template name in the server in order to
@@ -113,7 +116,7 @@ export function getCopyTemplatesCommand () {
   }
   return toPairs(project.config.templatesByName).map(pairs => {
     const [templateName, template] = pairs
-    const scopeTemplateDir = path.join(scope.templatesDir, templateName)
+    const scopeTemplateDir = path.join(scope.dir, 'templates', templateName)
     // we exclude package.json and config file because we want to merge them
     // and we exclude also files mentionned in the excludes item of the template
     // config
@@ -133,7 +136,7 @@ export function getCopyTemplatesCommand () {
 }
 
 export function addScopeConfig () {
-  const { scope } = this
+  const { app, scope } = this
   scope.config = {
     'python': '</usr/local/bin/python>',
     'backend': {
@@ -189,5 +192,5 @@ export function addScopeConfig () {
       }
     }
   }
-  fs.writeFileSync(scope.configDir, stringify(scope.config, {space: '\t'}))
+  fs.writeFileSync(path.join(scope.dir, app.configFile), stringify(scope.config, {space: '\t'}))
 }
