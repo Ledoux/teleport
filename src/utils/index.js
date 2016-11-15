@@ -37,15 +37,31 @@ export function getPackage (dir) {
   }
 }
 
-export function getGitignore (dir) {
-  const gitignoreDir = path.join(dir, '.gitignore')
-  if (fs.existsSync(gitignoreDir)) {
-    const gitignore = {}
-    fs.readFileSync(gitignoreDir)
+export function getGitignores (dir) {
+  const fileDir = path.join(dir, '.gitignore')
+  if (fs.existsSync(fileDir)) {
+    const gitignores = []
+    fs.readFileSync(fileDir)
       .toString('utf-8')
       .split('\n')
-      .forEach(word => { gitignore[word] = '' })
-    return gitignore
+      .forEach(word => { gitignores.push(word) })
+    return gitignores
+  }
+}
+
+export function getRequirements (dir, prefix) {
+  let fileName = 'requirements.txt'
+  if (prefix) {
+    fileName = `${prefix}_${fileName}`
+  }
+  const fileDir = path.join(dir, fileName)
+  if (fs.existsSync(fileDir)) {
+    const requirements = []
+    fs.readFileSync(fileDir)
+      .toString('utf-8')
+      .split('\n')
+      .forEach(word => { requirements.push(word) })
+    return requirements
   }
 }
 
@@ -54,25 +70,25 @@ export async function sleep (milliseconds) {
 }
 
 export function writePackage (dir, writtenPackage) {
-  fs.writeFileSync(path.join(dir, 'package.json'),
-  stringify(writtenPackage, { space: '\t' }))
+  const fileDir = path.join(dir, 'package.json')
+  const fileString = stringify(writtenPackage, { space: '\t' })
+  fs.writeFileSync(fileDir, fileString)
 }
 
-export function writeGitignore (dir, writtenGitignore) {
-  if (!writtenGitignore || typeof writtenGitignore === 'undefined') {
-    this.consoleWarn('writtenGitignore is not yet set')
+export function writeGitignore (dir, writtenGitignores) {
+  const fileDir = path.join(dir, '.gitignore')
+  const fileString = writtenGitignores.join('\n')
+  fs.writeFileSync(fileDir, fileString)
+}
+
+export function writeRequirements (dir, writtenRequirements, prefix) {
+  let fileName = 'requirements.txt'
+  if (prefix) {
+    fileName = `${prefix}_${fileName}`
   }
-  fs.writeFileSync(path.join(dir, '.gitignore'),
-    Object.keys(writtenGitignore).join('\n')
-  )
-}
-
-export function writeRequirements (dir, writtenRequirements) {
-  const requirementsText = toPairs(writtenRequirements).map(pairs => {
-    const [requirement, version] = pairs
-    return `${requirement}==${version}`
-  }).join('\n')
-  fs.writeFileSync(path.join(dir, 'requirements.txt'), requirementsText)
+  const fileDir = path.join(dir, fileName)
+  const fileString = writtenRequirements.join('\n')
+  fs.writeFileSync(fileDir, fileString)
 }
 
 export function getCartesianProduct (...args) {

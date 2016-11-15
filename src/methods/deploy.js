@@ -23,8 +23,8 @@ export function deployBaseServers () {
 }
 
 export function deployServerInNewTab () {
-  const { app, server, type } = this
-  const command = `${app.ttabDir} tpt -d --server ${server.name} --type ${type.name}`
+  const { app, program, server, type } = this
+  const command = `${app.ttabDir} tpt -d --server ${server.name} --type ${type.name} --cache ${program.cache}`
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
@@ -154,11 +154,10 @@ export function getRestartDockerCommand (config) {
   this.checkProject()
   const { app, project, server, type, run } = this
   let command
-  if (type === 'unname') {
+  if (type.name === 'unname') {
     const tag = '--name ' + run.tag
     const port = `-p ${run.port}:${run.port}`
-    const socket = this[`${type}Socket`]
-    command = `docker ${socket} run -d ${port} ${tag} ${run.image}`
+    command = `docker ${type.socket} run -d ${port} ${tag} ${run.image}`
   } else {
     command = `python ${app.pythonDir} restart ${run.tag}`
   }
@@ -171,7 +170,7 @@ export function getRestartDockerCommand (config) {
 }
 
 export function restartDocker () {
-  const { scope } = this
+  const { project } = this
   this.checkWeb()
   this.checkPort()
   const command = this.getRestartDockerCommand()
@@ -179,5 +178,10 @@ export function restartDocker () {
     can take a little of time...`)
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
-  this.consoleInfo(`If you have some trouble, go to ${scope.config.backend.kubernetesUrl}`)
+  this.consoleInfo(`If you have some trouble, go to ${project.config.backend.kubernetesUrl}`)
+}
+
+export function getDnsDockerCommand () {
+  const { run } = this
+  return `sky dns add ${run.dockerHost} ${run.dns} snips.ai`
 }

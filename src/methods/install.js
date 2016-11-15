@@ -16,70 +16,6 @@ export function install () {
   this.consoleInfo(`install was successful !`)
 }
 
-export function installScope () {
-  const { scope: { package: { name } } } = this
-  this.consoleInfo(`Let\'s install this ${name} scope !`)
-  // this.installDocker()
-  this.installKubernetes()
-  this.installInApp()
-  this.consoleInfo('scope install done !')
-}
-
-export function installDocker () {
-  const { scope } = this
-  const dockerVersionDigit = parseInt(childProcess
-    .execSync('docker version --format \'{{.Client.Version}}\'')
-    .toString('utf-8')
-    .replace(/(\.+)/g, ''))
-  const scopeDockerVersionDigit = parseInt(scope.dockerVersion
-    .replace(/(\.+)/g, ''))
-  if (dockerVersionDigit > scopeDockerVersionDigit) {
-    const dockerFile = `docker-${scope.dockerVersion}`
-    const command = [
-      `exec wget https://get.docker.com/builds/Darwin/x86_64/${scope.dockerVersion}`,
-      `cp ${dockerFile} $(which docker)`,
-      `rm ${dockerFile}`
-    ].join(' && ')
-    this.consoleInfo(`Let\'s install a good docker version, that one : ${scope.dockerVersion}`)
-    this.consoleLog(command)
-    childProcess.execSync(command)
-  }
-}
-
-export function getInstallKubernetesCommand () {
-  const { app, scope } = this
-  let commands = [`cd ${path.join(app, 'bin')}`]
-  commands.push(`kubectl config set-cluster master --server=http://${scope.config.backend.masterHost}:8080`)
-  commands.push('kubectl config set-context master --cluster=master')
-  commands.push('kubectl config use-context master')
-  commands.push('kubectl get nodes')
-  return commands.join(' && ')
-}
-
-export function installKubernetes () {
-  this.checkScope()
-  this.consoleInfo('Let\'s install kubernetes configs')
-  const command = this.getInstallKubernetesCommand()
-  this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
-  console.log('kubernetes configs are installed !')
-}
-
-export function installInApp () {
-  this.checkScope()
-  const { app, scope } = this
-  // register maybe
-  app.config.scopesByName[scope.package.name] = {
-    dir: scope.dir
-  }
-  // set current
-  app.config.currentScopeName = scope.package.name
-  // write
-  const writtenConfig = Object.assign({}, app.config)
-  delete writtenConfig.scopesByName.default
-  this.writeConfig(app.dir, writtenConfig)
-}
-
 export function installProject () {
   const { backend, project: { package: { name } } } = this
   this.consoleInfo(`Let\'s install this ${name} project !`)
@@ -90,6 +26,7 @@ export function installProject () {
 }
 
 export function installBackend () {
+  this.installKubernetes()
   this.installPythonVenv()
   this.installAppPythonLib()
   this.installBasePlaceholderFiles()
@@ -100,6 +37,50 @@ export function installBackend () {
   this.installServers()
   this.installSecrets()
   this.write(this.project)
+}
+
+export function installKubernetes () {
+  this.consoleInfo('Let\'s install kubernetes configs')
+  const command = this.getInstallKubernetesCommand()
+  this.consoleLog(command)
+  console.log(childProcess.execSync(command).toString('utf-8'))
+  this.consoleInfo('kubernetes configs are installed !')
+}
+
+export function getInstallKubernetesCommand () {
+  this.checkProject()
+  const { project: { config: { backend: { masterHost } }, dir } } = this
+  if (typeof masterHost !== 'string') {
+    this.consoleError('You must define a masterHost for kubectl')
+  }
+  let commands = [`cd ${path.join(dir, 'bin')}`]
+  commands.push(`kubectl config set-cluster master --server=http://${masterHost}:8080`)
+  commands.push('kubectl config set-context master --cluster=master')
+  commands.push('kubectl config use-context master')
+  commands.push('kubectl get nodes')
+  return commands.join(' && ')
+}
+
+export function installDocker () {
+  const { project } = this
+  const dockerVersionDigit = parseInt(childProcess
+    .execSync('docker version --format \'{{.Client.Version}}\'')
+    .toString('utf-8')
+    .replace(/(\.+)/g, ''))
+  const projectDockerVersion = project.config.backend.dockerVersion
+  const projectDockerVersionDigit = parseInt(projectDockerVersion
+    .replace(/(\.+)/g, ''))
+  if (dockerVersionDigit > projectDockerVersionDigit) {
+    const dockerFile = `docker-${project.dockerVersion}`
+    const command = [
+      `exec wget https://get.docker.com/builds/Darwin/x86_64/${projectDockerVersion}`,
+      `cp ${dockerFile} $(which docker)`,
+      `rm ${dockerFile}`
+    ].join(' && ')
+    this.consoleInfo(`Let\'s install a good docker version, that one : ${projectDockerVersion}`)
+    this.consoleLog(command)
+    childProcess.execSync(command)
+  }
 }
 
 export function getInstallVenvCommand () {
@@ -117,7 +98,7 @@ export function installPythonVenv () {
   if (program.lib === 'global') {
     return
   }
-  this.consoleInfo('... Installing a python venv for our backend')
+  this.consoleInfo('...Installing a python venv for our backend')
   const command = this.getInstallVenvCommand()
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
@@ -158,19 +139,20 @@ export function installBaseServers () {
 
 export function installServer () {
   const { program, server } = this
-  if (program.lib === 'local') {
-    this.setActivatedPythonVenv()
-  }
+  const commands = []
   let fileName = 'install.sh'
   if (program.image && typeof program.image !== 'undefined') {
     fileName = `${program.image}_${fileName}`
   }
+  fileName = `localhost_${fileName}`
   this.consoleInfo(`Let\'s launch the ${fileName} needed in the docker server... it can\'t take a long time`)
   // for now for settings like Xcode8 with ElCaptai uwsgi in venv install breaks, and only solution is
   // to do that with sudo
-  const installCommand = `cd ${server.dir} && ${program.permission} sh scripts/${fileName}`
-  this.consoleLog(installCommand)
-  console.log(childProcess.execSync(installCommand).toString('utf-8'))
+  commands.push(`cd ${server.dir}`)
+  commands.push(`${program.permission} sh scripts/${fileName}`)
+  const command = commands.join(' && ')
+  this.consoleLog(command)
+  console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
 export function installPorts () {
@@ -261,8 +243,8 @@ export function installPlaceholderFile () {
   let templateFile
   let templateFileName = installedFileName
   const templateFolderDir = program.folder === 'server'
-  ? server.scopeServerDir
-  : path.join(server.scopeServerDir, program.folder)
+  ? server.templateServerDir
+  : path.join(server.templateServerDir, program.folder)
   templateFileName = `${templatePrefix}${templateFileName}`
   let templateFileDir = path.join(templateFolderDir, templateFileName)
   if (fs.existsSync(templateFileDir)) {
@@ -327,7 +309,7 @@ export function installSecrets () {
 
 export function installSecret () {
   const { server } = this
-  // add maybe an empty secret
+  // configure maybe an empty secret
   const secretDir = path.join(server.dir, 'config/secret.json')
   if (!fs.existsSync(secretDir)) {
     fs.writeFileSync(secretDir, '{}')
