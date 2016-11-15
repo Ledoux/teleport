@@ -54,3 +54,55 @@ export function getAvailablePorts (docker) {
   const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])
   return ports
 }
+
+export function getTemplatesOption () {
+  const { project, program } = this
+  let templatesOption = ''
+  if (typeof program.templates !== 'undefined' && program.templates.trim() !== '') {
+    templatesOption = program.templates.split(',').join(' ')
+  } else if (project.config && project.config.templateNames) {
+    templatesOption = project.config.templateNames.join(' ')
+  }
+  return templatesOption
+}
+
+export function getTemplateNames () {
+  let templatesOption = this.getTemplatesOption()
+  return templatesOption.split(' ')
+    .map(template => template.split('@')[0])
+    .filter(templateName => templateName.trim() !== '')
+}
+
+export function getDepTemplateNames (templateName, depTemplateNames = []) {
+  const { project } = this
+  depTemplateNames.push(templateName)
+  const templateDir = path.join(project.dir, 'node_modules', templateName)
+  const templateConfig = this.getConfig(templateDir)
+  if (templateConfig) {
+    const templatePackage = getPackage(templateDir)
+    if (templatePackage.dependencies) {
+      Object.keys(templatePackage.dependencies)
+        .forEach(depTemplateName =>
+          this.getDepTemplateNames(depTemplateName, depTemplateNames)
+        )
+    }
+  }
+  return depTemplateNames
+}
+
+export function getAllTemplateNames () {
+  const { project: { config: { templateNames } } } = this
+  return _.uniq(_.flatten(templateNames.map(templateName =>
+  this.getDepTemplateNames(templateName))))
+}
+
+export function getTemplateDependencies () {
+  const { project: { config, dir } } = this
+  return _.fromPairs(config.templateNames
+    .map(template => {
+      let [templateName, templateVersion] = template.split('@')
+      const templateDir = path.join(dir, 'node_modules', templateName)
+      templateVersion = templateVersion || getPackage(templateDir).version
+      return [templateName, templateVersion]
+    }))
+}
