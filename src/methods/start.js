@@ -83,7 +83,8 @@ export function getStartServerCommand () {
   ? 'localhost'
   : type.name
   const fileName = `${typeName}_start.sh`
-  commands.push(`cd ${server.dir} && sh scripts/${fileName}`)
+  commands.push(`cd ${server.dir}`)
+  commands.push(`sh scripts/${fileName}`)
   let command = commands.join(' && ')
   if (program.user === 'me') {
     command = `${app.ttabDir} \"${command}\"`

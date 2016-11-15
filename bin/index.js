@@ -6,7 +6,7 @@ const Teleport = require('../lib').default
 
 program
   .version('0.0.1')
-  .option('add', 'Add')
+  .option('configure', 'Add')
   .option('-a, anchor', 'Anchor')
   .option('-c, create', 'Create')
   .option('-d, deploy', 'Deploy')
@@ -15,8 +15,10 @@ program
   .option('-k, kill', 'Kill')
   .option('-l, log', 'Log')
   .option('-m, map', 'Map')
+  .option('init', 'Init')
   .option('-i, install', 'Install')
   .option('-s, start', 'Start')
+  .option('-z, zsh', 'Zsh')
   .option('status', 'Status')
 
   .option('--cache [type]', 'Cache', 'true')
@@ -31,10 +33,10 @@ program
   .option('--method [type]', 'Method')
   .option('--permission [type]', 'Permission', '')
   .option('--pip [type]', 'Pip', /^(true|false)$/i, 'true')
-  .option('--project [type]', 'Project', 'demo')
+  .option('--project [type]', 'Project')
   .option('--scope [type]', 'Scope')
   .option('--server [type]', 'Server')
-  .option('--templates [type]', 'Templates', 'flask-webrouter,rethinkdb_provider')
+  .option('--templates [type]', 'Templates')
   .option('--ttab [type]', 'Ttab', 'false')
   .option('--type [type]', 'Type', /^(localhost|unname|staging|prod)$/i, 'localhost')
   .option('--user [type]', 'User', /^(me|jenkins)$/i, 'me')
