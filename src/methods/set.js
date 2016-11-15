@@ -9,45 +9,30 @@ export function setAppEnvironment () {
   app.dir = path.join(__dirname, '../../')
   app.package = getPackage(app.dir)
   app.configFile = `.${app.package.name.split('.js')[0]}.json`
-  app.config = this.getConfig(app.dir)
-  app.config.scopesByName.default = {
-    dir: path.join(app.dir, 'default')
-  }
-  app.currentScope = app.config.scopesByName[app.config.currentScopeName]
   app.ttabDir = path.join(app.dir, 'node_modules/ttab/bin/ttab')
   app.pythonDir = path.join(app.dir, 'bin/index.py')
 }
 
-export function setScopeEnvironment () {
-  const { scope } = this
-  console.log('scope.dir', scope.dir)
-  this.read(scope)
-}
-
 export function setProjectEnvironment () {
-  const { app, program, project, scope } = this
+  const { program, project } = this
   this.read(project)
-  // version
-  Object.assign(project.config, {
-    appVersion: app.package.name,
-    scope: {
-      name: scope.package.name,
-      version: scope.package.version
+  // dirs
+  project.nodeModulesDir = path.join(project.dir, 'node_modules')
+  if (project.config) {
+    // sub entities
+    this.setTypeEnvironment()
+    this.setBackendEnvironment()
+    if (typeof project.config.python === 'undefined') {
+      project.config.python = childProcess
+        .execSync('which python')
+        .toString('utf-8').trim()
     }
-  })
-  // sub entities
-  this.setTypeEnvironment()
-  this.setBackendEnvironment()
-  if (typeof project.config.python === 'undefined') {
-    project.config.python = childProcess
-      .execSync('which python')
+    project.config.pip = program.global === 'local'
+    ? path.join(project.dir, 'venv/bin/pip')
+    : childProcess
+      .execSync('which pip')
       .toString('utf-8').trim()
   }
-  project.config.pip = program.global === 'local'
-  ? path.join(project.dir, 'venv/bin/pip')
-  : childProcess
-    .execSync('which pip')
-    .toString('utf-8').trim()
 }
 
 export function setTypeEnvironment () {
@@ -56,11 +41,13 @@ export function setTypeEnvironment () {
     this.type = null
     return
   }
-  const type = this.type = Object.assign({}, typesByName[program.type])
-  type.name = program.type
-  type.pip = type.name === 'localhost'
-  ? pip
-  : 'pip'
+  if (typesByName) {
+    const type = this.type = Object.assign({}, typesByName[program.type])
+    type.name = program.type
+    type.pip = type.name === 'localhost'
+    ? pip
+    : 'pip'
+  }
 }
 
 export function setBackendEnvironment () {
@@ -70,16 +57,20 @@ export function setBackendEnvironment () {
     this.backend = null
     return
   }
-  const backend = this.backend = Object.assign({}, project.config.backend)
+  const backendConfig = project.config.backend
+  const backend = this.backend = Object.assign({}, backendConfig)
   backend.dir = path.join(project.dir, 'backend')
   backend.dockerEnv = backend.dockerEnv || {}
   backend.buildPushDockerServer = `${backend.buildPushDockerHost}:${backend.dockerPort}`
   backend.buildPushSocket = `-H tcp://${backend.buildPushDockerServer}`
-  backend.siteName = backend.siteName || project.package.name
-  backend.capitalUnderscoreSiteName = toCapitalUnderscoreCase(backend.siteName)
-  backend.dashSiteName = toDashCase(backend.siteName)
-  backend.serverNames = Object.keys(project.config.backend.serversByName)
-  // this.serverUrlsByName = {}
+  if (typeof backend.siteName === 'undefined') {
+    backend.siteName = project.package.name
+  }
+  backend.subDomainName = toDashCase(backend.siteName)
+  backend.capitalUnderscoreSubdomainName = toCapitalUnderscoreCase(backend.subDomainName)
+  if (project.config.backend.serversByName) {
+    backend.serverNames = Object.keys(project.config.backend.serversByName)
+  }
   if (type && type.dockerHost) {
     type.dockerServer = `${type.dockerHost}:${backend.dockerPort}`
     type.socket = `-H tcp://${type.dockerServer}`
@@ -101,23 +92,24 @@ export function setProviderEnvironment () {
 }
 
 export function setServerEnvironment () {
-  const { backend, program, scope } = this
+  const { backend, program, project } = this
   if (typeof program.server !== 'string') {
     this.server = null
     return
   }
-  const server = this.server = Object.assign({}, backend.serversByName[program.server])
+  const configServer = backend.serversByName[program.server]
+  const server = this.server = Object.assign({}, configServer)
   server.name = program.server
   server.dir = path.join(backend.dir, 'servers', server.name)
   server.configDir = path.join(server.dir, 'config')
-  server.scopeTemplateDir = path.join(scope.dir, 'templates', server.templateName)
-  server.scopeBackendDir = path.join(server.scopeTemplateDir, 'backend')
-  server.scopeServersDir = path.join(server.scopeBackendDir, 'servers')
-  server.scopeServerDir = path.join(server.scopeServersDir, server.name)
+  server.templateDir = path.join(project.nodeModulesDir, server.templateName)
+  server.templateBackendDir = path.join(server.templateDir, 'backend')
+  server.templateServersDir = path.join(server.templateBackendDir, 'servers')
+  server.templateServerDir = path.join(server.templateServersDir, server.name)
   server.dockerEnv = server.dockerEnv || {}
   server.isNoCache = false
   server.baseImage = `${backend.registryServer}/${server.baseTag}:${server.baseDockerVersion}`
-  server.tag = `${backend.dashSiteName}-${server.imageAbbreviation}`
+  server.tag = `${backend.subDomainName}-${server.imageAbbreviation}`
   if (typeof server.runsByTypeName === 'undefined') {
     server.runsByTypeName = {}
   }
@@ -153,7 +145,7 @@ export function setRunEnvironment () {
     const virtualNamePrefix = type.name === 'prod'
     ? ''
     : `${type.imageAbbreviation.toUpperCase()}_`
-    run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.imageAbbreviation.toUpperCase()}_SERVICE_HOST`
+    run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSubdomainName}_${server.imageAbbreviation.toUpperCase()}_SERVICE_HOST`
   }
   // set the url
   run.url = `http://${run.host}`
@@ -166,7 +158,7 @@ export function setRunEnvironment () {
     ? ''
     : `${type.name}-`
     // subdomain
-    let subDomainName = `${dnsPrefix}${backend.dashSiteName}`
+    let subDomainName = `${dnsPrefix}${backend.subDomainName}`
     if (!server.isMain) {
       subDomainName = `${subDomainName}-${server.imageAbbreviation}`
     }
