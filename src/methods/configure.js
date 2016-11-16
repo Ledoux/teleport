@@ -11,14 +11,13 @@ export function configure () {
 
 export function configureProject () {
   const { project } = this
-  // write
+  // script
   this.configureScript()
+  // write
   this.configureProjectConfig()
   this.configureProjectPackage()
   this.configureProjectGitignore()
   this.write(project)
-  // boilerplate
-  this.configureProjectBoilerplate()
   // base requirements
   this.setProjectEnvironment()
   this.program.method = 'configureServerBaseRequirements'
@@ -97,39 +96,4 @@ export function configureServerBaseRequirements () {
       return getRequirements(fileDir, 'base')
     }))))
   writeRequirements(server.configDir, allRequirements, 'base')
-}
-
-export function configureProjectBoilerplate () {
-  const { project } = this
-  this.consoleInfo(`Let\'s copy the templates in ${project.package.name}`)
-  const command = this.getConfigureProjectBoilerplateCommand()
-  this.consoleLog(command)
-  const buffer = childProcess.execSync(command)
-  console.log(buffer.toString('utf-8'))
-}
-
-export function getConfigureProjectBoilerplateCommand () {
-  const { app: { configFile }, project } = this
-  return project.allTemplateNames
-    .map(templateName => {
-      const templateDir = path.join(project.nodeModulesDir, templateName)
-      // we exclude package.json and config file because we want to merge them
-      // and we exclude also files mentionned in the excludes item of the template
-      // config
-      const templateConfig = this.getConfig(templateDir)
-      const totalExcludedDirs = (templateConfig.excludedDirs || [])
-        .concat([
-          'base_Dockerfile*',
-          'base_requirements*',
-          'package.json',
-          '.gitignore',
-          'README.md',
-          configFile,
-          '\'_p_*\''
-        ])
-      const excludeOption = totalExcludedDirs
-        .map(exclude => `--exclude=${exclude}`)
-        .join(' ')
-      return `rsync -rv ${excludeOption} ${templateDir}/ ${project.dir}`
-    }).join(' && ')
 }

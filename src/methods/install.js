@@ -1,6 +1,6 @@
 import childProcess from 'child_process'
 import fs from 'fs'
-import { toPairs, values } from 'lodash'
+import { values } from 'lodash'
 import path from 'path'
 
 import { formatString } from '../utils'
@@ -26,6 +26,7 @@ export function installProject () {
 }
 
 export function installBackend () {
+  this.installScript()
   this.installKubernetes()
   this.installPythonVenv()
   this.installAppPythonLib()
@@ -37,6 +38,13 @@ export function installBackend () {
   this.installServers()
   this.installSecrets()
   this.write(this.project)
+}
+
+export function installScript () {
+  const command = `cd ${this.project.dir} && npm run install`
+  this.consoleInfo('Let\'s install the project')
+  this.consoleLog(command)
+  console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
 export function installKubernetes () {
