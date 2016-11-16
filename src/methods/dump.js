@@ -1,5 +1,8 @@
 import childProcess from 'child_process'
+import { flatten, reverse, uniq } from 'lodash'
 import path from 'path'
+
+import { getRequirements, writeRequirements } from '../utils'
 
 export function dump () {
   this.getLevelMethod('dump')()
@@ -12,7 +15,7 @@ export function dumpProject () {
   this.dumpProjectBoilerplate()
   // base requirements
   this.setProjectEnvironment()
-  this.program.method = 'configureServerBaseRequirements'
+  this.program.method = 'dumpServerBaseRequirements'
   this.mapInServers()
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully configured!`)
@@ -51,4 +54,14 @@ export function getDumpProjectBoilerplateCommand () {
         .join(' ')
       return `rsync -rv ${excludeOption} ${templateDir}/ ${project.dir}`
     }).join(' && ')
+}
+
+export function dumpServerBaseRequirements () {
+  const { project, server } = this
+  const allRequirements = uniq(flatten(reverse(project.allTemplateNames
+    .map(templateName => {
+      const fileDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name, 'config')
+      return getRequirements(fileDir, 'base')
+    }))))
+  writeRequirements(server.configDir, allRequirements, 'base')
 }

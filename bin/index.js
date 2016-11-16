@@ -10,6 +10,7 @@ program
   .option('-a, anchor', 'Anchor')
   .option('-c, create', 'Create')
   .option('-d, deploy', 'Deploy')
+  .option('dump', 'Dump')
   .option('-e, exec', 'Exec')
   .option('-g, get', 'Get')
   .option('-k, kill', 'Kill')
