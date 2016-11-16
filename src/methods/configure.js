@@ -1,8 +1,8 @@
 import childProcess from 'child_process'
-import { flatten, merge, reverse, uniq, values } from 'lodash'
+import { merge, values } from 'lodash'
 import path from 'path'
 
-import { getGitignores, getRequirements, writeRequirements } from '../utils'
+import { getGitignores } from '../utils'
 
 export function configure () {
   this.getLevelMethod('configure')()
@@ -18,10 +18,6 @@ export function configureProject () {
   this.configureProjectPackage()
   this.configureProjectGitignore()
   this.write(project)
-  // base requirements
-  this.setProjectEnvironment()
-  this.program.method = 'configureServerBaseRequirements'
-  this.mapInServers()
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully configured!`)
 }
@@ -86,14 +82,4 @@ export function configureProjectGitignore () {
       }
     )
   )
-}
-
-export function configureServerBaseRequirements () {
-  const { project, server } = this
-  const allRequirements = uniq(flatten(reverse(project.allTemplateNames
-    .map(templateName => {
-      const fileDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name, 'config')
-      return getRequirements(fileDir, 'base')
-    }))))
-  writeRequirements(server.configDir, allRequirements, 'base')
 }
