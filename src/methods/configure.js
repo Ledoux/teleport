@@ -23,7 +23,7 @@ export function configureProject () {
 }
 
 export function configureScript () {
-  const command = `cd ${this.project.dir} && npm run configure`
+  const command = `cd ${this.project.dir} && sh bin/configure.sh`
   this.consoleInfo('Let\'s configure the project')
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))

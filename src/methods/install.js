@@ -29,19 +29,18 @@ export function installBackend () {
   this.installScript()
   this.installKubernetes()
   this.installPythonVenv()
-  this.installAppPythonLib()
-  this.installBasePlaceholderFiles()
-  this.installBaseServers()
-  this.installPorts()
+  // this.installBasePlaceholderFiles()
+  // this.installBaseServers()
   this.setAllTypesAndServersEnvironment()
   this.installPlaceholderFiles()
   this.installServers()
   this.installSecrets()
+  this.installPorts()
   this.write(this.project)
 }
 
 export function installScript () {
-  const command = `cd ${this.project.dir} && npm run install`
+  const command = `cd ${this.project.dir} && sh bin/install.sh`
   this.consoleInfo('Let\'s install the project')
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
@@ -102,25 +101,19 @@ export function getInstallVenvCommand () {
 }
 
 export function installPythonVenv () {
-  const { program } = this
+  const { project, program } = this
   if (program.lib === 'global') {
+    return
+  }
+  if (project.config.venv && !fs.exists(project.config.venv)) {
+    this.consoleInfo(`There is already a venv here ${project.config.venv}`)
     return
   }
   this.consoleInfo('...Installing a python venv for our backend')
   const command = this.getInstallVenvCommand()
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
-}
-
-export function installAppPythonLib () {
-  const { program, project } = this
-  if (program.lib === 'local') {
-    this.setActivatedPythonVenv()
-  }
-  this.consoleInfo('... Installing the python lib necessary for the teleport app')
-  const command = `cd ${project.dir} && ${project.config.pip} install -r requirements.txt`
-  this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
+  project.config.venv = '../../venv'
 }
 
 export function installBasePlaceholderFiles () {
@@ -128,7 +121,13 @@ export function installBasePlaceholderFiles () {
   program.image = 'base'
   program.method = null
   program.methods = [
-  ].map(newProgram => () => {
+    'install.sh'
+  ].map(file => {
+    return {
+      folder: 'scripts',
+      file: file
+    }
+  }).map(newProgram => () => {
     Object.assign(program, newProgram)
     this.installPlaceholderFile()
   })

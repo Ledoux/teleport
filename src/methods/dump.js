@@ -14,9 +14,11 @@ export function dumpProject () {
   // boilerplate
   this.dumpProjectBoilerplate()
   // base requirements
+  /*
   this.setProjectEnvironment()
   this.program.method = 'dumpServerBaseRequirements'
   this.mapInServers()
+  */
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully configured!`)
 }
