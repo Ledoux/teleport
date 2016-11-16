@@ -15,7 +15,8 @@ export function init () {
   project.package = Object.assign({
     name,
     scripts: {
-      'configure': 'sh bin/configure.sh'
+      'configure': 'sh bin/configure.sh',
+      'install': 'sh bin/install.sh'
     },
     version: '0.0.1'
   }, project.package)
@@ -40,9 +41,17 @@ export function init () {
   writeRequirements(project.dir, project.requirements)
   // write a configure file
   const configureFileDir = path.join(binDir, 'configure.sh')
-  const configureFileString = `npm install --save-dev ${templatesOption}`
+  const configureFileString = templatesOption !== ''
+  ? `npm install --save-dev ${templatesOption}`
+  : ''
   fs.writeFileSync(configureFileDir, configureFileString)
+  // write an install file
+  const installFileDir = path.join(binDir, 'install.sh')
+  const installFileString = 'npm install'
+  fs.writeFileSync(installFileDir, installFileString)
   // configure
   this.setProjectEnvironment()
   this.configure()
+  // dump
+  this.dump()
 }
