@@ -1,14 +1,13 @@
 // regeneratorRuntime is needed for async await
 import 'babel-polyfill'
 
-import { getPackage } from './utils'
-
 const methods = [
   'configure',
   'console',
   'check',
   'create',
   'deploy',
+  'dump',
   'exec',
   'get',
   'init',
