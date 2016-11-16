@@ -123,6 +123,7 @@ export function getConfigureProjectBoilerplateCommand () {
           'base_requirements*',
           'package.json',
           '.gitignore',
+          'README.md',
           configFile,
           '\'_p_*\''
         ])

@@ -66,8 +66,8 @@ export function setBackendEnvironment () {
   if (typeof backend.siteName === 'undefined') {
     backend.siteName = project.package.name
   }
-  backend.subDomainName = toDashCase(backend.siteName)
-  backend.capitalUnderscoreSubdomainName = toCapitalUnderscoreCase(backend.subDomainName)
+  backend.dashSiteName = toDashCase(backend.siteName)
+  backend.capitalUnderscoreSiteName = toCapitalUnderscoreCase(backend.dashSiteName)
   if (project.config.backend.serversByName) {
     backend.serverNames = Object.keys(project.config.backend.serversByName)
   }
@@ -108,8 +108,7 @@ export function setServerEnvironment () {
   server.templateServerDir = path.join(server.templateServersDir, server.name)
   server.dockerEnv = server.dockerEnv || {}
   server.isNoCache = false
-  server.baseImage = `${backend.registryServer}/${server.baseTag}:${server.baseDockerVersion}`
-  server.tag = `${backend.subDomainName}-${server.imageAbbreviation}`
+  server.tag = `${backend.dashSiteName}-${server.imageAbbreviation}`
   if (typeof server.runsByTypeName === 'undefined') {
     server.runsByTypeName = {}
   }
@@ -125,27 +124,22 @@ export function setRunEnvironment () {
   const run = this.run = Object.assign({}, type, server.runsByTypeName[type.name])
   // here we want to mutate the server.runsByTypeName[type.name] to keep the settings
   // that are done here
-  server.runsByTypeName[type.name] = run
+  // server.runsByTypeName[type.name] = run
   // set the docker image
-  if (run.dockerHost) {
-    // subDomain
-    run.dockerName = run.dockerHost.split('.')[0]
-    // init
-    if (typeof this.availablePortsByDockerName !== 'undefined') {
-      this.availablePortsByDockerName[run.dockerName] = []
-    }
+  if (run.name !== 'localhost') {
+    run.nodeName = `${run.subDomain}.${backend.nodeDomain}`
     // special case where we give to the host just the name of the dockerHost
     if (!type.hasDns) {
-      run.host = type.dockerHost
+      run.host = run.nodeName
     }
     run.tag = type.name === 'prod'
     ? server.tag
     : `${type.imageAbbreviation}-${server.tag}`
-    run.image = `${backend.registryServer}/${run.tag}:${server.dockerVersion}`
+    run.image = `${backend.registryServer}/${run.tag}:${server.docker.version}`
     const virtualNamePrefix = type.name === 'prod'
     ? ''
     : `${type.imageAbbreviation.toUpperCase()}_`
-    run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSubdomainName}_${server.imageAbbreviation.toUpperCase()}_SERVICE_HOST`
+    run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.imageAbbreviation.toUpperCase()}_SERVICE_HOST`
   }
   // set the url
   run.url = `http://${run.host}`
@@ -158,17 +152,17 @@ export function setRunEnvironment () {
     ? ''
     : `${type.name}-`
     // subdomain
-    let subDomainName = `${dnsPrefix}${backend.subDomainName}`
+    let subDomain = `${dnsPrefix}${backend.dashSiteName}`
     if (!server.isMain) {
-      subDomainName = `${subDomainName}-${server.imageAbbreviation}`
+      subDomain = `${subDomain}-${server.imageAbbreviation}`
     }
     // Note : we have to be careful that
     // the tag length is smaller than 24 characters
-    if (subDomainName.length > 24) {
-      this.consoleError(`this sub domain name ${subDomainName} is too long, you need to make it shorter than 24 characters`)
+    if (subDomain.length > 24) {
+      this.consoleError(`this sub domain name ${subDomain} is too long, you need to make it shorter than 24 characters`)
       process.exit()
     }
-    run.host = server.host || `${subDomainName}.${backend.domainName}`
+    run.host = server.host || `${subDomain}.${backend.domain}`
     run.url = `https://${run.host}`
   }
 }
