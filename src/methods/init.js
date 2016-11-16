@@ -8,16 +8,15 @@ export function init () {
   const { program, project } = this
   // name
   const name = program.project || project.dir.split('/').slice(-1)[0]
-  // mkdir
+  // dirs
   const binDir = path.join(project.dir, 'bin')
-  childProcess.execSync(`mkdir -p ${binDir}`)
+  const nodeModulesDir = path.join(project.dir, 'node_modules')
+  const yarnDir = path.join(project.dir, 'yarn.lock')
+  // exec
+  childProcess.execSync(`mkdir -p ${binDir} && rm -rf ${nodeModulesDir} && rm -f ${yarnDir}`)
   // package
   project.package = Object.assign({
     name,
-    scripts: {
-      'configure': 'sh bin/configure.sh',
-      'install': 'sh bin/install.sh'
-    },
     version: '0.0.1'
   }, project.package)
   writePackage(project.dir, project.package)
@@ -42,12 +41,13 @@ export function init () {
   // write a configure file
   const configureFileDir = path.join(binDir, 'configure.sh')
   const configureFileString = templatesOption !== ''
-  ? `npm install --save-dev ${templatesOption}`
+  // ? `npm install --save-dev ${templatesOption}`
+  ? `yarn add --dev ${templatesOption}`
   : ''
   fs.writeFileSync(configureFileDir, configureFileString)
   // write an install file
   const installFileDir = path.join(binDir, 'install.sh')
-  const installFileString = 'npm install'
+  const installFileString = 'yarn'
   fs.writeFileSync(installFileDir, installFileString)
   // configure
   this.setProjectEnvironment()
