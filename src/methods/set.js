@@ -108,6 +108,9 @@ export function setServerEnvironment () {
   server.templateServerDir = path.join(server.templateServersDir, server.name)
   server.dockerEnv = server.dockerEnv || {}
   server.isNoCache = false
+  if (typeof server.docker.base === 'undefined') {
+    server.docker.base = backend.base
+  }
   server.tag = `${backend.dashSiteName}-${server.imageAbbreviation}`
   if (typeof server.runsByTypeName === 'undefined') {
     server.runsByTypeName = {}

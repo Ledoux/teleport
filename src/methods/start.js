@@ -76,9 +76,6 @@ export function startServer () {
 export function getStartServerCommand () {
   const { app, program, server, type } = this
   const commands = []
-  if (program.lib === 'local') {
-    commands.push(this.getActivatedPythonVenvCommand())
-  }
   const fileName = 'localhost_start.sh'
   commands.push(`export MODE=${type.name}`)
   commands.push(`cd ${server.dir}`)
