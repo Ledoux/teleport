@@ -53,7 +53,7 @@ export function getUsedPorts () {
   this.checkWeb()
   const { app, run } = this
   if (!run) return
-  const command = `python ${app.pythonDir} ports --docker ${run.dockerName}`
+  const command = `python ${app.pythonDir} ports --docker ${run.host}`
   const rep = childProcess.execSync(command).toString('utf-8')
   const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])
   return ports
@@ -63,7 +63,6 @@ export function checkPort () {
   if (typeof this.usedPorts === 'undefined') {
     this.usedPorts = this.getUsedPorts()
   }
-  // const server = this.projectConfig.serversByName[this.program.server]
 }
 
 export function getBuildDockerCommand (config) {
