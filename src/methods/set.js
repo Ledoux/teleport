@@ -1,5 +1,6 @@
 import childProcess from 'child_process'
 import fs from 'fs'
+import { merge } from 'lodash'
 import path from 'path'
 
 import { getPackage, toCapitalUnderscoreCase, toDashCase } from '../utils'
@@ -52,7 +53,7 @@ export function setTypeEnvironment () {
 
 export function setBackendEnvironment () {
   // backend global env
-  const { project, type } = this
+  const { project } = this
   if (typeof project.config.backend === 'undefined') {
     this.backend = null
     return
@@ -61,8 +62,6 @@ export function setBackendEnvironment () {
   const backend = this.backend = Object.assign({}, backendConfig)
   backend.dir = path.join(project.dir, 'backend')
   backend.dockerEnv = backend.dockerEnv || {}
-  backend.buildPushDockerServer = `${backend.buildPushDockerHost}:${backend.dockerPort}`
-  backend.buildPushSocket = `-H tcp://${backend.buildPushDockerServer}`
   if (typeof backend.siteName === 'undefined') {
     backend.siteName = project.package.name
   }
@@ -71,12 +70,53 @@ export function setBackendEnvironment () {
   if (project.config.backend.serversByName) {
     backend.serverNames = Object.keys(project.config.backend.serversByName)
   }
-  if (type && type.dockerHost) {
-    type.dockerServer = `${type.dockerHost}:${backend.dockerPort}`
-    type.socket = `-H tcp://${type.dockerServer}`
-  }
+  this.setDockerEnvironment()
+  this.setKubernetesEnvironment()
   this.setProviderEnvironment()
+  this.setServersEnvironment()
   this.setServerEnvironment()
+}
+
+export function setDockerEnvironment () {
+  const { backend } = this
+  if (!backend || typeof this.backend.helpersByName === 'undefined') return
+  const docker = this.docker = this.backend.helpersByName.docker
+  docker.server = `${docker.host}:${docker.port}`
+  docker.socket = `-H tcp://${docker.server}`
+  this.setBaseEnvironment()
+  this.setCurrentEnvironment()
+  this.setRegistryEnvironment()
+}
+
+export function setBaseEnvironment () {
+  const { docker } = this
+  if (!docker || typeof docker.imagesByName === 'undefined') return
+  const base = this.base = this.docker.imagesByName.base
+}
+
+export function setCurrentEnvironment () {
+  const { docker } = this
+  if (!docker || typeof docker.imagesByName === 'undefined') return
+  const current = this.current = this.docker.imagesByName.current
+  this.setMaintainerEnvironment()
+}
+
+export function setMaintainerEnvironment () {
+  const { current } = this
+  if (!current) return
+  const maintainer = this.maintainer = this.current.maintainer
+}
+
+export function setRegistryEnvironment () {
+  const { docker } = this
+  if (!docker) return
+  const registry = this.registry = this.docker.registry
+}
+
+export function setKubernetesEnvironment () {
+  const { backend } = this
+  if (!backend || typeof this.backend.helpersByName === 'undefined') return
+  const kubernetes = this.kubernetes = this.backend.helpersByName.kubernetes
 }
 
 export function setProviderEnvironment () {
@@ -91,8 +131,13 @@ export function setProviderEnvironment () {
   provider.startDir = path.join(provider.dataDir, 'start.sh')
 }
 
+export function setServersEnvironment () {
+  const { backend } = this
+  this.serversByName = Object.assign({}, backend.serversByName)
+}
+
 export function setServerEnvironment () {
-  const { backend, program, project } = this
+  let { backend, docker, program, project } = this
   if (typeof program.server !== 'string') {
     this.server = null
     return
@@ -108,14 +153,14 @@ export function setServerEnvironment () {
   server.templateServerDir = path.join(server.templateServersDir, server.name)
   server.dockerEnv = server.dockerEnv || {}
   server.isNoCache = false
-  if (typeof server.docker.base === 'undefined') {
-    server.docker.base = backend.base
-  }
-  server.tag = `${backend.dashSiteName}-${server.imageAbbreviation}`
+  server.tag = `${backend.dashSiteName}-${server.abbreviation}`
   if (typeof server.runsByTypeName === 'undefined') {
     server.runsByTypeName = {}
   }
   this.setRunEnvironment()
+  if (server.docker) {
+    docker = merge(docker, server.docker)
+  }
 }
 
 export function setRunEnvironment () {
@@ -137,12 +182,14 @@ export function setRunEnvironment () {
     }
     run.tag = type.name === 'prod'
     ? server.tag
-    : `${type.imageAbbreviation}-${server.tag}`
+    : `${type.abbreviation}-${server.tag}`
     run.image = `${backend.registryServer}/${run.tag}:${server.docker.version}`
     const virtualNamePrefix = type.name === 'prod'
     ? ''
-    : `${type.imageAbbreviation.toUpperCase()}_`
-    run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.imageAbbreviation.toUpperCase()}_SERVICE_HOST`
+    : `${type.abbreviation.toUpperCase()}_`
+    run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.abbreviation.toUpperCase()}_SERVICE_HOST`
+  } else {
+    run.tag = `localhost-${server.tag}`
   }
   // set the url
   run.url = `http://${run.host}`
@@ -157,7 +204,7 @@ export function setRunEnvironment () {
     // subdomain
     let subDomain = `${dnsPrefix}${backend.dashSiteName}`
     if (!server.isMain) {
-      subDomain = `${subDomain}-${server.imageAbbreviation}`
+      subDomain = `${subDomain}-${server.abbreviation}`
     }
     // Note : we have to be careful that
     // the tag length is smaller than 24 characters
