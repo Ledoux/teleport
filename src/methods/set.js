@@ -3,7 +3,7 @@ import fs from 'fs'
 import { merge } from 'lodash'
 import path from 'path'
 
-import { getPackage, toCapitalUnderscoreCase, toDashCase } from '../utils'
+import { getPackage, getSecret, toCapitalUnderscoreCase, toDashCase } from '../utils'
 
 export function setAppEnvironment () {
   const { app } = this
@@ -91,32 +91,32 @@ export function setDockerEnvironment () {
 export function setBaseEnvironment () {
   const { docker } = this
   if (!docker || typeof docker.imagesByName === 'undefined') return
-  const base = this.base = this.docker.imagesByName.base
+  this.base = this.docker.imagesByName.base
 }
 
 export function setCurrentEnvironment () {
   const { docker } = this
   if (!docker || typeof docker.imagesByName === 'undefined') return
-  const current = this.current = this.docker.imagesByName.current
+  this.current = this.docker.imagesByName.current
   this.setMaintainerEnvironment()
 }
 
 export function setMaintainerEnvironment () {
   const { current } = this
   if (!current) return
-  const maintainer = this.maintainer = this.current.maintainer
+  this.maintainer = this.current.maintainer
 }
 
 export function setRegistryEnvironment () {
   const { docker } = this
   if (!docker) return
-  const registry = this.registry = this.docker.registry
+  this.registry = this.docker.registry
 }
 
 export function setKubernetesEnvironment () {
   const { backend } = this
   if (!backend || typeof this.backend.helpersByName === 'undefined') return
-  const kubernetes = this.kubernetes = this.backend.helpersByName.kubernetes
+  this.kubernetes = this.backend.helpersByName.kubernetes
 }
 
 export function setProviderEnvironment () {
@@ -157,10 +157,17 @@ export function setServerEnvironment () {
   if (typeof server.runsByTypeName === 'undefined') {
     server.runsByTypeName = {}
   }
+  this.setSecretEnvironment()
   this.setRunEnvironment()
   if (server.docker) {
     docker = merge(docker, server.docker)
   }
+}
+
+export function setSecretEnvironment () {
+  let { server } = this
+  if (!server) return
+  this.secret = getSecret(server.configDir)
 }
 
 export function setRunEnvironment () {

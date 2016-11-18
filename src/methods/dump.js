@@ -13,12 +13,6 @@ export function dumpProject () {
   const { project } = this
   // boilerplate
   this.dumpProjectBoilerplate()
-  // base requirements
-  /*
-  this.setProjectEnvironment()
-  this.program.method = 'dumpServerBaseRequirements'
-  this.mapInServers()
-  */
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully configured!`)
 }
@@ -43,8 +37,6 @@ export function getDumpProjectBoilerplateCommand () {
       const templateConfig = this.getConfig(templateDir)
       const totalExcludedDirs = (templateConfig.excludedDirs || [])
         .concat([
-          'base_Dockerfile*',
-          'base_requirements*',
           'package.json',
           '.gitignore',
           'README.md',
