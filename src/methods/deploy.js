@@ -7,19 +7,16 @@ export function deploy () {
   if (program.type === 'localhost') {
     program.type = 'staging'
   }
+  /*
   if (program.server && program.type) {
     this.deployServer()
   } else {
     this.deployServers()
   }
-}
-
-export function deployBaseServers () {
-  const { program } = this
-  program.method = 'deployServer'
-  program.methods = null
-  this.setTypeEnvironment()
-  this.mapInServers()
+  */
+  childProcess.execSync(
+    `tpt -e --script deploy --type ${program.type} --servers all --ttab true`
+  )
 }
 
 export function deployServerInNewTab () {
@@ -65,6 +62,7 @@ export function checkPort () {
   }
 }
 
+/*
 export function getBuildDockerCommand (config) {
   this.checkProject()
   const { backend, project, program, run, server, type } = this
@@ -87,18 +85,26 @@ export function getBuildDockerCommand (config) {
     `cd ${project.dir}`
   ].join(' && ')
 }
+*/
 
 export function buildDocker () {
   this.checkWeb()
   this.checkPort()
-  const { program, server, type } = this
+  const { server, type } = this
+  /*
   const command = this.getBuildDockerCommand()
   this.consoleInfo(`Ok we build your docker image of ${type.name} ${program.image ? program.image : ''} ${server.name}...
     can take a little of time...`)
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
+  */
+  const command = `cd ${server.dir} && sh scripts/${type.name}_build.sh`
+  this.consoleInfo('Let\'s install the project')
+  this.consoleLog(command)
+  console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
+/*
 export function getPushDockerCommand (config) {
   this.checkProject()
   const { backend, project, program, run, server } = this
@@ -115,13 +121,21 @@ export function getPushDockerCommand (config) {
   ].join(' && ')
   return command
 }
+*/
 
 export function pushDocker () {
   this.checkWeb()
+  const { server, type } = this
   // this.checkPort()
+  /*
   const command = this.getPushDockerCommand()
   this.consoleInfo(`Ok we push your docker image...
     can take a little of time...`)
+  this.consoleLog(command)
+  console.log(childProcess.execSync(command).toString('utf-8'))
+  */
+  const command = `cd ${server.dir} && sh scripts/${type.name}_push.sh`
+  this.consoleInfo('Let\'s install the project')
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
 }

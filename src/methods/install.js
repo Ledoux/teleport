@@ -6,8 +6,12 @@ import path from 'path'
 import { formatString } from '../utils'
 
 const notLocalhostPlaceholderFiles = [
+  'build.sh',
   'controller.yaml',
+  'deploy.sh',
   'Dockerfile',
+  'push.sh',
+  'run.sh',
   'service.yaml'
 ]
 
@@ -29,8 +33,6 @@ export function installBackend () {
   this.installScript()
   this.installKubernetes()
   this.installPythonVenv()
-  // this.installBasePlaceholderFiles()
-  // this.installBaseServers()
   this.setAllTypesAndServersEnvironment()
   this.installPlaceholderFiles()
   this.installServers()
@@ -56,12 +58,12 @@ export function installKubernetes () {
 
 export function getInstallKubernetesCommand () {
   this.checkProject()
-  const { project: { config: { backend: { masterHost } }, dir } } = this
-  if (typeof masterHost !== 'string') {
-    this.consoleError('You must define a masterHost for kubectl')
+  const { kubernetes, project: { dir } } = this
+  if (typeof kubernetes === 'undefined') {
+    this.consoleError('You must define a kubernetes config')
   }
   let commands = [`cd ${path.join(dir, 'bin')}`]
-  commands.push(`kubectl config set-cluster master --server=http://${masterHost}:8080`)
+  commands.push(`kubectl config set-cluster master --server=http://${kubernetes.host}:${kubernetes.port}`)
   commands.push('kubectl config set-context master --cluster=master')
   commands.push('kubectl config use-context master')
   commands.push('kubectl get nodes')
@@ -69,12 +71,12 @@ export function getInstallKubernetesCommand () {
 }
 
 export function installDocker () {
-  const { project } = this
+  const { docker } = this
   const dockerVersionDigit = parseInt(childProcess
     .execSync('docker version --format \'{{.Client.Version}}\'')
     .toString('utf-8')
     .replace(/(\.+)/g, ''))
-  const projectDockerVersion = project.config.backend.dockerVersion
+  const projectDockerVersion = docker.version
   const projectDockerVersionDigit = parseInt(projectDockerVersion
     .replace(/(\.+)/g, ''))
   if (dockerVersionDigit > projectDockerVersionDigit) {
@@ -97,7 +99,8 @@ export function getInstallVenvCommand () {
   if (program.lib === 'global') {
     option = '--system-site-packages'
   }
-  return `cd ${project.dir} && virtualenv -p ${project.config.python} venv ${option}`
+  const venvDir = path.join(project.dir, project.config.venv, '../')
+  return `cd ${venvDir} && virtualenv -p ${project.config.python} venv ${option}`
 }
 
 export function installPythonVenv () {
@@ -105,43 +108,24 @@ export function installPythonVenv () {
   if (program.lib === 'global') {
     return
   }
-  if (project.config.venv && !fs.exists(project.config.venv)) {
+  // check if a path to a venv was already set
+  if (project.config.venv && fs.exists(project.config.venv)) {
     this.consoleInfo(`There is already a venv here ${project.config.venv}`)
     return
   }
+  // just maybe check if there is one venv on the parent dir
+  const parentVenvDir = path.join(project.dir, '../venv')
+  if (fs.existsSync(parentVenvDir)) {
+    this.consoleInfo(`There is a venv here on the parent folder`)
+    project.config.venv = '../venv'
+    return
+  }
+  // either create one at the level of the project
+  project.config.venv = './venv'
   this.consoleInfo('...Installing a python venv for our backend')
   const command = this.getInstallVenvCommand()
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
-  project.config.venv = '../../venv'
-}
-
-export function installBasePlaceholderFiles () {
-  const { program } = this
-  program.image = 'base'
-  program.method = null
-  program.methods = [
-    'install.sh'
-  ].map(file => {
-    return {
-      folder: 'scripts',
-      file: file
-    }
-  }).map(newProgram => () => {
-    Object.assign(program, newProgram)
-    this.installPlaceholderFile()
-  })
-  this.mapInTypesAndServers()
-}
-
-export function installBaseServers () {
-  const { program } = this
-  program.image = 'base'
-  program.method = 'installServer'
-  program.methods = null
-  program.type = 'localhost'
-  this.setTypeEnvironment()
-  this.mapInServers()
 }
 
 export function installServer () {
@@ -218,7 +202,11 @@ export function installPlaceholderFiles () {
       file: file
     }
   }).concat([
+    'build.sh',
+    'deploy.sh',
     'install.sh',
+    'push.sh',
+    'run.sh',
     'start.sh'
   ].map(file => {
     return {

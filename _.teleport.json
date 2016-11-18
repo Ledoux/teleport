@@ -19,7 +19,7 @@
           }
         },
         "maintainer": "<Erwan Ledoux erwan.ledoux@snips.ai>",
-        "imageAbbreviation": "<wbr>"
+        "abbreviation": "<wbr>"
       },
       "<flask-websocketer>": {
         "baseTag": "<flask-wbs>",
@@ -31,7 +31,7 @@
           }
         },
         "maintainer": "<Erwan Ledoux erwan.ledoux@snips.ai>",
-        "imageAbbreviation": "<wbs>"
+        "abbreviation": "<wbs>"
       }
     }
   },
@@ -39,16 +39,16 @@
     "localhost": {},
     "unname": {
       "dockerHost": "<dev.foo.org>",
-      "imageAbbreviation": "<unm>"
+      "abbreviation": "<unm>"
     },
     "staging": {
       "dockerHost": "<dev.foo.org>",
-      "imageAbbreviation": "<stg>",
+      "abbreviation": "<stg>",
       "hasDns": true
     },
     "prod": {
       "dockerHost": "<prod.foo.org>",
-      "imageAbbreviation": "<prod>",
+      "abbreviation": "<prod>",
       "hasDns": true
     }
   }
