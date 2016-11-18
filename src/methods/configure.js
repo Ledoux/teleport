@@ -1,5 +1,5 @@
 import childProcess from 'child_process'
-import { merge, values } from 'lodash'
+import { merge, uniq, values } from 'lodash'
 import path from 'path'
 
 import { getGitignores } from '../utils'
@@ -70,16 +70,17 @@ export function configureProjectPackage () {
 
 export function configureProjectGitignore () {
   const { project } = this
-  project.gitignore = merge(
-    {
-      'secret.json': '',
-      'venv': ''
-    },
-    project.allTemplateNames
-      .map(templateName => {
-        const templateDir = path.join(project.nodeModulesDir, templateName)
-        return getGitignores(templateDir)
-      }
-    )
-  )
+  project.gitignores = [
+    '*pyc',
+    '*secret.json',
+    'src',
+    'venv'
+  ]
+  project.allTemplateNames
+    .forEach(templateName => {
+      const templateDir = path.join(project.nodeModulesDir, templateName)
+      const gitignores = getGitignores(templateDir)
+      project.gitignores = project.gitignores.concat(gitignores)
+    })
+  project.gitignores = uniq(project.gitignores)
 }

@@ -30,13 +30,6 @@ export function formatString (input, context) {
   })(input, context)
 }
 
-export function getPackage (dir) {
-  const packageDir = path.join(dir, 'package.json')
-  if (fs.existsSync(packageDir)) {
-    return JSON.parse(fs.readFileSync(packageDir))
-  }
-}
-
 export function getGitignores (dir) {
   const fileDir = path.join(dir, '.gitignore')
   if (fs.existsSync(fileDir)) {
@@ -46,6 +39,13 @@ export function getGitignores (dir) {
       .split('\n')
       .forEach(word => { gitignores.push(word) })
     return gitignores
+  }
+}
+
+export function getPackage (dir) {
+  const fileDir = path.join(dir, 'package.json')
+  if (fs.existsSync(fileDir)) {
+    return JSON.parse(fs.readFileSync(fileDir))
   }
 }
 
@@ -62,6 +62,14 @@ export function getRequirements (dir, prefix) {
       .split('\n')
       .forEach(word => { requirements.push(word) })
     return requirements
+  }
+}
+
+export function getSecret (dir) {
+  let fileName = 'secret.json'
+  const fileDir = path.join(dir, fileName)
+  if (fs.existsSync(fileDir)) {
+    return JSON.parse(fs.readFileSync(fileDir))
   }
 }
 
