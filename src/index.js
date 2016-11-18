@@ -23,6 +23,7 @@ const methods = [
   'zsh'
 ]
 const subModules = methods.map(method => require(`./methods/${method}`))
+const collectionNames = ['servers', 'types']
 
 class Teleport {
   constructor (program) {
@@ -80,9 +81,39 @@ class Teleport {
       ? JSON.parse(program.kwarg)
       : program.kwarg
     }
-    // it is maye a generic global task
+    // it is maybe a generic global task
     const programmedMethod = methods.find(method => program[method])
     if (this[programmedMethod]) {
+      // check for mapping ? let's see if there is already a collections
+      // arg defined
+      if (typeof program.collections === 'undefined') {
+        // so there is no clear mapping to collections
+        // but maybe there are some pluralized args
+        // suggesting that the method has to be done
+        // with a map protocol
+        const collectionSlugs = []
+        collectionNames.forEach(collectionName => {
+          const value = program[collectionName]
+          if (typeof value === 'string') {
+            if (value === 'all') {
+              collectionSlugs.push(`${collectionName}ByName`)
+            } else {
+              collectionSlugs.push(`${collectionName}ByName[${value}]`)
+            }
+          }
+        })
+        const collections = collectionSlugs.join('|')
+        // if collections is not empty, so yes, it is mapping
+        // method request, do it and return in that case
+        if (collections !== '') {
+          program.collections = collections
+          program.method = programmedMethod
+          this.map()
+          return
+        }
+      }
+      // if no collection, it is a simple unit call
+      // call it
       this[programmedMethod]()
       return
     }
