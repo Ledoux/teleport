@@ -16,9 +16,11 @@ const methods = [
   'log',
   'map',
   'read',
+  'replace',
   'set',
   'start',
   'status',
+  'uninstall',
   'write',
   'zsh'
 ]
