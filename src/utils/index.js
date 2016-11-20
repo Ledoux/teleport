@@ -49,11 +49,8 @@ export function getPackage (dir) {
   }
 }
 
-export function getRequirements (dir, prefix) {
+export function getRequirements (dir) {
   let fileName = 'requirements.txt'
-  if (prefix) {
-    fileName = `${prefix}_${fileName}`
-  }
   const fileDir = path.join(dir, fileName)
   if (fs.existsSync(fileDir)) {
     const requirements = []
@@ -89,14 +86,13 @@ export function writeGitignore (dir, writtenGitignores) {
   fs.writeFileSync(fileDir, fileString)
 }
 
-export function writeRequirements (dir, writtenRequirements, prefix) {
-  let fileName = 'requirements.txt'
-  if (prefix) {
-    fileName = `${prefix}_${fileName}`
+export function writeRequirements (dir, writtenRequirements) {
+  if (writtenRequirements) {
+    let fileName = 'requirements.txt'
+    const fileDir = path.join(dir, fileName)
+    const fileString = writtenRequirements.join('\n')
+    fs.writeFileSync(fileDir, fileString)
   }
-  const fileDir = path.join(dir, fileName)
-  const fileString = writtenRequirements.join('\n')
-  fs.writeFileSync(fileDir, fileString)
 }
 
 export function getCartesianProduct (...args) {

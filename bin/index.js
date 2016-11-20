@@ -18,7 +18,9 @@ program
   .option('-m, map', 'Map')
   .option('init', 'Init')
   .option('-i, install', 'Install')
+  .option('-r, replace', 'Replace')
   .option('-s, start', 'Start')
+  .option('-u, uninstall', 'Uninstall')
   .option('-z, zsh', 'Zsh')
   .option('status', 'Status')
 

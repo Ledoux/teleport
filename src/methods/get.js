@@ -49,7 +49,8 @@ export function getAvailablePorts (docker) {
   docker = docker || run.docker
   this.checkWeb()
   const { app } = this
-  const command = `python ${app.pythonDir} ports --filter available --docker ${docker}`
+  const activateDir = path.join(app.venv, 'bin/activate')
+  const command = `source ${activateDir} && python ${app.pythonDir} ports --filter available --docker ${docker}`
   const rep = childProcess.execSync(command).toString('utf-8')
   const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])
   return ports
@@ -77,16 +78,20 @@ export function getDepTemplateNames (templateName, depTemplateNames = []) {
   const { project } = this
   depTemplateNames.push(templateName)
   const templateDir = path.join(project.dir, 'node_modules', templateName)
-  const templateConfig = this.getConfig(templateDir)
-  if (templateConfig) {
-    const templatePackage = getPackage(templateDir)
-    if (templatePackage.dependencies) {
-      Object.keys(templatePackage.dependencies)
-        .forEach(depTemplateName =>
-          this.getDepTemplateNames(depTemplateName, depTemplateNames)
-        )
-    }
+  let templateConfig = this.getConfig(templateDir)
+  // make sure we have the node_module
+  if (typeof templateConfig === 'undefined') {
+    const command = `yarn add --dev ${templateName}`
+    // command = `npm install --save-dev ${templateName}`
+    childProcess.execSync(command)
   }
+  templateConfig = this.getConfig(templateDir)
+  const templatePackage = getPackage(templateDir)
+  const dependencies = Object.assign({}, templatePackage.dependencies, templatePackage.devDependencies)
+  Object.keys(dependencies)
+    .forEach(depTemplateName =>
+      this.getDepTemplateNames(depTemplateName, depTemplateNames)
+    )
   return depTemplateNames
 }
 

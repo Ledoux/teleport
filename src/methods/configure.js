@@ -33,16 +33,22 @@ export function configureProjectConfig () {
   // unpack
   const { project } = this
   // init again the config
-  project.config.templateNames = project.config.templateNames || this.getTemplateNames()
-  project.allTemplateNames = this.getAllTemplateNames()
+  project.config.templateNames = this.getTemplateNames()
 
   // merge
   project.config = merge(
     project.config,
-    ...project.allTemplateNames
+    ...project.config.templateNames
       .map(templateName => {
         const templateDir = path.join(project.nodeModulesDir, templateName)
         let templateConfig = this.getConfig(templateDir)
+        // remove attributes that are specific to the project
+        delete templateConfig.templateNames
+        delete templateConfig.venv
+        if (templateConfig.backend) {
+          delete templateConfig.backend.siteName
+        }
+        /*
         // special backend
         if (templateConfig.backend) {
           // set the parent template name in the server in order to
@@ -53,9 +59,10 @@ export function configureProjectConfig () {
               server.templateName = templateName
             })
         }
+        */
         return templateConfig
       })
-  )
+    )
 }
 
 export function configureProjectPackage () {
@@ -73,10 +80,11 @@ export function configureProjectGitignore () {
   project.gitignores = [
     '*pyc',
     '*secret.json',
+    'node_modules',
     'src',
     'venv'
   ]
-  project.allTemplateNames
+  project.config.templateNames
     .forEach(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
       const gitignores = getGitignores(templateDir)

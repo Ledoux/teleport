@@ -3,18 +3,6 @@ import fs from 'fs'
 import { values } from 'lodash'
 import path from 'path'
 
-import { formatString } from '../utils'
-
-const notLocalhostPlaceholderFiles = [
-  'build.sh',
-  'controller.yaml',
-  'deploy.sh',
-  'Dockerfile',
-  'push.sh',
-  'run.sh',
-  'service.yaml'
-]
-
 export function install () {
   this.getLevelMethod('install')()
   this.consoleInfo(`install was successful !`)
@@ -33,12 +21,12 @@ export function installBackend () {
   this.installScript()
   this.installKubernetes()
   this.installPythonVenv()
-  this.setAllTypesAndServersEnvironment()
-  this.installPlaceholderFiles()
-  this.installServers()
+  this.installAppRequirements()
   this.installSecrets()
   this.installPorts()
   this.write(this.project)
+  this.replace()
+  this.installServers()
 }
 
 export function installScript () {
@@ -109,7 +97,7 @@ export function installPythonVenv () {
     return
   }
   // check if a path to a venv was already set
-  if (project.config.venv && fs.exists(project.config.venv)) {
+  if (project.config.venv && fs.existsSync(project.config.venv)) {
     this.consoleInfo(`There is already a venv here ${project.config.venv}`)
     return
   }
@@ -128,8 +116,16 @@ export function installPythonVenv () {
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
+export function installAppRequirements () {
+  const { app, project } = this
+  this.consoleInfo('Let \'s install in the venv the tpt requirements')
+  const command = `source ${project.config.venv}/bin/activate && pip install ${app.requirements.join(' ')}`
+  this.consoleLog(command)
+  console.log(childProcess.execSync(command).toString('utf-8'))
+}
+
 export function installServer () {
-  const { program, server } = this
+  const { app, program, server } = this
   const commands = []
   let fileName = 'install.sh'
   if (program.image && typeof program.image !== 'undefined') {
@@ -141,7 +137,10 @@ export function installServer () {
   // to do that with sudo
   commands.push(`cd ${server.dir}`)
   commands.push(`${program.permission} sh scripts/${fileName}`)
-  const command = commands.join(' && ')
+  let command = commands.join(' && ')
+  if (program.user === 'me') {
+    command = `${app.ttabDir} "${command}"`
+  }
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
@@ -183,128 +182,6 @@ export function installPorts () {
       })
   }
   this.writeConfig(dir, config)
-}
-
-export function installPlaceholderFiles () {
-  const { program } = this
-  this.setAllTypesAndServersEnvironment()
-  program.image = undefined
-  program.method = null
-  program.methods = [
-    'service.yaml',
-    'controller.yaml',
-    'client_secret.json',
-    'uwsgi.ini',
-    'guwsgi.ini'
-  ].map(file => {
-    return {
-      folder: 'config',
-      file: file
-    }
-  }).concat([
-    'build.sh',
-    'deploy.sh',
-    'install.sh',
-    'push.sh',
-    'run.sh',
-    'start.sh'
-  ].map(file => {
-    return {
-      folder: 'scripts',
-      file: file
-    }
-  })).concat([
-    'Dockerfile'
-  ].map(file => {
-    return {
-      folder: 'server',
-      file: file
-    }
-  })).map(newProgram => () => {
-    Object.assign(program, newProgram)
-    this.installPlaceholderFile()
-  })
-  this.mapInTypesAndServers()
-}
-
-const templatePrefix = '_p_'
-
-export function installPlaceholderFile () {
-  this.checkProject()
-  const { backend, program, run, server, type } = this
-  // check
-  if (!backend || !run || !server || !type ||
-    (type.name === 'localhost' && notLocalhostPlaceholderFiles.includes(program.file))
-  ) { return }
-  // set the file name
-  let installedFileName = program.file
-  let typePrefix
-  if (program.image && typeof program.image !== 'undefined') {
-    installedFileName = `${program.image}_${installedFileName}`
-  }
-  if (type) {
-    typePrefix = `${type.name}_`
-    installedFileName = `${typePrefix}${installedFileName}`
-  }
-  // look first if there is no specific <type>_<image>_<script> template
-  let templateFile
-  let templateFileName = installedFileName
-  const templateFolderDir = program.folder === 'server'
-  ? server.templateServerDir
-  : path.join(server.templateServerDir, program.folder)
-  templateFileName = `${templatePrefix}${templateFileName}`
-  let templateFileDir = path.join(templateFolderDir, templateFileName)
-  if (fs.existsSync(templateFileDir)) {
-    templateFile = fs.readFileSync(templateFileDir, 'utf-8')
-  } else {
-    // remove the type prefix then to find a general <image>_<script> template
-    templateFileName = templateFileName.slice(templatePrefix.length + typePrefix.length)
-    templateFileName = `${templatePrefix}${templateFileName}`
-    templateFileDir = path.join(templateFolderDir, templateFileName)
-    if (fs.existsSync(templateFileDir)) {
-      templateFile = fs.readFileSync(templateFileDir, 'utf-8')
-    } else {
-      return
-    }
-  }
-  const installedFolderDir = program.folder === 'server'
-  ? server.dir
-  : path.join(server.dir, program.folder)
-  const installedFileDir = path.join(installedFolderDir, installedFileName)
-  // prepare the dockerExtraConfig
-  const extraConfig = Object.assign(
-    {
-      'DOCKER_HOST': run.host,
-      'PORT': run.port,
-      'SITE_NAME': backend.siteName,
-      'TYPE': type.name,
-      'URL': run.url,
-      'WEB': 'on'
-    },
-    backend.dockerEnv,
-    server.dockerEnv
-  )
-  this.dockerExtraConfig = Object.keys(extraConfig)
-    .map(key => `ENV ${key} ${extraConfig[key]}`).join('\n')
-  this.manageExtraConfig = Object.keys(extraConfig)
-    .map(key => `export ${key}=${extraConfig[key]}`).join(' && ')
-  if (this.manageExtraConfig.length > 0) {
-    this.manageExtraConfig = `${this.manageExtraConfig} &&`
-  }
-  // info
-  this.consoleInfo(`Let\'s install this placeholder file ${installedFileDir}`)
-  // replace
-  fs.writeFileSync(installedFileDir, formatString(templateFile, this))
-}
-
-export function installServers () {
-  const { program } = this
-  program.image = undefined
-  program.method = 'installServer'
-  program.methods = null
-  program.type = 'localhost'
-  this.setTypeEnvironment()
-  this.mapInServers()
 }
 
 export function installSecrets () {
