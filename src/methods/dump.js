@@ -14,7 +14,7 @@ export function dumpProject () {
   // boilerplate
   this.dumpProjectBoilerplate()
   // info
-  this.consoleInfo(`Your ${project.package.name} project was successfully configured!`)
+  this.consoleInfo(`Your ${project.package.name} project was successfully dumped!`)
 }
 
 export function dumpProjectBoilerplate () {
@@ -28,7 +28,7 @@ export function dumpProjectBoilerplate () {
 
 export function getDumpProjectBoilerplateCommand () {
   const { app: { configFile }, project } = this
-  return project.allTemplateNames
+  return project.config.templateNames
     .map(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
       // we exclude package.json and config file because we want to merge them

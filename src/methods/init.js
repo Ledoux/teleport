@@ -24,7 +24,6 @@ export function init () {
   const templatesOption = this.getTemplatesOption()
   project.config = Object.assign({}, project.config)
   project.config.templateNames = this.getTemplateNames()
-  project.allTemplateNames = this.getAllTemplateNames()
   this.writeConfig(project.dir, project.config)
   // gitignore
   project.gitignores = [
@@ -33,11 +32,6 @@ export function init () {
     'venv'
   ]
   writeGitignore(project.dir, project.gitignores)
-  // requirements
-  project.requirements = [
-    'click==5.1'
-  ]
-  writeRequirements(project.dir, project.requirements)
   // write a configure file
   const configureFileDir = path.join(binDir, 'configure.sh')
   const configureFileString = templatesOption !== ''

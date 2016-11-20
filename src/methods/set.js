@@ -3,13 +3,14 @@ import fs from 'fs'
 import { merge } from 'lodash'
 import path from 'path'
 
-import { getPackage, getSecret, toCapitalUnderscoreCase, toDashCase } from '../utils'
+import { getPackage, getRequirements, getSecret, toCapitalUnderscoreCase, toDashCase } from '../utils'
 
 export function setAppEnvironment () {
   const { app } = this
   app.dir = path.join(__dirname, '../../')
   app.package = getPackage(app.dir)
   app.configFile = `.${app.package.name.split('.js')[0]}.json`
+  app.requirements = getRequirements(app.dir)
   app.ttabDir = path.join(app.dir, 'node_modules/ttab/bin/ttab')
   app.pythonDir = path.join(app.dir, 'bin/index.py')
 }
@@ -80,9 +81,7 @@ export function setBackendEnvironment () {
 export function setDockerEnvironment () {
   const { backend } = this
   if (!backend || typeof this.backend.helpersByName === 'undefined') return
-  const docker = this.docker = this.backend.helpersByName.docker
-  docker.server = `${docker.host}:${docker.port}`
-  docker.socket = `-H tcp://${docker.server}`
+  this.docker = this.backend.helpersByName.docker
   this.setBaseEnvironment()
   this.setCurrentEnvironment()
   this.setRegistryEnvironment()
@@ -137,7 +136,7 @@ export function setServersEnvironment () {
 }
 
 export function setServerEnvironment () {
-  let { backend, docker, program, project } = this
+  let { backend, docker, program } = this
   if (typeof program.server !== 'string') {
     this.server = null
     return
@@ -147,10 +146,6 @@ export function setServerEnvironment () {
   server.name = program.server
   server.dir = path.join(backend.dir, 'servers', server.name)
   server.configDir = path.join(server.dir, 'config')
-  server.templateDir = path.join(project.nodeModulesDir, server.templateName)
-  server.templateBackendDir = path.join(server.templateDir, 'backend')
-  server.templateServersDir = path.join(server.templateBackendDir, 'servers')
-  server.templateServerDir = path.join(server.templateServersDir, server.name)
   server.dockerEnv = server.dockerEnv || {}
   server.isNoCache = false
   server.tag = `${backend.dashSiteName}-${server.abbreviation}`
@@ -190,7 +185,6 @@ export function setRunEnvironment () {
     run.tag = type.name === 'prod'
     ? server.tag
     : `${type.abbreviation}-${server.tag}`
-    run.image = `${backend.registryServer}/${run.tag}:${server.docker.version}`
     const virtualNamePrefix = type.name === 'prod'
     ? ''
     : `${type.abbreviation.toUpperCase()}_`
