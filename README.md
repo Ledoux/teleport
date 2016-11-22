@@ -28,6 +28,11 @@
     python get-pip.py
     ```
 
+  - yarn
+    ```
+    npm install -g yarn
+    ```
+
   - virtualenv > 15.0.3 (use --upgrade if you already have an older version)
     ```
     sudo pip install virtualenv

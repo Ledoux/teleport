@@ -45,11 +45,10 @@ export function getLevelMethod (command) {
 }
 
 export function getAvailablePorts (docker) {
-  const { run } = this
+  const { app, project, run } = this
   docker = docker || run.docker
   this.checkWeb()
-  const { app } = this
-  const activateDir = path.join(app.venv, 'bin/activate')
+  const activateDir = path.join(project.config.venv, 'bin/activate')
   const command = `source ${activateDir} && python ${app.pythonDir} ports --filter available --docker ${docker}`
   const rep = childProcess.execSync(command).toString('utf-8')
   const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])

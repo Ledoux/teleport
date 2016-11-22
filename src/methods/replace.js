@@ -37,6 +37,7 @@ export function replacePlaceholderFiles () {
     'service.yaml',
     'controller.yaml',
     'client_secret.json',
+    'guwsgi.ini',
     'uwsgi.ini',
     'guwsgi.ini'
   ].map(file => {
@@ -83,6 +84,10 @@ export function installServers () {
 export function replacePlaceholderFile () {
   this.checkProject()
   const { backend, program, project, run, server, type } = this
+  // connect if no port was set here
+  if (type.name !== 'localhost' && typeof run.port === 'undefined') {
+    this.connect()
+  }
   // check
   if (!backend || !run || !server || !type ||
     (type.name === 'localhost' && notLocalhostPlaceholderFiles.includes(program.file))
@@ -117,6 +122,10 @@ export function replacePlaceholderFile () {
   ? server.dir
   : path.join(server.dir, program.folder)
   const installedFileDir = path.join(installedFolderDir, installedFileName)
+  // ok for now if the file already exists and that we are not in the force mode, leave
+  if (fs.existsSync(installedFileDir) && program.force !== 'true') {
+    return
+  }
   // prepare the dockerExtraConfig
   const extraConfig = Object.assign(
     {

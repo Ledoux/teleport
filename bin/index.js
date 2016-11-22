@@ -29,6 +29,7 @@ program
   .option('--data [type]', 'Data', 'localhost')
   .option('--file [type]', 'file')
   .option('--folder [type]', 'Folder')
+  .option('--force [type]', 'Force', /^(true|false)$/i, 'false')
   .option('--kwarg [type]', 'Kwarg', '')
   .option('--image [type]', 'Image')
   .option('--lang [type]', 'Language', 'js')
