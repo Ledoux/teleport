@@ -3,6 +3,7 @@ import 'babel-polyfill'
 
 const methods = [
   'configure',
+  'connect',
   'console',
   'check',
   'create',
@@ -21,6 +22,7 @@ const methods = [
   'start',
   'status',
   'uninstall',
+  'watch',
   'write',
   'zsh'
 ]
