@@ -3,7 +3,13 @@ import fs from 'fs'
 import { merge } from 'lodash'
 import path from 'path'
 
-import { getPackage, getRequirements, getSecret, toCapitalUnderscoreCase, toDashCase } from '../utils'
+import { getPackage,
+  getGitignores,
+  getRequirements,
+  getSecret,
+  toCapitalUnderscoreCase,
+  toDashCase
+} from '../utils'
 
 export function setAppEnvironment () {
   const { app } = this
@@ -13,10 +19,16 @@ export function setAppEnvironment () {
   app.requirements = getRequirements(app.dir)
   app.ttabDir = path.join(app.dir, 'node_modules/ttab/bin/ttab')
   app.pythonDir = path.join(app.dir, 'bin/index.py')
+  let virtualEnvDir = childProcess.execSync('echo $VIRTUAL_ENV')
+                                  .toString('utf-8')
+                                  .trim()
+  app.venvDir = virtualEnvDir !== ''
+  ? virtualEnvDir
+  : null
 }
 
 export function setProjectEnvironment () {
-  const { program, project } = this
+  const { project } = this
   this.read(project)
   // dirs
   project.nodeModulesDir = path.join(project.dir, 'node_modules')
@@ -24,16 +36,6 @@ export function setProjectEnvironment () {
     // sub entities
     this.setTypeEnvironment()
     this.setBackendEnvironment()
-    if (typeof project.config.python === 'undefined') {
-      project.config.python = childProcess
-        .execSync('which python')
-        .toString('utf-8').trim()
-    }
-    project.config.pip = program.global === 'local'
-    ? path.join(project.dir, 'venv/bin/pip')
-    : childProcess
-      .execSync('which pip')
-      .toString('utf-8').trim()
   }
 }
 
@@ -145,6 +147,8 @@ export function setServerEnvironment () {
   const server = this.server = Object.assign({}, configServer)
   server.name = program.server
   server.dir = path.join(backend.dir, 'servers', server.name)
+  server.package = getPackage(server.dir)
+  server.gitignores = getGitignores(server.dir)
   server.configDir = path.join(server.dir, 'config')
   server.dockerEnv = server.dockerEnv || {}
   server.isNoCache = false

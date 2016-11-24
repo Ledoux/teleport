@@ -81,6 +81,9 @@ export function getStartServerCommand () {
   commands.push(`cd ${server.dir}`)
   commands.push(`sh scripts/${fileName}`)
   let command = commands.join(' && ')
+  if (app.venvDir) {
+    command = `source ${app.venvDir}/bin/activate && ${command}`
+  }
   if (program.user === 'me') {
     command = `${app.ttabDir} \"${command}\"`
   }

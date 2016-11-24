@@ -24,6 +24,11 @@ export function exec () {
     ? `python ${app.pythonDir} ${program.method.replace(/[ ]*,[ ]*|[ ]+/g, ' ')}`
     : this[program.method]()
   }
+  // venv check
+  if (app.venvDir) {
+    command = `source ${app.venvDir}/bin/activate && ${command}`
+  }
+  // ttab check
   if (program.ttab === 'true') {
     command = `${app.ttabDir} \"${command}\"`
   }
