@@ -19,7 +19,6 @@ export function installProject () {
 export function installBackend () {
   this.installScript()
   this.installKubernetes()
-  this.installPythonVenv()
   this.installAppRequirements()
   this.installSecrets()
   this.write(this.project)
@@ -78,64 +77,42 @@ export function installDocker () {
   }
 }
 
-export function getInstallVenvCommand () {
-  this.checkProject()
-  const { project, program } = this
-  let option = ''
-  if (program.lib === 'global') {
-    option = '--system-site-packages'
-  }
-  const venvDir = path.join(project.dir, project.config.venv, '../')
-  return `cd ${venvDir} && virtualenv -p ${project.config.python} venv ${option}`
-}
-
-export function installPythonVenv () {
-  const { project, program } = this
-  if (program.lib === 'global') {
-    return
-  }
-  // check if a path to a venv was already set
-  if (project.config.venv && fs.existsSync(project.config.venv)) {
-    this.consoleInfo(`There is already a venv here ${project.config.venv}`)
-    return
-  }
-  // just maybe check if there is one venv on the parent dir
-  const parentVenvDir = path.join(project.dir, '../venv')
-  if (fs.existsSync(parentVenvDir)) {
-    this.consoleInfo(`There is a venv here on the parent folder`)
-    project.config.venv = '../venv'
-    return
-  }
-  // either create one at the level of the project
-  project.config.venv = './venv'
-  this.consoleInfo('...Installing a python venv for our backend')
-  const command = this.getInstallVenvCommand()
-  this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
-}
-
 export function installAppRequirements () {
-  const { app, project } = this
+  const { app } = this
   this.consoleInfo('Let \'s install in the venv the tpt requirements')
-  const command = `source ${project.config.venv}/bin/activate && pip install ${app.requirements.join(' ')}`
+  const command = `pip install ${app.requirements.join(' ')}`
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
+}
+
+export function installServers () {
+  const { program } = this
+  program.image = undefined
+  program.method = 'installServer'
+  program.methods = null
+  program.type = 'localhost'
+  this.setTypeEnvironment()
+  this.mapInServers()
 }
 
 export function installServer () {
   const { app, program, server } = this
   const commands = []
   let fileName = 'install.sh'
-  if (program.image && typeof program.image !== 'undefined') {
-    fileName = `${program.image}_${fileName}`
-  }
   fileName = `localhost_${fileName}`
+  let fileDir = path.join(server.dir, 'scripts', fileName)
+  if (!fs.existsSync(fileDir)) {
+    fileName = 'install.sh'
+  }
   this.consoleInfo(`Let\'s launch the ${fileName} needed in the docker server... it can\'t take a long time`)
-  // for now for settings like Xcode8 with ElCaptai uwsgi in venv install breaks, and only solution is
+  // for now for settings like Xcode8 with ElCaptain uwsgi in venv install breaks, and only solution is
   // to do that with sudo
   commands.push(`cd ${server.dir}`)
   commands.push(`${program.permission} sh scripts/${fileName}`)
   let command = commands.join(' && ')
+  if (app.venvDir) {
+    command = `source ${app.venvDir}/bin/activate && ${command}`
+  }
   if (program.user === 'me') {
     command = `${app.ttabDir} "${command}"`
   }
