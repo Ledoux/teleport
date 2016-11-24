@@ -2,7 +2,7 @@ import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
-import { writeGitignore, writePackage, writeRequirements } from '../utils'
+import { writeGitignore, writePackage } from '../utils'
 
 export function init () {
   const { program, project } = this
@@ -27,9 +27,11 @@ export function init () {
   this.writeConfig(project.dir, project.config)
   // gitignore
   project.gitignores = [
-    'node_modules',
+    '*node_modules',
     '*.pyc',
-    'venv'
+    '*secret.json',
+    '*venv',
+    'yarn.lock'
   ]
   writeGitignore(project.dir, project.gitignores)
   // write a configure file

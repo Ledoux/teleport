@@ -71,16 +71,6 @@ export function replacePlaceholderFiles () {
   this.mapInTypesAndServers()
 }
 
-export function installServers () {
-  const { program } = this
-  program.image = undefined
-  program.method = 'installServer'
-  program.methods = null
-  program.type = 'localhost'
-  this.setTypeEnvironment()
-  this.mapInServers()
-}
-
 export function replacePlaceholderFile () {
   this.checkProject()
   const { backend, program, project, run, server, type } = this

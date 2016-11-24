@@ -1,23 +1,22 @@
 import childProcess from 'child_process'
-import { merge, uniq, values } from 'lodash'
+import { flatten, merge, uniq } from 'lodash'
 import path from 'path'
 
-import { getGitignores } from '../utils'
+import { getGitignores,
+  getPackage,
+  writeGitignore,
+  writePackage
+} from '../utils'
 
 export function configure () {
-  this.getLevelMethod('configure')()
-  this.consoleInfo('Your teleport configure was sucessful !')
-}
-
-export function configureProject () {
   const { project } = this
   // script
   this.configureScript()
-  // write
-  this.configureProjectConfig()
-  this.configureProjectPackage()
-  this.configureProjectGitignore()
-  this.write(project)
+  // project
+  this.configureProject()
+  // servers
+  this.program.method = 'configureServer'
+  this.mapInServers()
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully configured!`)
 }
@@ -27,6 +26,14 @@ export function configureScript () {
   this.consoleInfo('Let\'s configure the project')
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
+}
+
+export function configureProject () {
+  const { project } = this
+  this.configureProjectConfig()
+  this.configureProjectPackage()
+  this.configureProjectGitignore()
+  this.write(project)
 }
 
 export function configureProjectConfig () {
@@ -44,22 +51,9 @@ export function configureProjectConfig () {
         let templateConfig = this.getConfig(templateDir)
         // remove attributes that are specific to the project
         delete templateConfig.templateNames
-        delete templateConfig.venv
         if (templateConfig.backend) {
           delete templateConfig.backend.siteName
         }
-        /*
-        // special backend
-        if (templateConfig.backend) {
-          // set the parent template name in the server in order to
-          // make them able to retrieve their file templates from the scope
-          // for install time
-          values(templateConfig.backend.serversByName)
-            .forEach(server => {
-              server.templateName = templateName
-            })
-        }
-        */
         return templateConfig
       })
     )
@@ -77,13 +71,7 @@ export function configureProjectPackage () {
 
 export function configureProjectGitignore () {
   const { project } = this
-  project.gitignores = [
-    '*pyc',
-    '*secret.json',
-    'node_modules',
-    'src',
-    'venv'
-  ]
+  project.gitignores = getGitignores(project.dir)
   project.config.templateNames
     .forEach(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
@@ -91,4 +79,62 @@ export function configureProjectGitignore () {
       project.gitignores = project.gitignores.concat(gitignores)
     })
   project.gitignores = uniq(project.gitignores)
+}
+
+export function configureServer () {
+  const { server } = this
+  // this.configureServerConfig()
+  this.configureServerPackage()
+  // this.configureServerGitignore()
+  // this.write(server)
+  writePackage(server.dir, server.package)
+  // writeGitignore(server.dir, server.gitignores)
+}
+
+export function configureServerConfig () {
+  // unpack
+  const { project, server } = this
+
+  // merge
+  server.config = merge(
+    server.config || {},
+    ...project.config.templateNames
+      .map(templateName => {
+        const templateDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name)
+        let templateConfig = this.getConfig(templateDir)
+        return templateConfig
+      })
+    )
+}
+
+export function configureServerPackage () {
+  // unpack
+  const { project, server } = this
+
+  // merge
+  server.package = merge(
+    server.package || {},
+    ...project.config.templateNames
+      .map(templateName => {
+        const templateDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name)
+        let templatePackage = getPackage(templateDir)
+        return templatePackage
+      })
+    )
+}
+
+export function configureServerGitignore () {
+  // unpack
+  const { project, server } = this
+
+  // merge
+  server.gitignores = uniq(flatten(
+    (server.gitignores || []).concat(
+    project.config.templateNames
+      .map(templateName => {
+        const templateDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name)
+        let templateGitignores = getGitignores(templateDir)
+        return templateGitignores
+      })
+    )))
 }
