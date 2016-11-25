@@ -1,17 +1,31 @@
 import childProcess from 'child_process'
+import fs from 'fs'
+import path from 'path'
 
 export function deploy () {
-  const { program } = this
+  const { project, program } = this
   // type is localhost by default, but here we want to deploy
   // so we set actually the default to staging here
   if (program.type === 'localhost') {
     program.type = 'staging'
   }
-  let command = `tpt -e --script deploy --type ${program.type} --servers all`
+  /*
+  let command = `cd ${project.dir} && sh bin/deploy.sh`
+  if (program.type !== 'localhost') {
+    command = `${command} TYPE=${program.type}`
+  }*/
+  let commands = []
+  if (fs.existsSync(path.join(project.dir, 'bin/bundle.sh'))) {
+    commands.push(`cd ${project.dir} && sh bin/bundle.sh`)
+  }
+  commands.push(`tpt -e --script deploy --type ${program.type} --servers all`)
+  let command = commands.join(' && ')
   if (program.user === 'me') {
     command = `${command} --ttab true`
   }
-  childProcess.execSync(command)
+  this.consoleInfo('Let\'s deploy')
+  this.consoleLog(command)
+  console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
 export function getUsedPorts () {

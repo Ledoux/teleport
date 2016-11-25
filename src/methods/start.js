@@ -1,11 +1,13 @@
 import childProcess from 'child_process'
 import fs from 'fs'
+import path from 'path'
 
 import { sleep } from '../utils'
 
 export function start () {
   this.checkProject()
   this.backendStart()
+  this.bundlerStart()
 }
 
 export function backendStart () {
@@ -99,4 +101,13 @@ export function getOpenServerWindow () {
 export function openServerWindow () {
   const command = this.getOpenServerWindow()
   childProcess.execSync(command)
+}
+
+export function bundlerStart () {
+  const { project } = this
+  if (!fs.existsSync(path.join(project.dir, 'bundler'))) return
+  this.consoleInfo('Let\'s start the bundler')
+  const command = `ttab \'cd ${project.dir} && sh bin/localhost_bundle.sh\'`
+  this.consoleLog(command)
+  console.log(childProcess.execSync(command).toString('utf-8'))
 }
