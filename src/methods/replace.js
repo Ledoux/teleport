@@ -15,7 +15,7 @@ const notLocalhostPlaceholderFiles = [
 const templatePrefix = '_p_'
 
 export function replace () {
-  this.getLevelMethod('replace')()
+  this.replaceProject()
   this.consoleInfo('Your teleport replace was sucessful !')
 }
 
