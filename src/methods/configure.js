@@ -1,10 +1,10 @@
 import childProcess from 'child_process'
 import { flatten, merge, uniq } from 'lodash'
+import mkdirp from 'mkdirp'
 import path from 'path'
 
 import { getGitignores,
   getPackage,
-  writeGitignore,
   writePackage
 } from '../utils'
 
@@ -15,8 +15,8 @@ export function configure () {
   // project
   this.configureProject()
   // servers
-  this.program.method = 'configureServer'
-  this.mapInServers()
+  // this.program.method = 'configureServer'
+  // this.mapInServers()
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully configured!`)
 }
@@ -66,6 +66,18 @@ export function configureProjectPackage () {
     project.package = merge(project.package, {
       devDependencies: templateDependencies
     })
+
+    // merge
+    project.package = merge(
+      project.package,
+      ...Object.keys(templateDependencies)
+        .map(templateName => {
+          const templateDir = path.join(project.nodeModulesDir, templateName)
+          let templatePackage = getPackage(templateDir)
+          let { dependencies, devDependencies } = templatePackage
+          return { dependencies, devDependencies }
+        })
+      )
   }
 }
 
@@ -87,6 +99,7 @@ export function configureServer () {
   this.configureServerPackage()
   // this.configureServerGitignore()
   // this.write(server)
+  mkdirp.sync(server.dir)
   writePackage(server.dir, server.package)
   // writeGitignore(server.dir, server.gitignores)
 }

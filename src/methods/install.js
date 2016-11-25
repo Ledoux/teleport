@@ -27,7 +27,11 @@ export function installBackend () {
 }
 
 export function installScript () {
-  const command = `cd ${this.project.dir} && sh bin/install.sh`
+  const { app, program } = this
+  let command = `cd ${this.project.dir} && sh bin/install.sh`
+  if (program.user === 'me') {
+    command = `${app.ttabDir} "${command}"`
+  }
   this.consoleInfo('Let\'s install the project')
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
@@ -78,9 +82,15 @@ export function installDocker () {
 }
 
 export function installAppRequirements () {
-  const { app } = this
+  const { app, program } = this
   this.consoleInfo('Let \'s install in the venv the tpt requirements')
-  const command = `pip install ${app.requirements.join(' ')}`
+  let command = `pip install ${app.requirements.join(' ')}`
+  if (app.venvDir) {
+    command = `source ${app.venvDir}/bin/activate && ${command}`
+  }
+  if (program.user === 'me') {
+    command = `${app.ttabDir} "${command}"`
+  }
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
