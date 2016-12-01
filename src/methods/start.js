@@ -104,10 +104,10 @@ export function openServerWindow () {
 }
 
 export function bundlerStart () {
-  const { project } = this
+  const { app, project } = this
   if (!fs.existsSync(path.join(project.dir, 'bundler'))) return
   this.consoleInfo('Let\'s start the bundler')
-  const command = `ttab \'cd ${project.dir} && sh bin/localhost_bundle.sh\'`
+  const command = `${app.ttabDir} \'cd ${project.dir} && sh bin/localhost_bundle.sh\'`
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
 }
