@@ -1,20 +1,34 @@
 import 'colors'
 
 export function consoleLog (string) {
-  console.log(string.blue)
+  if (string) {
+    console.log(string.blue)
+  } else {
+    console.warn(`your string to console is not correct: ${string}`)
+  }
 }
 
 export function consoleInfo (string) {
-  console.log(string.green)
+  if (string) {
+    console.log(string.green)
+  } else {
+    console.warn(`your string to console is not correct: ${string}`)
+  }
 }
 
 export function consoleConfig (object) {
   console.log(JSON.stringify(object, null, 2))
 }
 export function consoleWarn (string) {
-  console.warn(string.yellow)
+  if (string) {
+    console.warn(string.yellow)
+  } else {
+    console.warn(`your string to console is not correct: ${string}`)
+  }
 }
 
 export function consoleError (string) {
-  console.error(string.red)
+  if (string) {
+    console.error(string.red)
+  }
 }
