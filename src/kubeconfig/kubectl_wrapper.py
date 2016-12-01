@@ -13,6 +13,7 @@ def _get_output_cli(command):
     return out
 
 def create(filepath):
+    print filepath
     out = _get_output_cli('kubectl create -f ' + filepath)
     print out
 

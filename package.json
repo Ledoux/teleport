@@ -25,5 +25,5 @@
     "update": "npm unpublish teleport.js@0.0.1 && npm publish",
     "watch": "./node_modules/nodemon/bin/nodemon.js src/index.js --watch src --exec babel-node --presets es2015,stage-3"
   },
-  "version": "0.0.11"
+  "version": "0.0.12"
 }
