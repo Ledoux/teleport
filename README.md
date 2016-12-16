@@ -59,21 +59,7 @@
   git clone git@github.com:Ledoux/teleport.git && cd teleport && yarn
   ```
 
-3. you need to create and install your scope where are defined all of your backend and frontend configs so as your templates
-  - create a new scope
-    ```
-    tpt -c --scope myTeleport
-    ```
-  - install the scope
-    ```
-    cd myTeleport && tpt -i
-    ```
-    ** NOTE ** : you might have an error install if you are ElCaptain OSX (10.11) with Xcode 8 (https://root.cern.ch/phpBB3/viewtopic.php?t=22376) for the uwsgi venv install.
-    In that case for now, you may ... upgrade to Sierra (10.12), or find
-    a https://developer.apple.com/download/more/
-
-
-4. create a new project as a test
+3. create a new project as a test
   ```
   tpt -c --project myApp --templates flask-webrouter
   ```
@@ -85,7 +71,7 @@
 
 5. Inside of the project you can run it localhost, first
   ```
-  tpt -r
+  tpt -s
   ```
 
 6. And you can deploy
