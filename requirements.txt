@@ -1,0 +1,4 @@
+arrow==0.6.0
+click==5.1
+PyYAML==3.12
+rethinkdb==2.3.0.post6
