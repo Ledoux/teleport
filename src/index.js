@@ -2,6 +2,7 @@
 import 'babel-polyfill'
 
 const methods = [
+  'build',
   'configure',
   'connect',
   'console',
@@ -16,6 +17,7 @@ const methods = [
   'kill',
   'log',
   'map',
+  'push',
   'read',
   'replace',
   'set',
