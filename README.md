@@ -38,7 +38,7 @@
     sudo pip install virtualenv
     ```
 
-  - kubectrl
+  - kubectl
     ```
     if [ '$(KERNEL)' = 'Darwin' ]; then \
   		curl -O http://storage.googleapis.com/kubernetes-release/release/v1.2.3/bin/darwin/amd64/kubectl; \
@@ -49,20 +49,18 @@
   	mv kubectl /usr/local/bin/
     ```
 
-2. then install it globally
+2. then install it globally (WARNING: this is not yet a public package, so you need
+  to register to our private npm-registry and be connected to our VPN)
   ```
   npm set registry https://npm-registry.corp.snips.net
   npm install -g teleport.js
   ```
-  or via git and install locally
-  ```
-  git clone git@github.com:Ledoux/teleport.git && cd teleport && yarn
-  ```
 
-3. create a new project as a test
+3. Let's create a new project, based on our favorite templates here at Snips:
   ```
-  tpt -c --project myApp --templates flask-webrouter
+  tpt -c --project myApp --templates teleport-flask-webrouter, teleport-snips
   ```
+  (to know more about these templates, see https://github.com/snipsco/teleport-flask-webrouter and https://github.com/snipsco/teleport-snips)
 
 5. install the project
   ```
