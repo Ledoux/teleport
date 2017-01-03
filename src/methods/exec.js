@@ -24,6 +24,10 @@ export function exec () {
     ? `python ${app.pythonDir} ${program.method.replace(/[ ]*,[ ]*|[ ]+/g, ' ')}`
     : this[program.method]()
   }
+  // option
+  if (program.helper) {
+    command = `export HELPER=${program.helper} && ${command}`
+  }
   // venv check
   if (app.venvDir) {
     command = `source ${app.venvDir}/bin/activate && ${command}`
