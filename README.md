@@ -50,7 +50,7 @@
     ```
 
 2. then install it globally (WARNING: this is not yet a public package, so you need
-  to register to our private npm-registry and be connected to our VPN)
+  to register to our private npm-registry and be connected to our VPN):
   ```
   npm set registry https://npm-registry.corp.snips.net
   npm install -g teleport.js
@@ -58,46 +58,41 @@
 
 3. Let's create a new project, based on our favorite templates here at Snips:
   ```
-  tpt -c --project myApp --templates teleport-flask-webrouter, teleport-snips
+  tpt -c --project my-app --templates teleport-flask-webrouter,teleport-snips
   ```
+  WARNING: please do not let space after the commas in the --templates option.
   (to know more about these templates, see https://github.com/snipsco/teleport-flask-webrouter and https://github.com/snipsco/teleport-snips)
 
-5. install the project
+5. install the project. First you need to activate a python venv:
   ```
-  cd myApp & tpt -i
+  source <path_to_your_venv>/bin/activate
+  ```
+  Then install your app:
+  ```
+  cd my-app & tpt -i
   ```
 
-5. Inside of the project you can run it localhost, first
+5. If you want to run locally:
   ```
   tpt -s
   ```
+  This opens a chrome window. You may refresh the page.
+  Start step looks like :
+  ![alt text](gifs/teleport-start.gif "Demo Start")
 
-6. And you can deploy
+6. And you can deploy:
   ```
   tpt -d
   ```
+  WARNING: if you use the snips deploy config (via the teleport-snips template),
+  you need also to do these things:
+  a. make sure that you are connected to the Snips VPN
+  b. make sure that you added your dns in the registry (but ask Erwan Ledoux or Francois Blas to do it)
 
-7. It should display
+7. It should display:
   ```
   Your service is available here : <your_dns_app>
   ```
   But make sure your your_dns_app is registered (ask @franblas if it is not the case)
 
 Enjoy !
-
-## Default Scope
-
-We recommend you to play with the templates given in the default scope, like the default demo one (https://github.com/Ledoux/catapult/blob/master/examples/demo/README.md)
-
-  - create step looks like :
-  ![alt text](gifs/teleport-create.gif "Demo Example Create")
-
-  - install step looks like (but note that we chose the pip false option to not
-    install the python libs in order to make shorter the gif video)
-  ![alt text](gifs/teleport-install.gif "Demo Start")
-
-  - start step looks like :
-  ![alt text](gifs/teleport-start.gif "Demo Start")
-
-  - deploy step looks like :
-  ![alt text](gifs/teleport-deploy.gif "Demo Deploy")
