@@ -5,7 +5,7 @@
     <img src="icon.png" alt="icon" title="made by @cecilesnips"/>
   </td>
   <td>
-    A node framework to install and run quickly applications based on Node/Flask servers via kubectrl
+    A node framework to quickly bootstrap new applications based on Node/Flask servers, via kubectrl
   </td>
 </table>
 
@@ -50,7 +50,7 @@
     ```
 
 2. then install it globally (WARNING: this is not yet a public package, so you need
-  to register to our private npm-registry and be connected to our VPN):
+  to register to Snips' private npm-registry and be connected to Snips' VPN):
   ```
   npm set registry https://npm-registry.corp.snips.net
   npm install -g teleport.js
@@ -58,9 +58,9 @@
 
 3. Let's create a new project, based on our favorite templates here at Snips:
   ```
-  tpt -c --project my-app --templates teleport-flask-webrouter, teleport-snips
+  tpt -c --project my-app --templates teleport-flask-webrouter,teleport-snips
   ```
-  WARNING: please do not let space after the commas in the --templates option.
+  WARNING: please ensure that the options listed after the --templates flag are separated just by a single comma, as above - without any extra spaces - otherwise it will not work properly.
   (to know more about these templates, see https://github.com/snipsco/teleport-flask-webrouter and https://github.com/snipsco/teleport-snips)
 
   Note that in an already created project, you can set directly in your .teleport.json an item like
@@ -99,7 +99,7 @@
   WARNING: if you use the snips deploy config (via the teleport-snips template),
   you need also to do these things:
   a. make sure that you are connected to the Snips VPN
-  b. make sure that you added your dns in the registry (but ask Erwan Ledoux or Francois Blas to do it)
+  b. make sure that you added your new dns in the registry (but ask Erwan Ledoux or Francois Blas to do it)
 
 7. It should display:
   ```
