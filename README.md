@@ -63,7 +63,22 @@
   WARNING: please do not let space after the commas in the --templates option.
   (to know more about these templates, see https://github.com/snipsco/teleport-flask-webrouter and https://github.com/snipsco/teleport-snips)
 
-5. install the project. First you need to activate a python venv:
+  Note that in an already created project, you can set directly in your .teleport.json an item like
+  ```
+  {
+    "templateNames": [
+  		"teleport-snips",
+  		"teleport-flask-webrouter"
+  	]
+  }
+  ```
+  And then just type
+  ```
+    tpt init
+  ```
+  for doing the equivalent setup.
+
+4. Install the project. First you need to activate a python venv:
   ```
   source <path_to_your_venv>/bin/activate
   ```
