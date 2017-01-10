@@ -11,7 +11,8 @@
 
 ## Get started
 
-1. make sure you have global dependencies
+### Global dependencies
+  make sure you have
 
   - node v > 6
     ```
@@ -49,14 +50,16 @@
   	mv kubectl /usr/local/bin/
     ```
 
-2. then install it globally (WARNING: this is not yet a public package, so you need
+Then install teleport globally (WARNING: this is not yet a public package, so you need
   to register to Snips' private npm-registry and be connected to Snips' VPN):
   ```
   npm set registry https://npm-registry.corp.snips.net
   npm install -g teleport.js
   ```
 
-3. Let's create a new project, based on our favorite templates here at Snips:
+### Start a new project
+
+1. Let's create one based on our favorite templates here at Snips:
   ```
   tpt -c --project my-app --templates teleport-flask-webrouter,teleport-snips
   ```
@@ -78,7 +81,7 @@
   ```
   for doing the equivalent setup.
 
-4. Install the project. First you need to activate a python venv:
+2. Install the project. First you need to activate a python venv:
   ```
   source <path_to_your_venv>/bin/activate
   ```
@@ -87,12 +90,12 @@
   cd my-app & tpt -i
   ```
 
-5. If you want to run locally:
+3. If you want to run locally:
   ```
   tpt -s
   ```
 
-6. And you can deploy:
+4. And you can deploy:
   ```
   tpt -d
   ```
@@ -101,7 +104,7 @@
   a. make sure that you are connected to the Snips VPN
   b. make sure that you added your new dns in the registry (but ask Erwan Ledoux or Francois Blas to do it)
 
-7. It should display:
+5. It should display:
   ```
   Your service is available here : <your_dns_app>
   ```
