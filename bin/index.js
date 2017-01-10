@@ -6,8 +6,7 @@ const Teleport = require('../lib').default
 
 program
   .version('0.0.1')
-  .option('configure', 'Add')
-  .option('-a, anchor', 'Anchor')
+  .option('configure', 'Configure')
   .option('-c, create', 'Create')
   .option('-d, deploy', 'Deploy')
   .option('dump', 'Dump')

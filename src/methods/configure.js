@@ -1,4 +1,5 @@
 import childProcess from 'child_process'
+import fs from 'fs'
 import { flatten, merge, uniq } from 'lodash'
 import mkdirp from 'mkdirp'
 import path from 'path'
@@ -11,7 +12,9 @@ import { getGitignores,
 export function configure () {
   const { project } = this
   // script
-  this.configureScript()
+  if (fs.existsSync(path.join(this.project.dir, 'bin/configure.sh'))) {
+    this.configureScript()
+  }
   // project
   this.configureProject()
   // servers
