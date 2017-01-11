@@ -20,7 +20,7 @@
     "registry": "https://npm-registry.corp.snips.net"
   },
   "scripts": {
-    "compile": "rm -rf lib && ./node_modules/.bin/babel --presets es2015,stage-3 -d lib/ src/",
+    "compile": "rm -rf lib && mkdir -p lib && ./node_modules/.bin/babel --presets es2015,stage-3 -d lib/ src/",
     "postinstall": "source bin/link.sh",
     "update": "npm unpublish teleport.js@0.0.1 && npm publish",
     "watch": "./node_modules/nodemon/bin/nodemon.js src/index.js --watch src --exec babel-node --presets es2015,stage-3"
