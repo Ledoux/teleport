@@ -38,6 +38,10 @@ export function installScript () {
 }
 
 export function installKubernetes () {
+  const { project } = this
+  if (!project.config.backend || !project.config.backend.kubernetes) {
+    return
+  }
   this.consoleInfo('Let\'s install kubernetes configs')
   const command = this.getInstallKubernetesCommand()
   this.consoleLog(command)
