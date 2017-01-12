@@ -2,6 +2,7 @@
 import 'babel-polyfill'
 
 const methods = [
+  'build',
   'configure',
   'connect',
   'console',
@@ -16,13 +17,14 @@ const methods = [
   'kill',
   'log',
   'map',
+  'push',
   'read',
   'replace',
+  'run',
   'set',
   'start',
   'status',
   'uninstall',
-  'watch',
   'write',
   'zsh'
 ]
@@ -35,8 +37,9 @@ class Teleport {
     console.log('\n\n** Welcome to teleport node-side ! **\n'.bold)
     // bind methods from sub modules
     subModules.forEach(module =>
-      Object.keys(module).forEach(key =>
-        this[key] = module[key].bind(this))
+      Object.keys(module).forEach(key => {
+        this[key] = module[key].bind(this)
+      })
     )
     // call init
     this.program = program
