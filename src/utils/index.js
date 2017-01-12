@@ -26,7 +26,7 @@ export function formatString (input, context) {
     }
   }
   return (function (input, context) {
-    return input.replace(/\$\([^$()]+\)/g, replacer(context))
+    return input.replace(/\$\[[^$()]+\]/g, replacer(context))
   })(input, context)
 }
 
