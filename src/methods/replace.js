@@ -80,12 +80,10 @@ export function replacePlaceholderFiles () {
       const dirChunks = templateFileDir.split('/')
       let installedFileName = dirChunks.slice(-1)[0]
                                        .replace(templatePrefix, '')
-      console.log('installedFileName', installedFileName)
       // we know that there are some script and config files dedicated to the deploy step
       // so we don't have actually to write them for the localhost type case
       if (type.name === 'localhost') {
         if (notLocalhostPlaceholderFiles.find(notLocalhostPlaceholderFile => {
-          console.log('notLocalhostPlaceholderFile', notLocalhostPlaceholderFile, installedFileName)
           return notLocalhostPlaceholderFile.test(installedFileName)
         })) {
           return
