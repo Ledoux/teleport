@@ -22,6 +22,7 @@ const notLocalhostPlaceholderFiles = [
   /.*deploy.sh$/,
   /.*Dockerfile$/,
   /.*push.sh$/,
+  /.*Procfile$/,
   /.*run.sh$/,
   /.*service.yaml$/
 ]
@@ -99,8 +100,14 @@ export function replacePlaceholderFiles () {
         return
       }
       const installedParams = installedFileName.split('_')
-      if (installedParams.length === 2 && installedParams[0] !== type.name ||
-      installedParams.length === 1) {
+      if (
+        installedParams.length === 2 && installedParams[0] !== type.name ||
+        // NOTE HERE A QUICK WORKAROUND SOLUTION
+        // we hardcode the special case of Procfile where we need to make it pass
+        // through the replace, but actually not making it specified
+        // with the type prefix
+        installedParams.length === 1 && installedFileName !== 'Procfile'
+      ) {
         installedFileName = `${type.name}_${installedFileName}`
       }
       const installedFileDir = path.join('backend', dirChunks.slice(0, -1)
