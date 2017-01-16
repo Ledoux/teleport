@@ -16,17 +16,50 @@ export function toCapitalUnderscoreCase (string) {
   return string.replace( /([a-z])([A-Z])/g, '$1_$2' ).replace(/-/g, '_').toUpperCase()
 }
 
+export function getMatches (re, input) {
+  let m
+  const matches = []
+  // first we need to know how many capturing groups we want
+  const count = Math.max(0, String(re).split('(.*)').length - 1)
+  // then we extract while the pointer has not reached the end of the string
+  do {
+    m = re.exec(input)
+    if (m) {
+      matches.push(m.slice(0, count + 1))
+    }
+  } while (m)
+  return matches
+}
+
+export function getForMatches (input) {
+  return getMatches(/\$\[for\s+(.*)\s+in\s+(.*)\]\s+(.*)\n/g, input)
+}
+
 // from http://stackoverflow.com/questions/4920383/javascript-string-replace
 export function formatString (input, context) {
-  var replacer = function (context) {
+  let replacedInput = input
+  // first we need to scrap the for local variables and add them to the context
+  const forMatches = getForMatches(input)
+  forMatches.forEach(forMatch => {
+    const array = get(context,forMatch[2])
+    const lines = array.map(element => {
+      const re = new RegExp(`\\$\\[\\[${forMatch[1]}\\]\\]`,'g')
+      return forMatch[3].replace(re, element)
+    })
+    replacedInput = replacedInput.replace(forMatch[0], lines.join('\n'))
+  })
+  // Now we replace the variable encapsulated in the $[] placeholders
+  // given the context
+  const replacer = function (context) {
     return function (string) {
-      // remove $( and )
+      // remove $[ and ]
       const slug = string.slice(2, -1)
       return get(context, slug)
     }
   }
+  // return
   return (function (input, context) {
-    return input.replace(/\$\[[^$()]+\]/g, replacer(context))
+    return replacedInput.replace(/\$\[[^$()]+\]/g, replacer(context))
   })(input, context)
 }
 
