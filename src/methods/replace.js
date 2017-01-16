@@ -51,6 +51,7 @@ export function replacePlaceholderFiles () {
     this.connect()
   }
   // prepare the dockerExtraConfig
+  console.log('TYPE', type.name, 'URL', run.url)
   const extraConfig = Object.assign(
     {
       'SITE_NAME': backend.siteName,
