@@ -33,6 +33,8 @@ export function setProjectEnvironment () {
   // dirs
   project.nodeModulesDir = path.join(project.dir, 'node_modules')
   if (project.config) {
+    // types
+    project.typeNames = Object.keys(project.config.typesByName)
     // sub entities
     this.setTypeEnvironment()
     this.setBackendEnvironment()
