@@ -56,7 +56,6 @@ export function dumpMergeFrontendServer () {
   const { backend, frontend } = this
   const serversDir = path.join(backend.dir, 'servers')
   const serverDirs = fs.readdirSync(serversDir)
-  console.log('serverDirs', serverDirs)
   if (serverDirs.includes('_p_frontend-server')) {
     const frontendServerDir = path.join(serversDir, '_p_frontend-server')
     // we actually move and merge the frontend server into the specified frontend server
