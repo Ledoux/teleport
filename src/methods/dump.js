@@ -53,11 +53,16 @@ export function getDumpProjectBoilerplateCommand () {
 }
 
 export function dumpMergeFrontendServer () {
-  const { backend, frontend } = this
+  let { backend, frontend } = this
   const serversDir = path.join(backend.dir, 'servers')
   const serverDirs = fs.readdirSync(serversDir)
-  if (serverDirs.includes('_p_frontend-server')) {
-    const frontendServerDir = path.join(serversDir, '_p_frontend-server')
+  if (serverDirs.includes('frontend-server')) {
+    if (!frontend) {
+      this.setFrontendEnvironment()
+      frontend = this.frontend
+    }
+    this.consoleInfo('Let\'s move the frontend server in the appropriate place')
+    const frontendServerDir = path.join(serversDir, 'frontend-server')
     // we actually move and merge the frontend server into the specified frontend server
     let command = `rsync -rv ${frontendServerDir}/* ${serversDir}/${frontend.serverName}`
     command += `&& rm -rf ${frontendServerDir}`
