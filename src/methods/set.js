@@ -181,10 +181,12 @@ export function setRunEnvironment () {
   // server.runsByTypeName[type.name] = run
   // set the docker image
   if (run.name !== 'localhost') {
-    run.nodeName = `${run.subDomain}.${backend.nodeDomain}`
-    // special case where we give to the host just the name of the dockerHost
-    if (!type.hasDns) {
-      run.host = run.nodeName
+    if (backend.helpersByName.kubernetes) {
+      run.nodeName = `${run.subDomain}.${backend.nodeDomain}`
+      // special case where we give to the host just the name of the dockerHost
+      if (!type.hasDns) {
+        run.host = run.nodeName
+      }
     }
     run.tag = type.name === 'prod'
     ? server.tag
@@ -197,8 +199,10 @@ export function setRunEnvironment () {
     run.tag = `localhost-${server.tag}`
   }
   // set the url
-  run.url = `http://${run.host}`
-  if (run.port !== null) {
+  run.url = run.host
+  ? `http://${run.host}`
+  : (run.name === 'localhost' ? 'http://localhost' : `https://${backend.siteName}.${backend.domain}`)
+  if (run.port) {
     run.url += ':' + run.port
   }
   // watch the ones that have a dns
@@ -207,17 +211,17 @@ export function setRunEnvironment () {
     ? ''
     : `${type.name}-`
     // subdomain
-    let subDomain = `${dnsPrefix}${backend.dashSiteName}`
+    run.subDomain = `${dnsPrefix}${backend.dashSiteName}`
     if (!server.isMain) {
-      subDomain = `${subDomain}-${server.abbreviation}`
+      run.subDomain = `${run.subDomain}-${server.abbreviation}`
     }
     // Note : we have to be careful that
     // the tag length is smaller than 24 characters
-    if (subDomain.length > 24) {
-      this.consoleError(`this sub domain name ${subDomain} is too long, you need to make it shorter than 24 characters`)
+    if (run.subDomain.length > 24) {
+      this.consoleError(`this sub domain name ${run.subDomain} is too long, you need to make it shorter than 24 characters`)
       process.exit()
     }
-    run.host = server.host || `${subDomain}.${backend.domain}`
+    run.host = server.host || `${run.subDomain}.${backend.domain}`
     run.url = `https://${run.host}`
   }
 }
