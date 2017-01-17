@@ -36,14 +36,16 @@ export function replace () {
 export function replaceProject () {
   const { program, project } = this
   // boilerplate
-  program.method = 'replacePlaceholderFiles'
+  program.method = 'replaceServerPlaceholderFiles'
   program.methods = null
   this.mapInTypesAndServers()
+  // boilerplate
+  this.replaceBundlerPlaceholderFiles()
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully replaced!`)
 }
 
-export function replacePlaceholderFiles () {
+export function replaceServerPlaceholderFiles () {
   // unpack
   const { backend, project, program, type, run, server } = this
   // connect if no port was set here
@@ -76,6 +78,7 @@ export function replacePlaceholderFiles () {
   // for each template replace
   this.getAllTemplateNames().forEach(templateName => {
     const templateDir = path.join(project.nodeModulesDir, templateName)
+    // replace at the server scope
     const templateServerDir = path.join(templateDir, 'backend/servers', server.name)
     const templateFileDirs = glob.sync(path.join(templateServerDir, `**/${templatePrefix}*`))
     templateFileDirs.forEach(templateFileDir => {
@@ -122,5 +125,25 @@ export function replacePlaceholderFiles () {
       const templateFile = fs.readFileSync(templateFileDir, 'utf-8')
       fs.writeFileSync(installedFileDir, formatString(templateFile, this))
     })
+  })
+}
+
+export function replaceBundlerPlaceholderFiles () {
+  const { project } = this
+  this.getAllTemplateNames().forEach(templateName => {
+    const templateDir = path.join(project.nodeModulesDir, templateName)
+    // replace at the server scope
+    const templateBundlerDir = path.join(templateDir, 'bundler')
+    if (fs.existsSync(templateBundlerDir)) {
+      const templateFileDirs = glob.sync(path.join(templateBundlerDir, `**/${templatePrefix}*`))
+      templateFileDirs.forEach(templateFileDir => {
+        const dirChunks = templateFileDir.split('/')
+        let installedFileName = dirChunks.slice(-1)[0]
+                                         .replace(templatePrefix, '')
+        const installedFileDir = path.join(project.dir, 'bundler', installedFileName)
+        const templateFile = fs.readFileSync(templateFileDir, 'utf-8')
+        fs.writeFileSync(installedFileDir, formatString(templateFile, this))
+      })
+    }
   })
 }

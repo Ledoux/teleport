@@ -36,6 +36,7 @@ export function setProjectEnvironment () {
     // sub entities
     this.setTypeEnvironment()
     this.setBackendEnvironment()
+    this.setFrontendEnvironment()
   }
 }
 
@@ -238,6 +239,20 @@ export function setAllTypesAndServersEnvironment () {
     this.mapInTypesAndServers()
     this.allTypesAndProjets = true
   }
+}
+
+export function setFrontendEnvironment () {
+  const { backend, project } = this
+  if (typeof project.config.frontend === 'undefined') {
+    this.frontend = null
+    return
+  }
+  const frontend = this.frontend = project.config.frontend
+  // we need to resolve the frontend server
+  const serverNames = Object.keys(backend.serversByName)
+  frontend.serverName = frontend.serverName ||
+    serverNames.find(serverName => /\w+-webrouter/.test(serverName)) ||
+    serverNames.find(serverName => /\w+-websocket/.test(serverName))
 }
 
 export function getActivatedPythonVenvCommand () {
