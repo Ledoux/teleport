@@ -2,12 +2,23 @@ import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
+const platformScriptNames = [
+  'build',
+  'deploy',
+  'push',
+  'run'
+]
+
 export function exec () {
   const { app, program, server, type } = this
   let command, scriptFile
   // execute a script
   if (typeof program.script !== 'undefined' && server) {
     let script = program.script
+    let platform = program.platform
+    if (platformScriptNames.includes(script) && platform) {
+      script = `${platform}_${script}`
+    }
     if (type) {
       script = `${type.name}_${script}`
     }
