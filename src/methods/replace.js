@@ -50,8 +50,9 @@ export function replacePlaceholderFiles () {
   if (type.name !== 'localhost' && typeof run.port === 'undefined') {
     this.connect()
   }
-  // prepare the dockerExtraConfig
-  console.log('TYPE', type.name, 'URL', run.url)
+  // add types
+  project.typeNames = Object.keys(project.config.typesByName)
+  // prepare the extraConfig
   const extraConfig = Object.assign(
     {
       'SITE_NAME': backend.siteName,

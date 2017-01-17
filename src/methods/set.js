@@ -33,8 +33,6 @@ export function setProjectEnvironment () {
   // dirs
   project.nodeModulesDir = path.join(project.dir, 'node_modules')
   if (project.config) {
-    // types
-    project.typeNames = Object.keys(project.config.typesByName)
     // sub entities
     this.setTypeEnvironment()
     this.setBackendEnvironment()
@@ -208,22 +206,23 @@ export function setRunEnvironment () {
     run.url += ':' + run.port
   }
   // watch the ones that have a dns
+  console.log('type.hasDns', type.hasDns)
   if (type.hasDns) {
     const dnsPrefix = type.name === 'prod'
     ? ''
     : `${type.name}-`
     // subdomain
-    let subDomain = `${dnsPrefix}${backend.dashSiteName}`
+    run.subDomain = `${dnsPrefix}${backend.dashSiteName}`
     if (!server.isMain) {
-      subDomain = `${subDomain}-${server.abbreviation}`
+      run.subDomain = `${run.subDomain}-${server.abbreviation}`
     }
     // Note : we have to be careful that
     // the tag length is smaller than 24 characters
-    if (subDomain.length > 24) {
-      this.consoleError(`this sub domain name ${subDomain} is too long, you need to make it shorter than 24 characters`)
+    if (run.subDomain.length > 24) {
+      this.consoleError(`this sub domain name ${run.subDomain} is too long, you need to make it shorter than 24 characters`)
       process.exit()
     }
-    run.host = server.host || `${subDomain}.${backend.domain}`
+    run.host = server.host || `${run.subDomain}.${backend.domain}`
     run.url = `https://${run.host}`
   }
 }
