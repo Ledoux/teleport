@@ -15,6 +15,7 @@ export function createProject () {
     this.consoleWarn('You didn\'t mention any particular name, please configure --project <your_project_name> in your command')
     return
   }
+  
   // check if such a project exists already here
   project.dir = path.join(this.currentDir, program.project)
   this.consoleInfo(`wait a second... We create your ${program.project} project !`)
