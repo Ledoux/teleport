@@ -206,7 +206,6 @@ export function setRunEnvironment () {
     run.url += ':' + run.port
   }
   // watch the ones that have a dns
-  console.log('type.hasDns', type.hasDns)
   if (type.hasDns) {
     const dnsPrefix = type.name === 'prod'
     ? ''
