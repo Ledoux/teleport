@@ -1,4 +1,5 @@
 import childProcess from 'child_process'
+import fs from 'fs'
 import { flatten, reverse, uniq } from 'lodash'
 import path from 'path'
 
@@ -13,6 +14,7 @@ export function dumpProject () {
   const { project } = this
   // boilerplate
   this.dumpProjectBoilerplate()
+  this.dumpMergeFrontendServer()
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully dumped!`)
 }
@@ -48,6 +50,22 @@ export function getDumpProjectBoilerplateCommand () {
         .join(' ')
       return `rsync -rv ${excludeOption} ${templateDir}/ ${project.dir}`
     }).join(' && ')
+}
+
+export function dumpMergeFrontendServer () {
+  const { backend, frontend } = this
+  const serversDir = path.join(backend.dir, 'servers')
+  const serverDirs = fs.readdirSync(serversDir)
+  console.log('serverDirs', serverDirs)
+  if (serverDirs.includes('_p_frontend-server')) {
+    const frontendServerDir = path.join(serversDir, '_p_frontend-server')
+    // we actually move and merge the frontend server into the specified frontend server
+    let command = `rsync -rv ${frontendServerDir}/* ${serversDir}/${frontend.serverName}`
+    command += `&& rm -rf ${frontendServerDir}`
+    this.consoleLog(command)
+    const buffer = childProcess.execSync(command)
+    console.log(buffer.toString('utf-8'))
+  }
 }
 
 export function dumpServerBaseRequirements () {
