@@ -143,6 +143,10 @@ export function setServerEnvironment () {
     this.server = null
     return
   }
+  if (!backend) {
+    this.setBackendEnvironment()
+    backend = this.backend
+  }
   const configServer = backend.serversByName[program.server]
   const server = this.server = Object.assign({}, configServer)
   server.name = program.server
