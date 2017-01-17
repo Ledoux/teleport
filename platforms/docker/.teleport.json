@@ -1,0 +1,55 @@
+{
+	"backend": {
+		"domain": "corp.snips.ai",
+		"helpersByName": {
+			"docker": {
+				"host": "prod1.corp.snips.ai",
+				"imagesByName": {
+					"base": {
+						"tag": "base",
+						"version": "0.8"
+					},
+					"current": {
+						"maintainer": {
+								"name": "Erwan Ledoux",
+								"email": "erwan.ledoux@snips.ai"
+						}
+					}
+				},
+				"port": "4243",
+				"registry": {
+					"host": "registry.corp.snips.ai",
+					"port": "5000"
+				},
+				"version": "1.10.2"
+			},
+			"kubernetes": {
+				"host": "infra2.corp.snips.ai",
+				"port": "8080",
+				"nodeDomain": "corp.snips.ai",
+				"url": "http://infra2.corp.snips.ai:8080/api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard/"
+			},
+			"smtp": {
+				"host": "smtp.corp.snips.net"
+			}
+		}
+	},
+	"typesByName": {
+		"localhost": {
+		},
+		"production": {
+			"subDomain": "prod2",
+			"hasDns": true,
+			"abbreviation": "prod"
+		},
+		"staging": {
+			"subDomain": "dev3",
+			"hasDns": true,
+			"abbreviation": "stg"
+		},
+		"unname": {
+			"subDomain": "dev3",
+			"abbreviation": "unm"
+		}
+	}
+}
