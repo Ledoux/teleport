@@ -6,6 +6,7 @@ import path from 'path'
 
 import { getGitignores,
   getPackage,
+  writeGitignore,
   writePackage
 } from '../utils'
 
@@ -18,8 +19,8 @@ export function configure () {
   // project
   this.configureProject()
   // servers
-  // this.program.method = 'configureServer'
-  // this.mapInServers()
+  this.program.method = 'configureServer'
+  this.mapInServers()
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully configured!`)
 }
@@ -100,11 +101,10 @@ export function configureServer () {
   const { server } = this
   // this.configureServerConfig()
   this.configureServerPackage()
-  // this.configureServerGitignore()
-  // this.write(server)
+  this.configureServerGitignore()
   mkdirp.sync(server.dir)
   writePackage(server.dir, server.package)
-  // writeGitignore(server.dir, server.gitignores)
+  writeGitignore(server.dir, server.gitignores)
 }
 
 export function configureServerConfig () {
