@@ -101,9 +101,9 @@ export function configureServer () {
   const { server } = this
   // this.configureServerConfig()
   this.configureServerPackage()
-  this.configureServerGitignore()
   mkdirp.sync(server.dir)
   writePackage(server.dir, server.package)
+  this.configureServerGitignore()
   writeGitignore(server.dir, server.gitignores)
 }
 
@@ -126,7 +126,6 @@ export function configureServerConfig () {
 export function configureServerPackage () {
   // unpack
   const { project, server } = this
-
   // merge
   server.package = merge(
     server.package || {},
