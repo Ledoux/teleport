@@ -1,0 +1,21 @@
+{
+	"backend": {
+		"domain": "herokuapp.com",
+		"helpersByName": {
+			"heroku": {
+			}
+		}
+	},
+	"typesByName": {
+		"localhost": {
+		},
+		"production": {
+			"abbreviation": "prod",
+			"hasDns": true
+		},
+		"staging": {
+			"abbreviation": "stg",
+			"hasDns": true
+		}
+	}
+}
