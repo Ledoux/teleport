@@ -44,10 +44,6 @@
 			"subDomain": "",
 			"hasDns": true,
 			"abbreviation": "stg"
-		},
-		"unname": {
-			"subDomain": "",
-			"abbreviation": "unm"
 		}
 	}
 }
