@@ -104,7 +104,7 @@ export function getSecret (dir) {
 }
 
 export async function sleep (milliseconds) {
-  return await new Promise(() => setimeOut(() => {}, milliseconds))
+  return await new Promise(() => setTimeout(() => {}, milliseconds))
 }
 
 export function writePackage (dir, writtenPackage) {
