@@ -23,7 +23,7 @@ Deployment configuration for [teleport](https://github.com/snipsco/teleport) in 
 ### typesByName
 - <key>
   - subDomain: prefix added to nodeDomain. Default to None. [REQUIRED]
-  - hasDns: TODO
+  - hasDns: TODO [REQUIRED]
   - abbreviation: special tag for containers. [REQUIRED]
 
 ## How to use it
