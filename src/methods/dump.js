@@ -14,7 +14,6 @@ export function dumpProject () {
   const { project } = this
   // boilerplate
   this.dumpProjectBoilerplate()
-  this.dumpMergeFrontendServer()
   // info
   this.consoleInfo(`Your ${project.package.name} project was successfully dumped!`)
 }
@@ -26,6 +25,7 @@ export function dumpProjectBoilerplate () {
   this.consoleLog(command)
   const buffer = childProcess.execSync(command)
   console.log(buffer.toString('utf-8'))
+  this.dumpMergeFrontendServer()
 }
 
 export function getDumpProjectBoilerplateCommand () {
@@ -53,7 +53,7 @@ export function getDumpProjectBoilerplateCommand () {
 }
 
 export function dumpMergeFrontendServer () {
-  let { backend, frontend } = this
+  let { backend, frontend, program } = this
   const serversDir = path.join(backend.dir, 'servers')
   const serverDirs = fs.readdirSync(serversDir)
   if (serverDirs.includes('frontend-server')) {
@@ -69,6 +69,9 @@ export function dumpMergeFrontendServer () {
     this.consoleLog(command)
     const buffer = childProcess.execSync(command)
     console.log(buffer.toString('utf-8'))
+  }
+  if (program.create) {
+    this.install()
   }
 }
 
