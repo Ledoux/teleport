@@ -1,6 +1,5 @@
 # Getting started with backend templates
-
-Example with nodejs express template
+Here are some additional informations about backend templates architecture. As an example we take the nodejs express template.
 
 ## Files tree
 ```
@@ -31,14 +30,18 @@ Example with nodejs express template
 ```
 
 ### Root level
-- package.json. A teleport template is a js package, this file describe the package.
-- .teleport.json. The teleport configuration file.
+- *package.json*: A teleport template is a js package, this file describe the package.
+- *.teleport.json*: The teleport configuration file.
 
 ### Into backend/servers
-- .dockerignore
+- *.dockerignore*: describe files that should be ignored during deployment process.
 NB: the name of the folder should match the `serversByName` first key into the `.teleport.json`
 
 ### Into express-webrouter
+- *Procfile*: define commands that will run on the deployed app. It's specific to Heroku platform (see https://devcenter.heroku.com/articles/procfile).
+- *_p_Dockerfile*: define the application image. It's specific to Docker.
+- *package.json*: define requirements for the deployed application. It's necessary for the Heroku app to have it at this level, moreover it's specific to our case (nodejs express), for a python app it should be a `requirements.txt` (see https://devcenter.heroku.com/articles/python-pip).
+
 #### app
 In this folder you should put all files related to the app. In our example we have an `index.js` to describe the express app and some html templates.
 
@@ -77,7 +80,7 @@ In this folder you should put all files related to deployment for the different 
 For Docker, build the image.
 For Heroku, initialize the git repository and create a blank application.
 
-- *push*: sush the application.  
+- *push*: push the application.  
 For Docker, push the image into a registry and register the kubernetes configuration into a db.
 For Heroku, push the code on the heroku remote repository.
 
@@ -85,11 +88,13 @@ For Heroku, push the code on the heroku remote repository.
 For Docker, launch the pod (container) regarding the kubernetes config.
 For Heroku, start the application previously created.
 
-- *deploy*: build + push + run.
+- *deploy*: build + push + run. Teleport command will call this script.
 
 - *start*: start the application locally.
 
-In order to separate your express api from the server object
+You should also put a `install.sh` and a `manage` scripts.  
+- *install*: install script that teleport will run inside the deployed app. Here it's related to the
+- *manage*: contains the server object linked to the app object. In order to separate the express api from the server object we put the http server object into the manage file. It's a way to keep clean the application api.
 
 #### config
-TODO
+In this folder you should put all files related to specific configuration. We set here 2 `.yaml` files related to kubernetes configuration and uwsgi configuration files for flask python app. In our case we do not use uwsgi files as it's python related.
