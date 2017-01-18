@@ -72,7 +72,22 @@ This is a placeholder for your frontend app. The `app_div` ID is very important 
 TODO specific + svgs ?
 
 #### scripts
-In this folder you should put all files related to deployment for the different platforms. There are 5 files per platform, which correspond to the 5 deployment steps of the teleport framework.
+In this folder you should put all files related to deployment for the different platforms and scripts to start the application. There are 5 files per platform:  
+- *build*: build the application.  
+For Docker, build the image.
+For Heroku, initialize the git repository and create a blank application.
+
+- *push*: sush the application.  
+For Docker, push the image into a registry and register the kubernetes configuration into a db.
+For Heroku, push the code on the heroku remote repository.
+
+- *run*: start the application.  
+For Docker, launch the pod (container) regarding the kubernetes config.
+For Heroku, start the application previously created.
+
+- *deploy*: build + push + run.
+
+- *start*: start the application locally.
 
 In order to separate your express api from the server object
 
