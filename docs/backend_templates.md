@@ -15,6 +15,8 @@ Here are some additional informations about backend templates architecture. As a
 |   |   +-- package.json
 |   |   +-- app
 |   |   |   +-- index.js
+|   |   |   +-- templates
+|   |   |   +-- static
 |   |   |   +-- ...
 |   |   +-- scripts
 |   |   |   +-- _p_heroku_run.sh
