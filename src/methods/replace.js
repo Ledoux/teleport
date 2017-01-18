@@ -1,5 +1,6 @@
 import fs from 'fs'
 import glob from 'glob'
+import mkdirp from 'mkdirp'
 import path from 'path'
 
 import { formatString } from '../utils'
@@ -7,8 +8,14 @@ import { formatString } from '../utils'
 const dockerPlaceholderfiles = [
   'build.sh',
   'controller.yaml',
-  'deploy.sh',
   'Dockerfile',
+  'service.yaml'
+]
+
+const deployPlaceholderfiles = [
+  'build.sh',
+  'controller.yaml',
+  'deploy.sh',
   'push.sh',
   'run.sh',
   'service.yaml'
@@ -115,14 +122,21 @@ export function replaceServerPlaceholderFiles () {
       ) {
         installedFileName = `${type.name}_${installedFileName}`
       }
-      const installedFileDir = path.join('backend', dirChunks.slice(0, -1)
+      const installedFolderDir = path.join(project.dir, 'backend', dirChunks.slice(0, -1)
                                   .join('/')
                                   .split('backend')
-                                  .slice(-1)[0], installedFileName)
-      if (fs.existsSync(installedFileDir) && program.force !== 'true') {
+                                  .slice(-1)[0])
+      const installedFileDir = path.join(installedFolderDir, installedFileName)
+      if (fs.existsSync(installedFileDir) &&
+        // we need to have specified force to true to do the replace
+        program.force !== 'true'
+      ) {
         return
       }
+      // make sure that the folder system to this file already exists
+      mkdirp.sync(installedFolderDir)
       const templateFile = fs.readFileSync(templateFileDir, 'utf-8')
+      // then write inside
       fs.writeFileSync(installedFileDir, formatString(templateFile, this))
     })
   })
@@ -140,8 +154,10 @@ export function replaceBundlerPlaceholderFiles () {
         const dirChunks = templateFileDir.split('/')
         let installedFileName = dirChunks.slice(-1)[0]
                                          .replace(templatePrefix, '')
-        const installedFileDir = path.join(project.dir, 'bundler', installedFileName)
+        const installedFolderDir = path.join(project.dir, 'bundler')
+        const installedFileDir = path.join(installedFolderDir, installedFileName)
         const templateFile = fs.readFileSync(templateFileDir, 'utf-8')
+        mkdirp.sync(installedFolderDir)
         fs.writeFileSync(installedFileDir, formatString(templateFile, this))
       })
     }
