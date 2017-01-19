@@ -15,8 +15,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     make build-essential gcc python-dev g++ libfreetype6 libfontconfig libpq-dev libspatialindex-dev libfreetype6-dev libffi-dev
 
 # node
-RUN git clone https://github.com/ry/node.git && \
-  cd node && ./configure && make && sudo make install
+RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && \
+  apt-get install nodejs
 
 # pip
 RUN curl https://bootstrap.pypa.io/get-pip.py -o "get-pip.py" && \
@@ -26,8 +26,8 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o "get-pip.py" && \
 RUN npm install -g yarn
 
 # python packages
-sudo pip install virtualenv arrow==0.6.0 click==5.1 PyYAML==3.12 rethinkdb==2.3.0.post6
+RUN sudo pip install virtualenv arrow==0.6.0 click==5.1 PyYAML==3.12 rethinkdb==2.3.0.post6
 
 # kubernetes cli
-curl -O http://storage.googleapis.com/kubernetes-release/release/v1.2.3/bin/linux/amd64/kubectl; && \
+RUN curl -O http://storage.googleapis.com/kubernetes-release/release/v1.2.3/bin/linux/amd64/kubectl && \
   chmod +x kubectl && mv kubectl /usr/local/bin/
