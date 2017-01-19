@@ -10,7 +10,7 @@ export function run () {
   let commands = []
   commands.push(`tpt -e --script run --type ${program.type} --servers all`)
   let command = commands.join(' && ')
-  if (program.user === 'me') {
+  if (program.user === 'me' && program.ttab === 'true') {
     command = `${command} --ttab true`
   }
   this.consoleInfo('Let\'s push')

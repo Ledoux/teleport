@@ -5,9 +5,21 @@ import path from 'path'
 import { sleep } from '../utils'
 
 export function start () {
+  const { app, program } = this
   this.checkProject()
+  if (program.shell === 'concurrently') {
+    this.concurrentlyCommands = []
+  }
   this.backendStart()
   this.bundlerStart()
+  if (program.shell === 'concurrently') {
+    const concurrentlyCommandsString = this.concurrentlyCommands
+      .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
+      .join(' ')
+    const command = `${app.concurrentlyDir} --kill-others ${concurrentlyCommandsString}`
+    this.consoleLog(command)
+    console.log(childProcess.execSync(command).toString('utf-8'))
+  }
 }
 
 export function backendStart () {
@@ -49,7 +61,7 @@ export function getPsProviderCommand () {
 export function getStartProviderCommand () {
   const { app, program, provider } = this
   let command = `cd ${provider.dataDir} && sh start.sh`
-  if (program.user === 'me') {
+  if (program.user === 'me' && program.ttab === 'true') {
     command = `${app.ttabDir} \"${command}\"`
   }
   return command
@@ -63,16 +75,17 @@ export function startServers () {
 
 export function startServer () {
   this.checkProject()
-  const { run, server } = this
+  const { program, run, server } = this
   if (!server) return
   const command = this.getStartServerCommand()
-  this.consoleInfo(`Let\'s start the ${server.name} server`)
-  this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
-  console.log(`Go now to http://localhost:${run.port} to see your app`)
-  // sleep a bit to wait that the server is startning
-  sleep(3000)
-  this.openServerWindow()
+  if (program.shell !== 'concurrently') {
+    this.consoleInfo(`Let\'s start the ${server.name} server`)
+    this.consoleLog(command)
+    console.log(childProcess.execSync(command).toString('utf-8'))
+    console.log(`${server.name} serves at http://localhost:${run.port}`)
+  } else {
+    this.concurrentlyCommands.push(command)
+  }
 }
 
 export function getStartServerCommand () {
@@ -86,16 +99,10 @@ export function getStartServerCommand () {
   if (app.venvDir) {
     command = `source ${app.venvDir}/bin/activate && ${command}`
   }
-  if (program.user === 'me') {
+  if (program.user === 'me' && program.shell === 'ttab') {
     command = `${app.ttabDir} \"${command}\"`
   }
   return command
-}
-
-export function getOpenServerWindow () {
-  const { run } = this
-  const url = `http://localhost:${run.port}`
-  return `open -a Google\\ Chrome \'${url}\'`
 }
 
 export function openServerWindow () {
@@ -104,10 +111,17 @@ export function openServerWindow () {
 }
 
 export function bundlerStart () {
-  const { app, project } = this
+  const { app, program, project } = this
   if (!fs.existsSync(path.join(project.dir, 'bundler'))) return
-  this.consoleInfo('Let\'s start the bundler')
-  const command = `${app.ttabDir} \'cd ${project.dir} && sh bin/localhost_bundle.sh\'`
-  this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
+  let command = `cd ${project.dir} && sh bin/localhost_bundle.sh`
+  if (program.shell === 'concurrently') {
+    this.concurrentlyCommands.push(command)
+  } else {
+    if (program.shell === 'ttab'){
+      command = `${app.ttabDir} \'${command}\'`
+    }
+    this.consoleInfo('Let\'s start the bundler')
+    this.consoleLog(command)
+    console.log(childProcess.execSync(command).toString('utf-8'))
+  }
 }
