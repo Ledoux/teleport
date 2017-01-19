@@ -11,8 +11,7 @@ Deployment configuration for [teleport](https://github.com/snipsco/teleport) in 
     - tcp: docker socket. If set to true, port and host should be defined. By default unix socket.
     - port: docker socket port. By default None.
     - registry
-      - host: docker registry hostname. If point to a private registry, you should provide a port. By default public one.
-      - port: docker registry port. By default None.
+      - url: docker registry url. By default public one.
     - version: docker server version. By default 1.10.2.
   - kubernetes
     - host: kubernetes master hostname. By default None. [REQUIRED]
