@@ -19,8 +19,7 @@
 				"tcp": false,
 				"port": "",
 				"registry": {
-					"host": "",
-					"port": ""
+					"url": "index.docker.io"
 				},
 				"version": "1.10.2"
 			},
