@@ -4,6 +4,8 @@ import path from 'path'
 
 export function deploy () {
   const { project, program } = this
+  // reset
+  this.execResetConcurrently('deploy')
   // type is localhost by default, but here we want to deploy
   // so we set actually the default to staging here
   if (program.type === 'localhost') {
@@ -20,10 +22,7 @@ export function deploy () {
   }
   commands.push(`tpt -e --script deploy --type ${program.type} --servers all`)
   let command = commands.join(' && ')
-  if (program.user === 'me') {
-    command = `${command} --ttab true`
-  }
-  this.consoleInfo('Let\'s deploy')
+  // exec
   this.consoleLog(command)
   console.log(childProcess.execSync(command).toString('utf-8'))
 }

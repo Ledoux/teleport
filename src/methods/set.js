@@ -18,6 +18,7 @@ export function setAppEnvironment () {
   app.configFile = `.${app.package.name.split('.js')[0]}.json`
   app.requirements = getRequirements(app.dir)
   app.ttabDir = path.join(app.dir, 'node_modules/ttab/bin/ttab')
+  app.concurrentlyDir = path.join(app.dir, 'node_modules/.bin/concurrently')
   app.pythonDir = path.join(app.dir, 'bin/index.py')
   let virtualEnvDir = childProcess.execSync('echo $VIRTUAL_ENV')
                                   .toString('utf-8')
@@ -212,7 +213,7 @@ export function setRunEnvironment () {
   }
   // watch the ones that have a dns
   if (type.hasDns) {
-    const dnsPrefix = type.name === 'prod'
+    const dnsPrefix = type.name === 'production'
     ? ''
     : `${type.name}-`
     // subdomain
