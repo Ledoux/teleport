@@ -5,7 +5,7 @@ export function getPsDatabaseCommand () {
 }
 
 export function psDatabase () {
-  console.log(childProcess.execSync(this.getPsDatabaseCommand()).toString('utf-8'))
+  childProcess.execSync(this.getPsDatabaseCommand(), { stdio: [0, 1, 2] })
 }
 
 export function getKillDatabaseCommand () {
@@ -16,7 +16,7 @@ export function getKillDatabaseCommand () {
 export function killDatabase () {
   const command = this.getKillDatabaseCommand()
   command === ''
-  ? console.log(childProcess.execSync(command).toString('utf-8'))
+  ? childProcess.execSync(command, { stdio: [0, 1, 2] })
   : console.log('There is no rethink database to kill')
 }
 
@@ -26,7 +26,7 @@ export function getPsUwsgiCommand () {
 
 export function psUwsgi () {
   const command = this.getPsUwsgiCommand()
-  console.log(childProcess.execSync(command).toString('utf-8'))
+  childProcess.execSync(command, { stdio: [0, 1, 2] })
 }
 
 export function getKillUwsgiCommand () {
@@ -42,7 +42,7 @@ export function getPsGunicornCommand () {
 
 export function psGunicorn () {
   const command = this.getPsGunicornCommand()
-  console.log(childProcess.execSync(command).toString('utf-8'))
+  childProcess.execSync(command, { stdio: [0, 1, 2] })
 }
 
 export function getKillGunicornCommand () {

@@ -14,7 +14,7 @@ export function install () {
       .join(' ')
     const command = `${app.concurrentlyDir} ${concurrentlyCommandsString}`
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
   this.consoleInfo(`install was successful !`)
 }
@@ -47,7 +47,7 @@ export function installScript () {
     }
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
     this.concurrentlyCommands.push(command)
   }
@@ -62,7 +62,7 @@ export function installKubernetes () {
   this.consoleInfo('Let\'s install kubernetes configs')
   const command = this.getInstallKubernetesCommand()
   this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
+  childProcess.execSync(command, { stdio: [0, 1, 2] })
   this.consoleInfo('kubernetes configs are installed !')
 }
 
@@ -115,7 +115,7 @@ export function installAppRequirements () {
     }
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
     this.concurrentlyCommands.push(command)
   }
@@ -155,7 +155,7 @@ export function installServer () {
     }
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
     this.concurrentlyCommands.push(command)
   }
