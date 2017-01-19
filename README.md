@@ -12,6 +12,9 @@
 ## Overview
 ![Teleport overview icon](docs/teleport_overview.png "Teleport overview")
 
+### Templates
+- [Existing templates](docs/templates_list.md)
+
 ## Getting started
 ### Installation
 Dependencies:
