@@ -74,8 +74,3 @@ export function restartDocker () {
   console.log(childProcess.execSync(command).toString('utf-8'))
   this.consoleInfo(`If you have some trouble, go to ${project.config.backend.kubernetesUrl}`)
 }
-
-export function getDnsDockerCommand () {
-  const { run } = this
-  return `sky dns add ${run.dockerHost} ${run.dns} snips.ai`
-}
