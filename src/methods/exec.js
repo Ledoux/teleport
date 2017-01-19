@@ -51,7 +51,7 @@ export function exec () {
       this.consoleInfo('Which corresponds to : ')
       this.consoleLog(scriptFile)
     }
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else if (script) {
     this.execAddConcurrently(script, command)
   }
@@ -72,7 +72,7 @@ export function execConcurrentlyOrDirectly(script) {
       command = `${command} --ttab true`
       this.consoleInfo(`Let\'s ${script}`)
       this.consoleLog(command)
-      console.log(childProcess.execSync(command).toString('utf-8'))
+      childProcess.execSync(command, { stdio: [0, 1, 2] })
     }
   }
   else {
@@ -81,6 +81,6 @@ export function execConcurrentlyOrDirectly(script) {
       .join(' ')
     const command = `${app.concurrentlyDir} --kill-others ${concurrentlyCommandsString}`
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
 }

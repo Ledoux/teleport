@@ -18,7 +18,7 @@ export function start () {
       .join(' ')
     const command = `${app.concurrentlyDir} --kill-others ${concurrentlyCommandsString}`
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
 }
 
@@ -81,7 +81,7 @@ export function startServer () {
   if (program.shell !== 'concurrently') {
     this.consoleInfo(`Let\'s start the ${server.name} server`)
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
     console.log(`${server.name} serves at http://localhost:${run.port}`)
   } else {
     this.concurrentlyCommands.push(command)
@@ -122,6 +122,6 @@ export function bundlerStart () {
     }
     this.consoleInfo('Let\'s start the bundler')
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
 }
