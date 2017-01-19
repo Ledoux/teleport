@@ -5,7 +5,7 @@ import arrow
 import yaml
 import time
 
-RETHINK_HOST = 'prod2.corp.snips.ai'
+RETHINK_HOST = 'localhost'
 RETHINK_PORT = 28015
 RETHINK_DATABASE = 'infraservices'
 RETHINK_TABLE = 'services'
@@ -15,7 +15,6 @@ def rethink_connect(database):
   Returns the connection object to the rethink host.
   Connection to the rethink database host.
   """
-  print 'Using RETHINKDB in infrastructure/utils/main.py at %s:%s' % (RETHINK_HOST, RETHINK_PORT)
   max_attempts = 5
   n_attempts = 0
   while n_attempts < max_attempts:
