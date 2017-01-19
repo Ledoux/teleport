@@ -1,113 +1,73 @@
-# teleport
+# Teleport
 
 <table>
   <td>
     <img src="icon.png" alt="icon" title="made by @cecilesnips"/>
   </td>
   <td>
-    A node framework to quickly bootstrap new applications based on Node/Flask servers, via kubectrl
+    A node framework to quickly bootstrap and deploy applications based on templates
   </td>
 </table>
 
-## Get started
+## Overview
+![Teleport overview icon](docs/teleport_overview.png "Teleport overview")
 
-### Global dependencies
-  make sure you have
+## Getting started
+### Installation
+Dependencies:
+- Node version >= 6
+- Python 2.7 + pip >= v8
 
-  - node v > 6
-    ```
-    git clone git://github.com/ry/node.git
-    cd node
-    ./configure
-    make
-    sudo make install
-    ```
+You can install all dependencies and Teleport by typing
+```
+make install
+```
 
-  - pip > 9
-    ```
-    curl https://bootstrap.pypa.io/get-pip.py -o "get-pip.py"
-    python get-pip.py
-    ```
+## Setup backends
+Teleport support for now 2 types of backend: Kubernetes and Heroku. We strongly recommend to start with Heroku in order to test the framework as Kubernetes needs a more complex infrastructure and specifics options to work.
 
-  - yarn
-    ```
-    npm install -g yarn
-    ```
+### Heroku
+To get started with heroku, just create an account (if not already done) on the platform: https://www.heroku.com/. Then install the command line tool https://devcenter.heroku.com/articles/heroku-cli.  
 
-  - virtualenv > 15.0.3 (use --upgrade if you already have an older version)
-    ```
-    sudo pip install virtualenv
-    ```
+Setup your credentials
+```
+heroku login
+```
 
-  - kubectl
-    ```
-    if [ '$(KERNEL)' = 'Darwin' ]; then \
-  		curl -O http://storage.googleapis.com/kubernetes-release/release/v1.2.3/bin/darwin/amd64/kubectl; \
-  	else \
-  		curl -O http://storage.googleapis.com/kubernetes-release/release/v1.2.3/bin/linux/amd64/kubectl; \
-  	fi
-  	chmod +x kubectl
-  	mv kubectl /usr/local/bin/
-    ```
+That's it! You are all set! :smiley:
 
-Then install teleport globally (WARNING: this is not yet a public package, so you need
-  to register to Snips' private npm-registry and be connected to Snips' VPN):
-  ```
-  npm set registry https://npm-registry.corp.snips.net
-  npm install -g teleport.js
-  ```
+### Kubernetes
+Not well supported yet... We are fixing this :construction:
 
-### Start a new project
+[Additional setup](app_database.md) to the Kubernetes cluster.
 
-1. Let's create one based on our favorite templates here at Snips:
-  ```
-  tpt -c --project my-app --templates teleport-flask-webrouter,teleport-snips
-  ```
-  WARNING: please ensure that the options listed after the --templates flag are separated just by a single comma, as above - without any extra spaces - otherwise it will not work properly.
-  (to know more about these templates, see https://github.com/snipsco/teleport-flask-webrouter and https://github.com/snipsco/teleport-snips)
+## Start a new project
+As an example let's create a web app on Heroku platform with the following components:
+- A Python Flask server
+- A Webpack React frontend on top of the server  
 
-  Note that in an already created project, you can set directly in your .teleport.json an item like
-  ```
-  {
-    "templateNames": [
-  		"teleport-snips",
-  		"teleport-flask-webrouter"
-  	]
-  }
-  ```
-  And then just type
-  ```
-    tpt init
-  ```
-  for doing the equivalent setup.
+### Creation
+We first create the app by typing
+```
+tpt -c --project my-app --templates teleport-flask-webrouter,teleport-webpack-react,teleport-heroku
+```
+:warning: Please ensure that the options listed after the --templates flag are separated just by a single comma, as above - without any extra spaces - otherwise it will not work properly.
 
-2. Install the project. First you need to activate a python venv:
-  ```
-  source <path_to_your_venv>/bin/activate
-  ```
-  Then install your app:
-  ```
-  cd my-app & tpt -i
-  ```
+You can have more informations about those templates by checking their repos:
+- [Flask webrouter](https://github.com/snipsco/teleport-flask-webrouter)
+- [Webpack React](https://github.com/snipsco/teleport-webpack-react)
+- [Heroku](platforms/heroku/)
 
-3. If you want to run locally:
-  ```
-  tpt -s
-  ```
+### Run locally
+If you want to test the app locally you can type
+```
+tpt -s
+```
 
-4. And you can deploy:
-  ```
-  tpt -d
-  ```
-  WARNING: if you use the snips deploy config (via the teleport-snips template),
-  you need also to do these things:
-  a. make sure that you are connected to the Snips VPN
-  b. make sure that you added your new dns in the registry (but ask Erwan Ledoux or Francois Blas to do it)
+### Deploy the app
+Let's now deploy it directly on Heroku as we choose this platform template.
+```
+tpt -d
+```
 
-5. It should display:
-  ```
-  Your service is available here : <your_dns_app>
-  ```
-  But make sure your your_dns_app is registered (ask @franblas if it is not the case)
-
-Enjoy !
+After that your app should be now on heroku :smiley: Enjoy !
