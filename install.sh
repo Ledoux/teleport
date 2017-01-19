@@ -1,7 +1,6 @@
 #!/bin/bash
 
 KERNEL=$(uname)
-# MIN_MAJOR_NODE_VERSION=6
 
 ## node
 if which node > /dev/null ; then
@@ -74,3 +73,7 @@ else
     echo "teleport is not installed"
     npm install -g teleport.js
 fi
+
+## python dependencies
+echo "installing python dependencies"
+sudo pip install -r requirements.txt
