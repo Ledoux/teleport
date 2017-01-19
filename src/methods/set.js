@@ -273,7 +273,7 @@ export function setActivatedPythonVenv () {
   ) {
     const command = this.getActivatedPythonVenvCommand()
     this.consoleLog(command)
-    console.log(childProcess.execSync(command).toString('utf-8'))
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
     this.isPythonVenvActivated = true
   }
 }
