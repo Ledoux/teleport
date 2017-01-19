@@ -6,8 +6,8 @@
 				"host": "",
 				"imagesByName": {
 					"base": {
-						"tag": "ubuntu",
-						"version": "14.04"
+						"tag": "franblas/teleportjs",
+						"version": "0.1"
 					},
 					"current": {
 						"maintainer": {
