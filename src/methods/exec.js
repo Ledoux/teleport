@@ -13,19 +13,20 @@ export function exec () {
   const { app, program, server, type } = this
   let command, scriptFile
   // execute a script
-  if (typeof program.script !== 'undefined' && server) {
-    let script = program.script
+  const script = program.script
+  if (typeof script !== 'undefined' && server) {
     let platform = program.platform
+    let typedScript = script
     if (platformScriptNames.includes(script) && platform) {
-      script = `${platform}_${script}`
+      typedScript = `${platform}_${script}`
     }
     if (type) {
-      script = `${type.name}_${script}`
+      typedScript = `${type.name}_${script}`
     }
     // find the file
-    const scriptFileDir = path.join(server.dir, 'scripts', `${script}.sh`)
+    const scriptFileDir = path.join(server.dir, 'scripts', `${typedScript}.sh`)
     scriptFile = fs.readFileSync(scriptFileDir).toString('utf-8')
-    command = `cd ${server.dir} && sh scripts/${script}.sh`
+    command = `cd ${server.dir} && sh scripts/${typedScript}.sh`
   } else if (typeof program.method !== 'string') {
     console.log('You didn\'t specify a method to be called, please use the --method option for that')
     return
@@ -43,11 +44,43 @@ export function exec () {
   if (program.ttab === 'true') {
     command = `${app.ttabDir} \"${command}\"`
   }
-  this.consoleInfo('Let\'s exec this command !')
-  this.consoleLog(command)
-  if (scriptFile) {
-    this.consoleInfo('Which corresponds to : ')
-    this.consoleLog(scriptFile)
+  if (program.shell !== 'concurrently') {
+    this.consoleInfo('Let\'s exec this command !')
+    this.consoleLog(command)
+    if (scriptFile) {
+      this.consoleInfo('Which corresponds to : ')
+      this.consoleLog(scriptFile)
+    }
+    console.log(childProcess.execSync(command).toString('utf-8'))
+  } else if (script) {
+    this.execAddConcurrently(script, command)
   }
-  console.log(childProcess.execSync(command).toString('utf-8'))
+}
+
+export function execResetConcurrently (script) {
+  this[`${script}ConcurrentlyCommands`] = []
+}
+
+export function execAddConcurrently (script, command) {
+  this[`${script}ConcurrentlyCommands`].push(command)
+}
+
+export function execConcurrentlyOrDirectly(script) {
+  const { program } = this
+  if (program.shell !== 'concurrently') {
+    if (program.user === 'me' && program.ttab === 'true') {
+      command = `${command} --ttab true`
+      this.consoleInfo(`Let\'s ${script}`)
+      this.consoleLog(command)
+      console.log(childProcess.execSync(command).toString('utf-8'))
+    }
+  }
+  else {
+    const concurrentlyCommandsString = this[`${script}ConcurrentlyCommands`]
+      .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
+      .join(' ')
+    const command = `${app.concurrentlyDir} --kill-others ${concurrentlyCommandsString}`
+    this.consoleLog(command)
+    console.log(childProcess.execSync(command).toString('utf-8'))
+  }
 }
