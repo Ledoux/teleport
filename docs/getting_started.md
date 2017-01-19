@@ -4,6 +4,11 @@
 ![Teleport overview icon](teleport_overview.png "Teleport overview")
 
 ## Installation
+Dependencies:
+- Node version >= 6
+- Python 2.7 + pip >= v8
+
+You can install all dependencies and Teleport by typing
 ```
 make install
 ```
@@ -22,7 +27,8 @@ heroku login
 That's it! You are all set! :smiley:
 
 ### Kubernetes
-TODO
+Not well supported yet... We are fixing this :construction:
+
 [Additional setup](app_database.md) to the Kubernetes cluster.
 
 ## Start a new project
@@ -49,7 +55,7 @@ tpt -s
 ```
 
 ### Deploy the app
-Let's now deploy it directly on Heroku as we choose the heroku template.
+Let's now deploy it directly on Heroku as we choose this platform template.
 ```
 tpt -d
 ```
