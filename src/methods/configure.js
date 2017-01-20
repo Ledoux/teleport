@@ -29,7 +29,7 @@ export function configureScript () {
   const command = `cd ${this.project.dir} && sh bin/configure.sh`
   this.consoleInfo('Let\'s configure the project')
   this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
+  childProcess.execSync(command, { stdio: [0, 1, 2] })
 }
 
 export function configureProject () {
