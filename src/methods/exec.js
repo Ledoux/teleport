@@ -21,7 +21,7 @@ export function exec () {
       typedScript = `${platform}_${script}`
     }
     if (type) {
-      typedScript = `${type.name}_${script}`
+      typedScript = `${type.name}_${typedScript}`
     }
     // find the file
     const scriptFileDir = path.join(server.dir, 'scripts', `${typedScript}.sh`)
