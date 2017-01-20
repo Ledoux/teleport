@@ -40,10 +40,6 @@ export function exec () {
   if (app.venvDir) {
     command = `source ${app.venvDir}/bin/activate && ${command}`
   }
-  // ttab check
-  if (program.ttab === 'true') {
-    command = `${app.ttabDir} \"${command}\"`
-  }
   if (program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s exec this command !')
     this.consoleLog(command)
@@ -60,26 +56,20 @@ export function exec () {
   }
 }
 
-export function execResetConcurrently (script) {
-  this[`${script}ConcurrentlyCommands`] = []
-}
-
 export function execAddConcurrently (script, command) {
-  if ( this[`${script}ConcurrentlyCommands`] === undefined ) {
-    this[`${script}ConcurrentlyCommands`] = []
-  }
+  const concurrentlyCommandsString = `${script}ConcurrentlyCommands`
+  if (typeof this[concurrentlyCommandsString] === 'undefined') (
+    this[concurrentlyCommandsString] = []
+  )
   this[`${script}ConcurrentlyCommands`].push(command)
 }
 
 export function execConcurrentlyOrDirectly(script) {
   const { program } = this
   if (program.shell !== 'concurrently') {
-    if (program.user === 'me' && program.ttab === 'true') {
-      command = `${command} --ttab true`
-      this.consoleInfo(`Let\'s ${script}`)
-      this.consoleLog(command)
-      childProcess.execSync(command, { stdio: [0, 1, 2] })
-    }
+    this.consoleInfo(`Let\'s ${script}`)
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
   else {
     const concurrentlyCommandsString = this[`${script}ConcurrentlyCommands`]
