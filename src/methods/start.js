@@ -61,9 +61,6 @@ export function getPsProviderCommand () {
 export function getStartProviderCommand () {
   const { app, program, provider } = this
   let command = `cd ${provider.dataDir} && sh start.sh`
-  if (program.user === 'me' && program.ttab === 'true') {
-    command = `${app.ttabDir} \"${command}\"`
-  }
   return command
 }
 
@@ -99,9 +96,6 @@ export function getStartServerCommand () {
   if (app.venvDir) {
     command = `source ${app.venvDir}/bin/activate && ${command}`
   }
-  if (program.user === 'me' && program.shell === 'ttab') {
-    command = `${app.ttabDir} \"${command}\"`
-  }
   return command
 }
 
@@ -117,9 +111,6 @@ export function bundlerStart () {
   if (program.shell === 'concurrently') {
     this.concurrentlyCommands.push(command)
   } else {
-    if (program.shell === 'ttab'){
-      command = `${app.ttabDir} \'${command}\'`
-    }
     this.consoleInfo('Let\'s start the bundler')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })

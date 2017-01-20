@@ -2,8 +2,6 @@ import childProcess from 'child_process'
 
 export function run () {
   const { program } = this
-  // reset
-  this.execResetConcurrently('push')
   // type is localhost by default, but here we want to deploy
   // so we set actually the default to staging here
   if (program.type === 'localhost') {
