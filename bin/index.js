@@ -46,6 +46,7 @@ program
   .option('--script [type]', 'Script')
   .option('--server [type]', 'Server')
   .option('--servers [type]', 'Servers')
+  .option('--shell [type]', 'Shell', /^(concurrently|ttab|sync)$/i, 'concurrently')
   .option('--templates [type]', 'Templates')
   .option('--ttab [type]', 'Ttab', 'false')
   .option('--type [type]', 'Type', 'localhost')
