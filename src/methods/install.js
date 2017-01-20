@@ -3,7 +3,19 @@ import fs from 'fs'
 import path from 'path'
 
 export function install () {
+  const { app, program } = this
+  if (program.shell === 'concurrently') {
+    this.concurrentlyCommands = []
+  }
   this.getLevelMethod('install')()
+  if (program.shell === 'concurrently') {
+    const concurrentlyCommandsString = this.concurrentlyCommands
+      .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
+      .join(' ')
+    const command = `${app.concurrentlyDir} ${concurrentlyCommandsString}`
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
+  }
   this.consoleInfo(`install was successful !`)
 }
 
@@ -29,12 +41,17 @@ export function installBackend () {
 export function installScript () {
   const { app, program } = this
   let command = `cd ${this.project.dir} && sh bin/install.sh`
-  if (program.user === 'me') {
-    command = `${app.ttabDir} "${command}"`
+  if (program.shell !== 'concurrently') {
+    if (program.user === 'me' && program.ttab === 'true') {
+      command = `${app.ttabDir} "${command}"`
+    }
+    this.consoleInfo('Let\'s install the project')
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
+  } else {
+    this.concurrentlyCommands.push(command)
   }
-  this.consoleInfo('Let\'s install the project')
-  this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
+
 }
 
 export function installKubernetes () {
@@ -45,7 +62,7 @@ export function installKubernetes () {
   this.consoleInfo('Let\'s install kubernetes configs')
   const command = this.getInstallKubernetesCommand()
   this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
+  childProcess.execSync(command, { stdio: [0, 1, 2] })
   this.consoleInfo('kubernetes configs are installed !')
 }
 
@@ -89,14 +106,19 @@ export function installAppRequirements () {
   const { app, program } = this
   this.consoleInfo('Let \'s install in the venv the tpt requirements')
   let command = `pip install ${app.requirements.join(' ')}`
-  if (app.venvDir) {
-    command = `source ${app.venvDir}/bin/activate && ${command}`
+  if (program.shell !== 'concurrently') {
+    if (program.user === 'me' && program.ttab === 'true') {
+      if (app.venvDir) {
+        command = `source ${app.venvDir}/bin/activate && ${command}`
+      }
+      command = `${app.ttabDir} "${command}"`
+    }
+    this.consoleInfo('Let\'s install the project')
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
+  } else {
+    this.concurrentlyCommands.push(command)
   }
-  if (program.user === 'me') {
-    command = `${app.ttabDir} "${command}"`
-  }
-  this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
 export function installServers () {
@@ -124,14 +146,19 @@ export function installServer () {
   commands.push(`cd ${server.dir}`)
   commands.push(`${program.permission} sh scripts/${fileName}`)
   let command = commands.join(' && ')
-  if (app.venvDir) {
-    command = `source ${app.venvDir}/bin/activate && ${command}`
+  if (program.shell !== 'concurrently') {
+    if (program.user === 'me' && program.ttab === 'true') {
+      if (app.venvDir) {
+        command = `source ${app.venvDir}/bin/activate && ${command}`
+      }
+      command = `${app.ttabDir} "${command}"`
+    }
+    this.consoleInfo('Let\'s install the project')
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
+  } else {
+    this.concurrentlyCommands.push(command)
   }
-  if (program.user === 'me') {
-    command = `${app.ttabDir} "${command}"`
-  }
-  this.consoleLog(command)
-  console.log(childProcess.execSync(command).toString('utf-8'))
 }
 
 export function installSecrets () {
