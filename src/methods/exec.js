@@ -54,6 +54,9 @@ export function exec () {
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else if (script) {
     this.execAddConcurrently(script, command)
+    childProcess.execSync(this[`${script}ConcurrentlyCommands`], { stdio: [0, 1, 2] })
+  } else {
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
 }
 
@@ -62,6 +65,9 @@ export function execResetConcurrently (script) {
 }
 
 export function execAddConcurrently (script, command) {
+  if ( this[`${script}ConcurrentlyCommands`] === undefined ) {
+    this[`${script}ConcurrentlyCommands`] = []
+  }
   this[`${script}ConcurrentlyCommands`].push(command)
 }
 
