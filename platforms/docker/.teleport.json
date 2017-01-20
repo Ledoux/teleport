@@ -1,0 +1,48 @@
+{
+	"backend": {
+		"domain": "",
+		"helpersByName": {
+			"docker": {
+				"host": "",
+				"imagesByName": {
+					"base": {
+						"tag": "franblas/teleportjs",
+						"version": "0.1"
+					},
+					"current": {
+						"maintainer": {
+								"name": "Teleport",
+								"email": "<teleport@teleport.com>"
+						}
+					}
+				},
+				"tcp": false,
+				"port": "",
+				"registry": {
+					"url": "index.docker.io"
+				},
+				"version": "1.10.2"
+			},
+			"kubernetes": {
+				"host": "",
+				"port": "",
+				"nodeDomain": "",
+				"url": ""
+			}
+		}
+	},
+	"typesByName": {
+		"localhost": {
+		},
+		"production": {
+			"subDomain": "",
+			"hasDns": true,
+			"abbreviation": "prod"
+		},
+		"staging": {
+			"subDomain": "",
+			"hasDns": true,
+			"abbreviation": "stg"
+		}
+	}
+}
