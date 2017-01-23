@@ -193,10 +193,10 @@ export function setRunEnvironment () {
         run.host = run.nodeName
       }
     }
-    run.tag = type.name === 'prod'
+    run.tag = type.name === 'production'
     ? server.tag
     : `${type.abbreviation}-${server.tag}`
-    const virtualNamePrefix = type.name === 'prod'
+    const virtualNamePrefix = type.name === 'production'
     ? ''
     : `${type.abbreviation.toUpperCase()}_`
     run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.abbreviation.toUpperCase()}_SERVICE_HOST`
