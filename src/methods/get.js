@@ -52,10 +52,6 @@ export function getAvailablePorts (docker) {
   if (app.venvDir) {
     command = `source ${app.venvDir}/bin/activate && ${command}`
   }
-  /*
-  if (program.user === 'me') {
-    command = `${app.ttabDir} "${command}"`
-  }*/
   const rep = childProcess.execSync(command).toString('utf-8')
   const ports = JSON.parse('[' + rep.split('[').slice(-1)[0])
   return ports

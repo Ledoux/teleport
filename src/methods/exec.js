@@ -17,11 +17,16 @@ export function exec () {
   if (typeof script !== 'undefined' && server) {
     let platform = program.platform
     let typedScript = script
-    if (platformScriptNames.includes(script) && platform) {
+
+    if (platformScriptNames.includes(script) && platform &&
+      // NOTE : this is where we need to do a little hacky workaround
+      // our default platform value is heroku, but our scripts in our templates
+      // are by default kubernetes if they don't have a prefix platform
+      platform !== 'kubernetes') {
       typedScript = `${platform}_${script}`
     }
     if (type) {
-      typedScript = `${type.name}_${script}`
+      typedScript = `${type.name}_${typedScript}`
     }
     // find the file
     const scriptFileDir = path.join(server.dir, 'scripts', `${typedScript}.sh`)
@@ -40,10 +45,6 @@ export function exec () {
   if (app.venvDir) {
     command = `source ${app.venvDir}/bin/activate && ${command}`
   }
-  // ttab check
-  if (program.ttab === 'true') {
-    command = `${app.ttabDir} \"${command}\"`
-  }
   if (program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s exec this command !')
     this.consoleLog(command)
@@ -54,26 +55,26 @@ export function exec () {
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else if (script) {
     this.execAddConcurrently(script, command)
+    childProcess.execSync(this[`${script}ConcurrentlyCommands`], { stdio: [0, 1, 2] })
+  } else {
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
 }
 
-export function execResetConcurrently (script) {
-  this[`${script}ConcurrentlyCommands`] = []
-}
-
 export function execAddConcurrently (script, command) {
+  const concurrentlyCommandsString = `${script}ConcurrentlyCommands`
+  if (typeof this[concurrentlyCommandsString] === 'undefined') (
+    this[concurrentlyCommandsString] = []
+  )
   this[`${script}ConcurrentlyCommands`].push(command)
 }
 
 export function execConcurrentlyOrDirectly(script) {
   const { program } = this
   if (program.shell !== 'concurrently') {
-    if (program.user === 'me' && program.ttab === 'true') {
-      command = `${command} --ttab true`
-      this.consoleInfo(`Let\'s ${script}`)
-      this.consoleLog(command)
-      childProcess.execSync(command, { stdio: [0, 1, 2] })
-    }
+    this.consoleInfo(`Let\'s ${script}`)
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
   else {
     const concurrentlyCommandsString = this[`${script}ConcurrentlyCommands`]
