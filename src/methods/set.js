@@ -17,7 +17,6 @@ export function setAppEnvironment () {
   app.package = getPackage(app.dir)
   app.configFile = `.${app.package.name.split('.js')[0]}.json`
   app.requirements = getRequirements(app.dir)
-  app.ttabDir = path.join(app.dir, 'node_modules/ttab/bin/ttab')
   app.concurrentlyDir = path.join(app.dir, 'node_modules/.bin/concurrently')
   app.pythonDir = path.join(app.dir, 'bin/index.py')
   let virtualEnvDir = childProcess.execSync('echo $VIRTUAL_ENV')
@@ -194,10 +193,10 @@ export function setRunEnvironment () {
         run.host = run.nodeName
       }
     }
-    run.tag = type.name === 'prod'
+    run.tag = type.name === 'production'
     ? server.tag
     : `${type.abbreviation}-${server.tag}`
-    const virtualNamePrefix = type.name === 'prod'
+    const virtualNamePrefix = type.name === 'production'
     ? ''
     : `${type.abbreviation.toUpperCase()}_`
     run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.abbreviation.toUpperCase()}_SERVICE_HOST`
