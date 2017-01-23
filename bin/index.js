@@ -46,12 +46,10 @@ program
   .option('--script [type]', 'Script')
   .option('--server [type]', 'Server')
   .option('--servers [type]', 'Servers')
-  .option('--shell [type]', 'Shell', /^(concurrently|ttab|sync)$/i, 'concurrently')
+  .option('--shell [type]', 'Shell', /^(concurrently|sync)$/i, 'concurrently')
   .option('--templates [type]', 'Templates')
-  .option('--ttab [type]', 'Ttab', 'false')
   .option('--type [type]', 'Type', 'localhost')
   .option('--types [type]', 'Types')
-  .option('--user [type]', 'User', /^(me|jenkins)$/i, 'me')
   .option('--venv [type]', 'Venv', /^(true|false)$/i, 'true')
   .option('--web [type]', 'Web', /^(true|false)$/i, 'true')
 

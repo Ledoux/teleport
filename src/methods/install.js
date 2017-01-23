@@ -42,9 +42,6 @@ export function installScript () {
   const { app, program } = this
   let command = `cd ${this.project.dir} && sh bin/install.sh`
   if (program.shell !== 'concurrently') {
-    if (program.user === 'me' && program.ttab === 'true') {
-      command = `${app.ttabDir} "${command}"`
-    }
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
@@ -107,12 +104,6 @@ export function installAppRequirements () {
   this.consoleInfo('Let \'s install in the venv the tpt requirements')
   let command = `pip install ${app.requirements.join(' ')}`
   if (program.shell !== 'concurrently') {
-    if (program.user === 'me' && program.ttab === 'true') {
-      if (app.venvDir) {
-        command = `source ${app.venvDir}/bin/activate && ${command}`
-      }
-      command = `${app.ttabDir} "${command}"`
-    }
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
@@ -147,12 +138,6 @@ export function installServer () {
   commands.push(`${program.permission} sh scripts/${fileName}`)
   let command = commands.join(' && ')
   if (program.shell !== 'concurrently') {
-    if (program.user === 'me' && program.ttab === 'true') {
-      if (app.venvDir) {
-        command = `source ${app.venvDir}/bin/activate && ${command}`
-      }
-      command = `${app.ttabDir} "${command}"`
-    }
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })

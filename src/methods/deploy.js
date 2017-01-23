@@ -4,23 +4,16 @@ import path from 'path'
 
 export function deploy () {
   const { project, program } = this
-  // reset
-  this.execResetConcurrently('deploy')
   // type is localhost by default, but here we want to deploy
   // so we set actually the default to staging here
   if (program.type === 'localhost') {
     program.type = 'staging'
   }
-  /*
-  let command = `cd ${project.dir} && sh bin/deploy.sh`
-  if (program.type !== 'localhost') {
-    command = `${command} TYPE=${program.type}`
-  }*/
   let commands = []
   if (fs.existsSync(path.join(project.dir, 'bin/bundle.sh'))) {
     commands.push(`cd ${project.dir} && sh bin/bundle.sh`)
   }
-  commands.push(`tpt -e --script deploy --type ${program.type} --servers all`)
+  commands.push(`tpt -e --script deploy --type ${program.type} --platform ${program.platform} --servers all`)
   let command = commands.join(' && ')
   // exec
   this.consoleLog(command)
