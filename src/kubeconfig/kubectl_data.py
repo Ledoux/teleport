@@ -1,14 +1,14 @@
 # encoding: utf-8
-
-import rethinkdb as r
 import arrow
-import yaml
+import os
+import rethinkdb as r
 import time
+import yaml
 
-RETHINK_HOST = 'localhost'
-RETHINK_PORT = 28015
-RETHINK_DATABASE = 'infraservices'
-RETHINK_TABLE = 'services'
+RETHINK_HOST = os.environ.get('KUBERNETES_RETHINK_HOST', 'localhost')
+RETHINK_PORT = int(os.environ.get('KUBERNETES_RETHINK_PORT', 28015))
+RETHINK_DATABASE = os.environ.get('KUBERNETES_RETHINK_DATABASE', 'infraservices')
+RETHINK_TABLE = os.environ.get('KUBERNETES_RETHINK_TABLE','services')
 
 def rethink_connect(database):
   """

@@ -59,7 +59,7 @@ export function formatString (input, context) {
   }
   // return
   return (function (input, context) {
-    return replacedInput.replace(/\$\[[^$()]+\]/g, replacer(context))
+    return replacedInput.replace(/\$\[[^$()]+?\]/g, replacer(context))
   })(input, context)
 }
 
