@@ -13,7 +13,7 @@ export function build () {
   if (fs.existsSync(path.join(project.dir, 'bin/bundle.sh'))) {
     commands.push(`cd ${project.dir} && sh bin/bundle.sh`)
   }
-  commands.push(`tpt -e --script build --type ${program.type} --servers all`)
+  commands.push(`tpt -e --script build --type ${program.type} --platform ${program.platform} --servers all`)
   let command = commands.join(' && ')
   // exec
   this.consoleLog(command)
