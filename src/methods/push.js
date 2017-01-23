@@ -8,7 +8,7 @@ export function push () {
     program.type = 'staging'
   }
   let commands = []
-  commands.push(`tpt -e --script push --type ${program.type} --servers all`)
+  commands.push(`tpt -e --script push --type ${program.type} --platform ${program.platform} --servers all`)
   let command = commands.join(' && ')
   // exec
   this.consoleLog(command)
