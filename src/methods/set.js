@@ -16,6 +16,20 @@ export function setAppEnvironment () {
   app.dir = path.join(__dirname, '../../')
   app.package = getPackage(app.dir)
   app.configFile = `.${app.package.name.split('.js')[0]}.json`
+  app.projectsByName = this.getProjectsByName(app.dir)
+  // let's check if there is no deprecated projects... ie
+  // project with an object in the teleport config, but actually
+  // the corresponding dir does not exist anymore
+  let isRewritten = false
+  Object.keys(app.projectsByName).forEach(name => {
+    if (!fs.existsSync(app.projectsByName[name].dir)) {
+      delete app.projectsByName[name]
+      isRewritten = true
+    }
+  })
+  if (isRewritten) {
+    this.writeProjectsByName()
+  }
   app.requirements = getRequirements(app.dir)
   app.concurrentlyDir = path.join(app.dir, 'node_modules/.bin/concurrently')
   app.pythonDir = path.join(app.dir, 'bin/index.py')
