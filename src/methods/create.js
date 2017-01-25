@@ -9,12 +9,7 @@ export function create () {
 
 export function createProject () {
   // unpack
-  const { project, program } = this
-  // warn
-  if (typeof program.project !== 'string') {
-    this.consoleWarn('You didn\'t mention any particular name, please configure --project <your_project_name> in your command')
-    return
-  }
+  const { app, project, program } = this
   // check if such a project exists already here
   project.dir = path.join(this.currentDir, program.project)
   this.consoleInfo(`wait a second... We create your ${program.project} project !`)
@@ -22,6 +17,16 @@ export function createProject () {
     this.consoleWarn(`There is already a ${program.project} here...`)
     process.exit()
   }
+  const projectsByName = app.projectsByName
+  const previousProject = projectsByName[program.project]
+  if (previousProject) {
+    this.consoleWarn(`There is already a ${program.project} here ${previousProject.dir}...`)
+    process.exit()
+  }
+  projectsByName[program.project] = {
+    dir: project.dir
+  }
+  this.writeProjectsByName(projectsByName)
   // mkdir the folder app
   childProcess.execSync(`mkdir -p ${program.project}`)
   // write default package
