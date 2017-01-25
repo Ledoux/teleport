@@ -22,7 +22,7 @@ export function createProject () {
     this.consoleWarn(`There is already a ${program.project} here...`)
     process.exit()
   }
-  const projectsByName = app.config.projectsByName
+  const projectsByName = app.projectsByName
   const previousProject = projectsByName[program.project]
   if (previousProject) {
     this.consoleWarn(`There is already a ${program.project} here ${previousProject.dir}...`)
@@ -31,7 +31,7 @@ export function createProject () {
   projectsByName[program.project] = {
     dir: project.dir
   }
-  this.writeConfig(app.dir, app.config)
+  this.writeProjectsByName(projectsByName)
   // mkdir the folder app
   childProcess.execSync(`mkdir -p ${program.project}`)
   // write default package

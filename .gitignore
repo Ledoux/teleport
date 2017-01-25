@@ -3,6 +3,6 @@
 *.pyc
 node_modules/
 lib/
-.teleport.json
+.projects.json
 yarn.lock
 yarn-error.log
