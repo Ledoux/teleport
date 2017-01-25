@@ -1,6 +1,8 @@
 // regeneratorRuntime is needed for async await
 import 'babel-polyfill'
 
+import { id } from './utils'
+
 const methods = [
   'build',
   'configure',
@@ -58,6 +60,11 @@ class Teleport {
     }
     // if we want to create something, then we return because we are not in a scope or in a project yet
     if (typeof program.create !== 'undefined') {
+      // in the case where no project name was given, we need to invent one based on a uniq ID
+      if (typeof program.project !== 'string') {
+        this.consoleWarn('You didn\'t mention any particular name, we are going to give you one')
+        program.project = `app-${id()}`
+      }
       this.level = ['project'].find(level => program[level])
       return
     }
