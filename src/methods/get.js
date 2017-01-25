@@ -30,6 +30,12 @@ export function getConfig (dir) {
   return config
 }
 
+export function getProjectsByName () {
+  const { app: { dir } } = this
+  const fileDir = path.join(dir, '.projects.json')
+  return JSON.parse(fs.readFileSync(fileDir))
+}
+
 export function getAppConfig (dir) {
   return JSON.stringify(this.getConfig(this.app.dir), null, 2)
 }
