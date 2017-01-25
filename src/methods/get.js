@@ -33,6 +33,9 @@ export function getConfig (dir) {
 export function getProjectsByName () {
   const { app: { dir } } = this
   const fileDir = path.join(dir, '.projects.json')
+  if ( !fs.existsSync(fileDir) ) {
+    fs.writeFileSync(fileDir, '{}')
+  }
   return JSON.parse(fs.readFileSync(fileDir))
 }
 
