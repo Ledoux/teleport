@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+PROJECT_NAME='app-test'
+
+venv_creation() {
+  virtualenv venv && . venv/bin/activate
+  pip install -r ../requirements.txt --no-cache-dir
+}
+
+venv_remove() {
+  deactivate
+}
+
+create_fake_folder() {
+  local fake_folder="$1"
+  mkdir -pv $fake_folder
+}
+
+clean_project() {
+  local fake_folder="$1"
+  rm -rf $fake_folder
+}
