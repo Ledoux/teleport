@@ -21,7 +21,7 @@
   },
   "scripts": {
     "compile": "./node_modules/.bin/babel --presets es2015,stage-3 -d lib/ src/",
-    "postinstall": "rm -rf lib &&  echo '{}' >.teleport.json && mkdir -p lib && npm run compile",
+    "postinstall": "rm -rf lib && (ls .projects.json || echo '{}' > .projects.json) && mkdir -p lib && npm run compile",
     "update": "npm unpublish teleport.js@0.0.1 && npm publish",
     "link": "source bin/link.sh",
     "watch": "./node_modules/nodemon/bin/nodemon.js src/index.js --watch src --exec babel-node --presets es2015,stage-3"
