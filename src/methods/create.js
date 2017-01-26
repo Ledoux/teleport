@@ -13,11 +13,6 @@ import path from 'path'
 // - it calls the sub tasks init
 
 export function create () {
-  this.getLevelMethod('create')()
-  this.consoleInfo('Your teleport create was sucessful !')
-}
-
-export function createProject () {
   // unpack
   const { app, project, program } = this
   // check if such a project exists already here
