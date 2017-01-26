@@ -15,7 +15,7 @@ import fs from 'fs'
 import path from 'path'
 
 export function install () {
-  const { backend, app, program, project:  } = this
+  const { backend, app, program, project } = this
   // we may need to temp all the child process commands
   // in an array in order to call them at once with
   // a concurrently command
