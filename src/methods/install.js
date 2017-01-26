@@ -15,7 +15,7 @@ import fs from 'fs'
 import path from 'path'
 
 export function install () {
-  const { backend, app, program } = this
+  const { backend, app, program, project:  } = this
   // we may need to temp all the child process commands
   // in an array in order to call them at once with
   // a concurrently command
@@ -23,7 +23,7 @@ export function install () {
     this.concurrentlyInstallCommands = []
   }
   // check for backend install
-  this.consoleInfo(`Let\'s install this ${name} project !`)
+  this.consoleInfo(`Let\'s install this project !`)
   if (backend) {
     this.installScript()
     this.installKubernetes()
