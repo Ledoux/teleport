@@ -27,14 +27,6 @@ import path from 'path'
 
 import { getRequirements, writeRequirements } from '../utils'
 
-const excludedDirs = [
-  'package.json',
-  '.gitignore',
-  'README.md',
-  configFile,
-  '\'_p_*\''
-]
-
 export function dump () {
   const { project } = this
   this.consoleInfo(`Let\'s dump the templates in ${project.package.name}`)
@@ -50,6 +42,13 @@ export function dump () {
 
 export function getDumpProjectBoilerplateCommand () {
   const { app: { configFile }, project } = this
+  const excludedDirs = [
+    'package.json',
+    '.gitignore',
+    'README.md',
+    configFile,
+    '\'_p_*\''
+  ]
   return project.config.templateNames
     .map(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
