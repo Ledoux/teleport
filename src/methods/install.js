@@ -2,53 +2,61 @@ import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
+// INSTALL SUB TASK
+// install is called at the create task time, but you can also call it in an already
+// created project if you want to reinstall things.
+// - installScript method looks if there are no such global bin/install.sh script to be executed
+// - installKubernetes checks if your keubernetes config is okay for a potential deploy via this platform
+// - teleport have some python scripts therefore installAppRequirements makes sure that they
+// are installed in the bound venv
+// - installSecrets install empty json config file put in the server config folders
+// - replace is an important sub task that you need to see specifically in the replace.js script
+// - finally installServers parse all the servers to do their own specific install process by executing
+// their scripts/install.sh file
+
 export function install () {
-  const { app, program } = this
+  const { backend, app, program } = this
+  // we may need to temp all the child process commands
+  // in an array in order to call them at once with
+  // a concurrently command
   if (program.shell === 'concurrently') {
-    this.concurrentlyCommands = []
+    this.concurrentlyInstallCommands = []
   }
-  this.getLevelMethod('install')()
+  // check for backend install
+  this.consoleInfo(`Let\'s install this ${name} project !`)
+  if (backend) {
+    this.installScript()
+    this.installKubernetes()
+    this.installAppRequirements()
+    this.installSecrets()
+    this.write(this.project)
+    this.replace()
+    this.installServers()
+  }
+  // now
   if (program.shell === 'concurrently') {
-    const concurrentlyCommandsString = this.concurrentlyCommands
+    const concurrentlyInstallCommandsString = this.concurrentlyInstallCommands
       .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
       .join(' ')
-    const command = `${app.concurrentlyDir} ${concurrentlyCommandsString}`
+    const command = `${app.concurrentlyDir} ${concurrentlyInstallCommandsString}`
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
   this.consoleInfo(`install was successful !`)
 }
 
-export function installProject () {
-  const { backend, project: { package: { name } } } = this
-  this.consoleInfo(`Let\'s install this ${name} project !`)
-  if (backend) {
-    this.installBackend()
-  }
-  this.consoleInfo('project install done !')
-}
-
-export function installBackend () {
-  this.installScript()
-  this.installKubernetes()
-  this.installAppRequirements()
-  this.installSecrets()
-  this.write(this.project)
-  this.replace()
-  this.installServers()
-}
-
 export function installScript () {
   const { app, program } = this
   let command = `cd ${this.project.dir} && sh bin/install.sh`
+  // if the shell is concurrently, we don't want actually to execute
+  // the code directly but put it in the temp commands array
   if (program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
-    this.concurrentlyCommands.push(command)
+    this.concurrentlyInstallCommands.push(command)
   }
-
 }
 
 export function installKubernetes () {
@@ -103,12 +111,14 @@ export function installAppRequirements () {
   const { app, program } = this
   this.consoleInfo('Let \'s install in the venv the tpt requirements')
   let command = `pip install ${app.requirements.join(' ')}`
+  // if the shell is concurrently, we don't want actually to execute
+  // the code directly but put it in the temp commands array
   if (program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
-    this.concurrentlyCommands.push(command)
+    this.concurrentlyInstallCommands.push(command)
   }
 }
 
@@ -137,12 +147,14 @@ export function installServer () {
   commands.push(`cd ${server.dir}`)
   commands.push(`${program.permission} sh scripts/${fileName}`)
   let command = commands.join(' && ')
+  // if the shell is concurrently, we don't want actually to execute
+  // the code directly but put it in the temp commands array
   if (program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
-    this.concurrentlyCommands.push(command)
+    this.concurrentlyInstallCommands.push(command)
   }
 }
 
