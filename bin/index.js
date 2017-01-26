@@ -5,7 +5,7 @@ const program = require('commander')
 const Teleport = require('../lib').default
 
 program
-  .version('0.0.1')
+  .version(require('../package.json').version)
   .option('configure', 'Configure')
   .option('-b, build', 'Build')
   .option('-c, create', 'Create')
