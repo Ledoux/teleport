@@ -18,6 +18,7 @@
     "nodemon": "^1.11.0",
     "jest": "18.1.0"
   },
+  "engines": { "node": ">= 6.0" },
   "main": "lib/index.js",
   "name": "teleport.js",
   "publishConfig": {
