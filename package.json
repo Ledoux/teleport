@@ -16,7 +16,7 @@
     "babel-preset-stage-3": "^6.17.0",
     "concurrently": "^3.1.0",
     "nodemon": "^1.11.0",
-    "jest": "18.1.0",
+    "jest": "18.1.0"
   },
   "main": "lib/index.js",
   "name": "teleport.js",
@@ -27,6 +27,7 @@
     "compile": "./node_modules/.bin/babel --presets es2015,stage-3 -d lib/ src/",
     "postinstall": "rm -rf lib && mkdir -p lib && npm run compile",
     "link": "source bin/link.sh",
+    "test": "jest",
     "watch": "./node_modules/nodemon/bin/nodemon.js src/index.js --watch src --exec babel-node --presets es2015,stage-3"
   },
   "bin": {
