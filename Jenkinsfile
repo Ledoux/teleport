@@ -14,10 +14,10 @@ def cmds = [
 'flask-webrouter':BACKEND_ONLY_TEST + ' fwbr teleport-flask-webrouter teleport-heroku',
 'flask-websocket':BACKEND_ONLY_TEST + ' fwbs teleport-flask-websocket teleport-heroku',
 'express-webrouter':BACKEND_ONLY_TEST + ' ewbr teleport-express-webrouter teleport-heroku',
-'flask-webrouter-webpack-react':BACKEND_AND_FRONTEND_TEST + ' fwbrwpr teleport-flask-webrouter teleport-webpack-react teleport-heroku',
-'express-webrouter-webpack-react':BACKEND_AND_FRONTEND_TEST + ' ewbrwpr teleport-express-webrouter teleport-webpack-react teleport-heroku',
-'flask-webrouter-webpack-angular':BACKEND_AND_FRONTEND_TEST + ' fwbrwpa teleport-flask-webrouter teleport-webpack-angular teleport-heroku',
-'express-webrouter-webpack-angular':BACKEND_AND_FRONTEND_TEST + ' ewbrwpa teleport-express-webrouter teleport-webpack-angular teleport-heroku'
+'flask-webrouter-webpack-react':BACKEND_AND_FRONTEND_TEST + ' fwbr teleport-flask-webrouter teleport-webpack-react teleport-heroku',
+'express-webrouter-webpack-react':BACKEND_AND_FRONTEND_TEST + ' ewbr teleport-express-webrouter teleport-webpack-react teleport-heroku',
+'flask-webrouter-webpack-angular':BACKEND_AND_FRONTEND_TEST + ' fwbr teleport-flask-webrouter teleport-webpack-angular teleport-heroku',
+'express-webrouter-webpack-angular':BACKEND_AND_FRONTEND_TEST + ' ewbr teleport-express-webrouter teleport-webpack-angular teleport-heroku'
 ]
 def builders = [:]
 node {
