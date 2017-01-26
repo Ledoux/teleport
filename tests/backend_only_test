@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+. tests/utils
+
+test_backend_template() {
+  local fake_folder="$1"
+  local backend_template="$2"
+  local platform_template="$3"
+  clean_project $fake_folder
+  create_fake_folder $fake_folder
+  cd $fake_folder && venv_creation
+  tpt -c --project $PROJECT_NAME --templates $backend_template,$platform_template && cd .. || exit 1
+  # deploy_template
+  venv_remove
+}
+
+test_backend_template $1 $2 $3
