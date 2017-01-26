@@ -1,7 +1,3 @@
-import childProcess from 'child_process'
-import fs from 'fs'
-import path from 'path'
-
 // INSTALL SUB TASK
 // install is called at the create task time, but you can also call it in an already
 // created project if you want to reinstall things.
@@ -13,6 +9,10 @@ import path from 'path'
 // - replace is an important sub task that you need to see specifically in the replace.js script
 // - finally installServers parse all the servers to do their own specific install process by executing
 // their scripts/install.sh file
+
+import childProcess from 'child_process'
+import fs from 'fs'
+import path from 'path'
 
 export function install () {
   const { backend, app, program } = this

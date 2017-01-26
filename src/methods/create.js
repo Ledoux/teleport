@@ -1,7 +1,3 @@
-import childProcess from 'child_process'
-import fs from 'fs'
-import path from 'path'
-
 // CREATE TASK
 // this is the first task you can call from teleport to build  project.
 // - it decides if the name of the project is good set
@@ -11,6 +7,10 @@ import path from 'path'
 // of your teleport
 // - it create your folder that will contain the file system
 // - it calls the sub tasks init
+
+import childProcess from 'child_process'
+import fs from 'fs'
+import path from 'path'
 
 export function create () {
   // unpack

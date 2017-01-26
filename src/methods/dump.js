@@ -1,10 +1,3 @@
-import childProcess from 'child_process'
-import fs from 'fs'
-import { flatten, reverse, uniq } from 'lodash'
-import path from 'path'
-
-import { getRequirements, writeRequirements } from '../utils'
-
 // DUMP SUB TASK
 // dump is called at the init sub task time, but you can also call it in an already
 // created project if you want to dump again things. Two things are to be understood here.
@@ -25,7 +18,14 @@ import { getRequirements, writeRequirements } from '../utils'
 // by first looking at the first one that has a suffix server name ending by
 // 'webrouter', and if not, it will find one with a websocket prefix.
 // After having merged the frontend-server folder into the <>-webrouter
-// or <>-websocket one, it removes the temp frontend-server folder. 
+// or <>-websocket one, it removes the temp frontend-server folder.
+
+import childProcess from 'child_process'
+import fs from 'fs'
+import { flatten, reverse, uniq } from 'lodash'
+import path from 'path'
+
+import { getRequirements, writeRequirements } from '../utils'
 
 const excludedDirs = [
   'package.json',
