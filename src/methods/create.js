@@ -2,6 +2,16 @@ import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
+// CREATE TASK
+// this is the first task you can call from teleport to build  project.
+// - it decides if the name of the project is good set
+// (and if not, it will give you one random)
+// - it checks if there is folder with the same project name here.
+// - it checks if there are no such project already refered into the .projects.json
+// of your teleport
+// - it create your folder that will contain the file system
+// - it calls the sub tasks init
+
 export function create () {
   this.getLevelMethod('create')()
   this.consoleInfo('Your teleport create was sucessful !')
