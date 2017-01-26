@@ -5,20 +5,37 @@ import path from 'path'
 
 import { getRequirements, writeRequirements } from '../utils'
 
+// DUMP SUB TASK
+// dump is called at the init sub task time, but you can also call it in an already
+// created project if you want to dump again things. Two things are to be understood here.
+// - dump looks first at all the boilerplate file systems contained in each
+// template of the app. These are reachable in the node_modules dir.
+// The app does an rsync of each of them with the actual file system of the project.
+// One important point is that dump does not rsync important dirs listed in
+// the 'excludedDirs' array global variable. Indeed some of them (essentially
+// the config files like package.json) has been already merged during the
+// configure time (a previous init sub task). Others that are prefixed by _p_
+// are placeholder files that will be actually added at the replace
+// time (which is a sub task of install).
+// - if you have a frontend bundling template, teleport has at this stage
+// created a temp server folder 'frontend-server' in your backend/servers dir.
+// Given the setting now on what should the server responsible to render the
+// html part of the app, the dump task will actually merge this phantom temp
+// server folder into the real one. Teleport finds the real html render server
+// by first looking at the first one that has a suffix server name ending by
+// 'webrouter', and if not, it will find one with a websocket prefix.
+// After having merged the frontend-server folder into the <>-webrouter
+// or <>-websocket one, it removes the temp frontend-server folder. 
+
+const excludedDirs = [
+  'package.json',
+  '.gitignore',
+  'README.md',
+  configFile,
+  '\'_p_*\''
+]
+
 export function dump () {
-  this.getLevelMethod('dump')()
-  this.consoleInfo('Your teleport dump was sucessful !')
-}
-
-export function dumpProject () {
-  const { project } = this
-  // boilerplate
-  this.dumpProjectBoilerplate()
-  // info
-  this.consoleInfo(`Your ${project.package.name} project was successfully dumped!`)
-}
-
-export function dumpProjectBoilerplate () {
   const { project } = this
   this.consoleInfo(`Let\'s dump the templates in ${project.package.name}`)
   const command = this.getDumpProjectBoilerplateCommand()
@@ -26,6 +43,9 @@ export function dumpProjectBoilerplate () {
   const buffer = childProcess.execSync(command)
   console.log(buffer.toString('utf-8'))
   this.dumpMergeFrontendServer()
+  // info
+  this.consoleInfo(`Your ${project.package.name} project was successfully dumped!`)
+
 }
 
 export function getDumpProjectBoilerplateCommand () {
@@ -38,13 +58,7 @@ export function getDumpProjectBoilerplateCommand () {
       // config
       const templateConfig = this.getConfig(templateDir)
       const totalExcludedDirs = (templateConfig.excludedDirs || [])
-        .concat([
-          'package.json',
-          '.gitignore',
-          'README.md',
-          configFile,
-          '\'_p_*\''
-        ])
+        .concat(excludedDirs)
       const excludeOption = totalExcludedDirs
         .map(exclude => `--exclude=${exclude}`)
         .join(' ')
