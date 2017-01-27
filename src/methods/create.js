@@ -17,15 +17,15 @@ export function create () {
   const { app, project, program } = this
   // check if such a project already exists here
   project.dir = path.join(this.currentDir, program.project)
-  this.consoleInfo(`wait a second... We create your ${program.project} project !`)
+  this.consoleInfo(`wait a second... Creating your ${program.project} project !`)
   if (fs.existsSync(project.dir)) {
-    this.consoleWarn(`There is already a ${program.project} here...`)
+    this.consoleWarn(`Oops. There is already a ${program.project} here... Exiting.`)
     process.exit()
   }
   const projectsByName = app.projectsByName
   const previousProject = projectsByName[program.project]
   if (previousProject) {
-    this.consoleWarn(`There is already a ${program.project} here ${previousProject.dir}...`)
+    this.consoleWarn(`Oops. There is already a ${program.project} here ${previousProject.dir}... Exiting`)
     process.exit()
   }
   projectsByName[program.project] = {
