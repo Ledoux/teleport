@@ -1,14 +1,18 @@
 // REPLACE SUB TASK
-// replace is called at the create task time, but you can also call it in an already
-// created project if you want to reinstall things.
-// - installScript method looks if there are no such global bin/install.sh script to be executed
-// - installKubernetes checks if your keubernetes config is okay for a potential deploy via this platform
-// - teleport have some python scripts therefore installAppRequirements makes sure that they
-// are installed in the bound venv
-// - installSecrets install empty json config file put in the server config folders
-// - replace is an important sub task that you need to see specifically in the replace.js script
-// - finally installServers parse all the servers to do their own specific install process by executing
-// their scripts/install.sh file
+// replace is called at the install task time, but you can also call it in an already
+// created project if you want to recopy the placeholder files.
+// - replace goes to each server of the project and looks at all the placholder files found
+// at the same place in each template. Placeholder files are targeted
+// because of their prefix _p_ in their file name. The content of these files
+// is formated by replacing all the $[] values from the one it can get
+// dynamically from the this teleport object. You can check more precisely how
+// does the formatString function work in the ../utils/index.js. Note also that
+// the replace method will create for one _p_<file_name> placeholder file the equivalent
+// number of files that you have of types (localhost, staging and production
+// in the common case). Meaning that you will have localhost_<file_name>,
+// staging_<file_name>, production_<file_name> created.
+// - replace goes to your bundler folder and does the same thing task, except
+// that it is not going to create one file per type, just only one.
 
 import fs from 'fs'
 import glob from 'glob'
