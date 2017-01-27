@@ -89,10 +89,12 @@ export function dumpMergeFrontendServer () {
 
 export function dumpServerBaseRequirements () {
   const { project, server } = this
-  const allRequirements = uniq(flatten(reverse(project.allTemplateNames
-    .map(templateName => {
-      const fileDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name, 'config')
-      return getRequirements(fileDir, 'base')
-    }))))
+  const allRequirements = uniq(flatten(reverse(
+    project.allTemplateNames
+      .map(templateName => {
+        const fileDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name, 'config')
+        return getRequirements(fileDir, 'base')
+      })
+  )))
   writeRequirements(server.configDir, allRequirements, 'base')
 }
