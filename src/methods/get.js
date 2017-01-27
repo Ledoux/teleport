@@ -39,10 +39,6 @@ export function getProjectsByName () {
   return JSON.parse(fs.readFileSync(fileDir))
 }
 
-export function getAppConfig (dir) {
-  return JSON.stringify(this.getConfig(this.app.dir), null, 2)
-}
-
 export function getAvailablePorts (docker) {
   const { app, run } = this
   docker = docker || run.docker
