@@ -108,7 +108,7 @@ export function replaceServerPlaceholderFiles () {
       // we know that there are some script and config files dedicated to the deploy step
       // so we don't have actually to write them for the localhost type case
       if (type.name === 'localhost') {
-        if (notLocalhostPlaceholderFiles.find(notLocalhostPlaceholderFile => {
+        if (notLocalhostPlaceholderFiles.some(notLocalhostPlaceholderFile => {
           return notLocalhostPlaceholderFile.test(installedFileName)
         })) {
           return
