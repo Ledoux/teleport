@@ -102,11 +102,6 @@ export function getStartServerCommand () {
   return command
 }
 
-export function openServerWindow () {
-  const command = this.getOpenServerWindow()
-  childProcess.execSync(command)
-}
-
 export function bundlerStart () {
   const { app, program, project } = this
   if (!fs.existsSync(path.join(project.dir, 'bundler'))) return
