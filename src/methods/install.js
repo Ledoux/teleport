@@ -78,6 +78,7 @@ export function getInstallKubernetesCommand () {
   const { kubernetes, project: { dir } } = this
   if (typeof kubernetes === 'undefined') {
     this.consoleError('You must define a kubernetes config')
+    process.exit(1)
   }
   let commands = [`cd ${path.join(dir, 'bin')}`]
   commands.push(`kubectl config set-cluster master --server=http://${kubernetes.host}:${kubernetes.port}`)
