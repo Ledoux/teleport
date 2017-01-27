@@ -89,13 +89,18 @@ export function getInstallKubernetesCommand () {
 
 export function installDocker () {
   const { docker } = this
-  const dockerVersionDigit = parseInt(childProcess
-    .execSync('docker version --format \'{{.Client.Version}}\'')
-    .toString('utf-8')
-    .replace(/(\.+)/g, ''))
+  const dockerVersionDigit = parseInt(
+    childProcess
+      .execSync('docker version --format \'{{.Client.Version}}\'')
+      .toString('utf-8')
+      .replace(/(\.+)/g, '')
+    , 10
+  )
   const projectDockerVersion = docker.version
-  const projectDockerVersionDigit = parseInt(projectDockerVersion
-    .replace(/(\.+)/g, ''))
+  const projectDockerVersionDigit = parseInt(
+    projectDockerVersion.replace(/(\.+)/g, ''),
+    10
+  )
   if (dockerVersionDigit > projectDockerVersionDigit) {
     const dockerFile = `docker-${project.dockerVersion}`
     const command = [
