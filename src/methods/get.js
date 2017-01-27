@@ -75,7 +75,6 @@ export function getDepTemplateNames (templateName, depTemplateNames = []) {
   depTemplateNames.push(templateName)
   const templateDir = path.join(project.dir, 'node_modules', templateName)
   let templateConfig = this.getConfig(templateDir)
-  templateConfig = this.getConfig(templateDir)
   const templatePackage = getPackage(templateDir)
   if (typeof templatePackage !== 'undefined' && typeof templateConfig !== 'undefined') {
     const dependencies = Object.assign({}, templatePackage.dependencies, templatePackage.devDependencies)
