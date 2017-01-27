@@ -147,7 +147,7 @@ export function installServer () {
   if (!fs.existsSync(fileDir)) {
     fileName = 'install.sh'
   }
-  this.consoleInfo(`Let\'s launch the ${fileName} needed in the server... it can\'t take a long time`)
+  this.consoleInfo(`Let\'s launch the ${fileName} needed in the server... it will not take long`)
   // for now for settings like Xcode8 with ElCaptain uwsgi in venv install breaks, and only solution is
   // to do that with sudo
   commands.push(`cd ${server.dir}`)
