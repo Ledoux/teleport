@@ -99,28 +99,11 @@ export function configureProjectGitignore () {
 
 export function configureServer () {
   const { server } = this
-  // this.configureServerConfig()
   this.configureServerPackage()
   mkdirp.sync(server.dir)
   writePackage(server.dir, server.package)
   this.configureServerGitignore()
   writeGitignore(server.dir, server.gitignores)
-}
-
-export function configureServerConfig () {
-  // unpack
-  const { project, server } = this
-
-  // merge
-  server.config = merge(
-    server.config || {},
-    ...project.config.templateNames
-      .map(templateName => {
-        const templateDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name)
-        let templateConfig = this.getConfig(templateDir)
-        return templateConfig
-      })
-    )
 }
 
 export function configureServerPackage () {

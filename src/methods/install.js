@@ -1,34 +1,30 @@
+// INSTALL SUB TASK
+// install is called at the create task time, but you can also call it in an already
+// created project if you want to reinstall things:
+// - installScript method looks if there are no such global bin/install.sh script to be executed
+// - installKubernetes checks if your kubernetes config is okay for a potential deploy via this platform
+// - teleport have some python scripts therefore installAppRequirements makes sure that they
+// are installed in the bound venv
+// - installSecrets install empty json config file put in the server config folders
+// - replace is an important sub task that you need to see specifically in the replace.js script
+// - finally installServers parse all the servers to do their own specific install process by executing
+// their scripts/install.sh file
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
 export function install () {
-  const { app, program } = this
+  const { backend, app, program, project } = this
+  if (!backend) return
+  // normally the install commands run themselves,
+  // but when using a shell like concurrently we collect the commands
+  // in an array in order to call them at once
   if (program.shell === 'concurrently') {
-    this.concurrentlyCommands = []
+    this.concurrentlyInstallCommands = []
   }
-  this.getLevelMethod('install')()
-  if (program.shell === 'concurrently') {
-    const concurrentlyCommandsString = this.concurrentlyCommands
-      .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
-      .join(' ')
-    const command = `${app.concurrentlyDir} ${concurrentlyCommandsString}`
-    this.consoleLog(command)
-    childProcess.execSync(command, { stdio: [0, 1, 2] })
-  }
-  this.consoleInfo(`install was successful !`)
-}
-
-export function installProject () {
-  const { backend, project: { package: { name } } } = this
-  this.consoleInfo(`Let\'s install this ${name} project !`)
-  if (backend) {
-    this.installBackend()
-  }
-  this.consoleInfo('project install done !')
-}
-
-export function installBackend () {
+  this.consoleInfo(`Let\'s install this project !`)
+  // NOTE: this.concurrentlyInstallCommands is populated by the following commands
   this.installScript()
   this.installKubernetes()
   this.installAppRequirements()
@@ -36,19 +32,32 @@ export function installBackend () {
   this.write(this.project)
   this.replace()
   this.installServers()
+  // now execute the collected commands if shell is concurrently
+  if (program.shell === 'concurrently') {
+    const concurrentlyInstallCommandsString = this.concurrentlyInstallCommands
+      .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
+      .join(' ')
+    const command = `${app.concurrentlyDir} ${concurrentlyInstallCommandsString}`
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
+  }
+  this.consoleInfo(`install was successful !`)
 }
 
 export function installScript () {
   const { app, program } = this
+  // check if exists
+  if (!fs.existsSync(path.join(this.project.dir, 'bin/install.sh'))) return
   let command = `cd ${this.project.dir} && sh bin/install.sh`
+  // if the shell is concurrently, we don't want actually to execute
+  // the code directly but put it in the temp commands array
   if (program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
-    this.concurrentlyCommands.push(command)
+    this.concurrentlyInstallCommands.push(command)
   }
-
 }
 
 export function installKubernetes () {
@@ -68,6 +77,7 @@ export function getInstallKubernetesCommand () {
   const { kubernetes, project: { dir } } = this
   if (typeof kubernetes === 'undefined') {
     this.consoleError('You must define a kubernetes config')
+    process.exit(1)
   }
   let commands = [`cd ${path.join(dir, 'bin')}`]
   commands.push(`kubectl config set-cluster master --server=http://${kubernetes.host}:${kubernetes.port}`)
@@ -79,13 +89,18 @@ export function getInstallKubernetesCommand () {
 
 export function installDocker () {
   const { docker } = this
-  const dockerVersionDigit = parseInt(childProcess
-    .execSync('docker version --format \'{{.Client.Version}}\'')
-    .toString('utf-8')
-    .replace(/(\.+)/g, ''))
+  const dockerVersionDigit = parseInt(
+    childProcess
+      .execSync('docker version --format \'{{.Client.Version}}\'')
+      .toString('utf-8')
+      .replace(/(\.+)/g, '')
+    , 10
+  )
   const projectDockerVersion = docker.version
-  const projectDockerVersionDigit = parseInt(projectDockerVersion
-    .replace(/(\.+)/g, ''))
+  const projectDockerVersionDigit = parseInt(
+    projectDockerVersion.replace(/(\.+)/g, ''),
+    10
+  )
   if (dockerVersionDigit > projectDockerVersionDigit) {
     const dockerFile = `docker-${project.dockerVersion}`
     const command = [
@@ -101,14 +116,16 @@ export function installDocker () {
 
 export function installAppRequirements () {
   const { app, program } = this
-  this.consoleInfo('Let \'s install in the venv the tpt requirements')
+  this.consoleInfo('Let\'s install in the venv the tpt requirements')
   let command = `pip install ${app.requirements.join(' ')}`
+  // if the shell is concurrently, we don't want actually to execute
+  // the code directly but put it in the temp commands array
   if (program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
-    this.concurrentlyCommands.push(command)
+    this.concurrentlyInstallCommands.push(command)
   }
 }
 
@@ -125,24 +142,25 @@ export function installServers () {
 export function installServer () {
   const { app, program, server } = this
   const commands = []
-  let fileName = 'install.sh'
-  fileName = `localhost_${fileName}`
+  let fileName = `localhost_install.sh`
   let fileDir = path.join(server.dir, 'scripts', fileName)
   if (!fs.existsSync(fileDir)) {
     fileName = 'install.sh'
   }
-  this.consoleInfo(`Let\'s launch the ${fileName} needed in the server... it can\'t take a long time`)
+  this.consoleInfo(`Let\'s launch the ${fileName} needed in the server... it will not take long`)
   // for now for settings like Xcode8 with ElCaptain uwsgi in venv install breaks, and only solution is
   // to do that with sudo
   commands.push(`cd ${server.dir}`)
   commands.push(`${program.permission} sh scripts/${fileName}`)
   let command = commands.join(' && ')
+  // if the shell is concurrently, we don't want actually to execute
+  // the code directly but put it in the temp commands array
   if (program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
-    this.concurrentlyCommands.push(command)
+    this.concurrentlyInstallCommands.push(command)
   }
 }
 

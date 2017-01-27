@@ -21,7 +21,7 @@ export function writeProjectsByName (projectsByName) {
 export function write (level) {
   if (level) {
     if (typeof level.dir !== 'string') {
-      this.consoleError('level.dir is not correct to write something !')
+      this.consoleError('level.dir is not of the right format, expected \'string\'')
       return
     }
     this.writeConfig(level.dir, level.config)

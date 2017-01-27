@@ -6,26 +6,30 @@ const Teleport = require('../lib').default
 
 program
   .version(require('../package.json').version)
+  // list first all the tasks and sub tasks
   .option('configure', 'Configure')
   .option('-b, build', 'Build')
   .option('-c, create', 'Create')
   .option('-d, deploy', 'Deploy')
   .option('dump', 'Dump')
-  .option('-e, exec', 'Exec')
-  .option('-g, get', 'Get')
-  .option('-k, kill', 'Kill')
-  .option('-l, log', 'Log')
-  .option('-m, map', 'Map')
   .option('init', 'Init')
   .option('-i, install', 'Install')
   .option('-p, push', 'Push')
   .option('replace', 'Replace')
   .option('-r, run', 'Run')
   .option('-s, start', 'Start')
+
+  // list all the utility commands
+  .option('-e, exec', 'Exec')
+  .option('-g, get', 'Get')
+  .option('-k, kill', 'Kill')
+  .option('-l, log', 'Log')
+  .option('-m, map', 'Map')
   .option('-u, uninstall', 'Uninstall')
   .option('-z, zsh', 'Zsh')
   .option('status', 'Status')
 
+  // list all the options
   .option('--cache [type]', 'Cache', 'true')
   .option('--collection [type]', 'Collection')
   .option('--data [type]', 'Data', 'localhost')

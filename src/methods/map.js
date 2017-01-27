@@ -9,7 +9,7 @@ export function getArrayFromArrayOrObject (value) {
   : values(value)
 }
 
-// this function is kind of usefult to apply a function among different
+// this method is kind of usefult to apply a function among different
 // set of program attributes, bases on some entities name different sets
 export function map () {
   const { program } = this
@@ -31,33 +31,7 @@ export function map () {
   })
   // get the collection slugs
   const collectionSlugs = program.collections.split('|')
-  // get all the cartesian products
-  const names = collectionSlugs
-    .map(collectionSlug => {
-      // is the slug an array ?
-      if (collectionSlug.slice(-1)[0] === ']') {
-        return collectionSlug
-                .match(/\[(.*?)\]/g)
-                .slice(-1)[0] // take the last match
-                .slice(1, -1) // remove [ and ]
-                .split(',')
-        /*
-        return collectionSlug
-                      .split('[')
-                      .slice(-1)[0] // take last [content]
-                      .slice(0, -1) // remove ']'
-                      .split(',')
-                      // .map(key => getArrayFromArrayOrObject(get(this, key)))
-        */
-      } else {
-        // if not it is an all request
-        // const key = `${collectionSlugs}ByName`
-        const key = collectionSlug
-        // collection = getArrayFromArrayOrObject(get(this, key))
-        return Object.keys(get(this, key) || {})
-      }
-    })
-  const pairs = getCartesianProduct(...names)
+
   // get the program singular names
   const singularNames = collectionSlugs.map(collectionSlug => {
     let pluralName = collectionSlug.split('.')
@@ -73,6 +47,28 @@ export function map () {
   const environmentMethods = titleSingularNames.map(titleSingularName =>
     this[`set${titleSingularName}Environment`]
   )
+
+  // get all the cartesian products
+  const names = collectionSlugs
+    .map(collectionSlug => {
+      // is the slug an array ?
+      if (collectionSlug.slice(-1)[0] === ']') {
+        return collectionSlug
+                .match(/\[(.*?)\]/g)
+                .slice(-1)[0] // take the last match
+                .slice(1, -1) // remove [ and ]
+                .split(',')
+      } else {
+        // if not it is an all request
+        // const key = `${collectionSlugs}ByName`
+        const key = collectionSlug
+        // collection = getArrayFromArrayOrObject(get(this, key))
+        return Object.keys(get(this, key) || {})
+      }
+    })
+
+  const pairs = getCartesianProduct(...names)
+
   // set the program for each case and call the method
   pairs.forEach(pair => {
     // set env
@@ -87,21 +83,18 @@ export function map () {
 
 export function mapInServers () {
   const { program } = this
-  // program.collections = 'project.config.backend.servers'
   program.collections = 'project.config.backend.serversByName'
   this.map()
 }
 
 export function mapInProviders () {
   const { program } = this
-  // program.collections = 'project.config.backend.providers'
   program.collections = 'project.config.backend.providersByName'
   this.map()
 }
 
 export function mapInTypesAndServers () {
   const { program } = this
-  // program.collections = 'project.config.types,project.config.backend.servers'
   program.collections = 'project.config.typesByName|project.config.backend.serversByName'
   this.map()
 }

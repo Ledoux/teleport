@@ -10,6 +10,9 @@ export function start () {
   if (program.shell === 'concurrently') {
     this.concurrentlyCommands = []
   }
+  // NOTE: normally these commands execute directly,
+  // but for the concurrently shell they are instead pushed to the
+  // this.concurrentlyCommands array, and executed together below
   this.backendStart()
   this.bundlerStart()
   if (program.shell === 'concurrently') {
@@ -97,11 +100,6 @@ export function getStartServerCommand () {
     command = `source ${app.venvDir}/bin/activate && ${command}`
   }
   return command
-}
-
-export function openServerWindow () {
-  const command = this.getOpenServerWindow()
-  childProcess.execSync(command)
 }
 
 export function bundlerStart () {

@@ -1,3 +1,18 @@
+// REPLACE SUB TASK
+// replace is called at the install task time, but you can also call it in an already
+// created project if you want to recopy the placeholder files.
+// - replace goes to each server of the project and looks at all the placholder files
+// for each template.
+// Placeholder files are matched via the _p_ prefix in their file name.
+// In these files all the $[] instances are replaced with values from this teleport object.
+// You can check more precisely how the formatString function works in the ../utils/index.js.
+// Note also that the replace method will for each _p_<file_name> placeholder file
+// create one file per type (localhost, staging and production in the common case).
+// Meaning that you will have localhost_<file_name>, staging_<file_name>,
+// production_<file_name> created.
+// - replace goes to your bundler folder and does the same thing, except
+// that it is not going to create one file per type, just only one.
+
 import fs from 'fs'
 import glob from 'glob'
 import mkdirp from 'mkdirp'
@@ -36,11 +51,6 @@ const notLocalhostPlaceholderFiles = [
 const templatePrefix = '_p_'
 
 export function replace () {
-  this.replaceProject()
-  this.consoleInfo('Your teleport replace was sucessful !')
-}
-
-export function replaceProject () {
   const { program, project } = this
   // boilerplate
   program.method = 'replaceServerPlaceholderFiles'
@@ -71,7 +81,7 @@ export function replaceServerPlaceholderFiles () {
     backend.dockerEnv,
     server.dockerEnv
   )
-  // specify the port if it is already set
+  // specify the port if it is available
   if (server.runsByTypeName[type.name] && server.runsByTypeName[type.name].port) {
     run.port = server.runsByTypeName[type.name].port
   }
@@ -98,7 +108,7 @@ export function replaceServerPlaceholderFiles () {
       // we know that there are some script and config files dedicated to the deploy step
       // so we don't have actually to write them for the localhost type case
       if (type.name === 'localhost') {
-        if (notLocalhostPlaceholderFiles.find(notLocalhostPlaceholderFile => {
+        if (notLocalhostPlaceholderFiles.some(notLocalhostPlaceholderFile => {
           return notLocalhostPlaceholderFile.test(installedFileName)
         })) {
           return
