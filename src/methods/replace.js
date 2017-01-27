@@ -81,7 +81,7 @@ export function replaceServerPlaceholderFiles () {
     backend.dockerEnv,
     server.dockerEnv
   )
-  // specify the port if it is already set
+  // specify the port if it is available
   if (server.runsByTypeName[type.name] && server.runsByTypeName[type.name].port) {
     run.port = server.runsByTypeName[type.name].port
   }
