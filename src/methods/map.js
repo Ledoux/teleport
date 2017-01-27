@@ -31,6 +31,23 @@ export function map () {
   })
   // get the collection slugs
   const collectionSlugs = program.collections.split('|')
+
+  // get the program singular names
+  const singularNames = collectionSlugs.map(collectionSlug => {
+    let pluralName = collectionSlug.split('.')
+                                  .slice(-1)[0]
+                                  .split('[')[0]
+    if (pluralName.endsWith('ByName')) {
+      pluralName = pluralName.slice(0, -6)
+    }
+    return pluralize(pluralName, 1)
+  })
+  const titleSingularNames = singularNames.map(toTitleCase)
+  // get the env methods
+  const environmentMethods = titleSingularNames.map(titleSingularName =>
+    this[`set${titleSingularName}Environment`]
+  )
+
   // get all the cartesian products
   const names = collectionSlugs
     .map(collectionSlug => {
@@ -49,22 +66,9 @@ export function map () {
         return Object.keys(get(this, key) || {})
       }
     })
+
   const pairs = getCartesianProduct(...names)
-  // get the program singular names
-  const singularNames = collectionSlugs.map(collectionSlug => {
-    let pluralName = collectionSlug.split('.')
-                                  .slice(-1)[0]
-                                  .split('[')[0]
-    if (pluralName.endsWith('ByName')) {
-      pluralName = pluralName.slice(0, -6)
-    }
-    return pluralize(pluralName, 1)
-  })
-  const titleSingularNames = singularNames.map(toTitleCase)
-  // get the env methods
-  const environmentMethods = titleSingularNames.map(titleSingularName =>
-    this[`set${titleSingularName}Environment`]
-  )
+
   // set the program for each case and call the method
   pairs.forEach(pair => {
     // set env
