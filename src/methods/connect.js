@@ -1,3 +1,10 @@
+// CONNECT SUB TASK
+// connect is called at the replace sub task time, it is particularly related
+// to the docker deploy config.
+// - it looks if the ports for each of your server were specified. If not, it will then
+// give to them some that are available given the range of ports that your docker platform
+// can still share.
+
 import { values } from 'lodash'
 
 export function connect () {

@@ -19,6 +19,9 @@ We defined a set of methods splitting this workflow into small pieces of tasks (
 |   |   - install node dependencies for frontend (if it exists)
 |   |   +-- replace
 |   |   |   - grab all the placeholder files in the templates and write them into the project with replaced config values
+|   |   |   +-- connect (docker case)
+|   |   |   |   - if no port was specified, Teleport finds the ones that are available
+|   |   |   |   for your deployed servers.
 +-- start
 |   - start locally the manager for each server
 |   - start frontend dev server (if it exists)
