@@ -116,7 +116,7 @@ export function installDocker () {
 
 export function installAppRequirements () {
   const { app, program } = this
-  this.consoleInfo('Let \'s install in the venv the tpt requirements')
+  this.consoleInfo('Let\'s install in the venv the tpt requirements')
   let command = `pip install ${app.requirements.join(' ')}`
   // if the shell is concurrently, we don't want actually to execute
   // the code directly but put it in the temp commands array
