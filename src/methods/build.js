@@ -1,7 +1,8 @@
 // BUILD SUB TASK
 // build is called at the deploy task time, but you can also call it in an already
 // created project. It is here about to build the heroku git repositories/docker images
-// of each server that will help then to deploy the whole project. 
+// of each server that will help then to deploy the whole project.
+// - build method executes the script that bundles the possible frontend
 // - build goes to each server and execute their scripts/<type>_<platform>_build.sh
 // script.
 
