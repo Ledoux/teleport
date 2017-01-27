@@ -1,7 +1,7 @@
 {
   "author": "The Snips Tooling Team",
   "license": "MIT",
-  "description": "Node framework to bootstrap and deploy applications based on templates",
+  "description": "Node framework to bootstrap and deploy web applications based on templates",
   "dependencies": {
     "colors": "^1.1.2",
     "commander": "^2.9.0",
