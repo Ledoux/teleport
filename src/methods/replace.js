@@ -1,5 +1,5 @@
 // REPLACE SUB TASK
-// install is called at the create task time, but you can also call it in an already
+// replace is called at the create task time, but you can also call it in an already
 // created project if you want to reinstall things.
 // - installScript method looks if there are no such global bin/install.sh script to be executed
 // - installKubernetes checks if your keubernetes config is okay for a potential deploy via this platform
@@ -48,11 +48,6 @@ const notLocalhostPlaceholderFiles = [
 const templatePrefix = '_p_'
 
 export function replace () {
-  this.replaceProject()
-  this.consoleInfo('Your teleport replace was sucessful !')
-}
-
-export function replaceProject () {
   const { program, project } = this
   // boilerplate
   program.method = 'replaceServerPlaceholderFiles'

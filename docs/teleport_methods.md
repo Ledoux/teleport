@@ -1,6 +1,6 @@
 # Teleport methods
 
-Teleport is an application that makes easier the different steps in a bootstraping/deployment process.
+Teleport is an application that makes bootstraping and deployment easier.
 
 We defined a set of methods splitting this workflow into small pieces of tasks (create, start, deploy) and sub-tasks (init, configure, dump, install, replace, build, push, run). You can look at the graph below that explains how is structured the global spec of Teleport.
 
@@ -9,12 +9,11 @@ We defined a set of methods splitting this workflow into small pieces of tasks (
 |   - create project folder
 |   - reference the project in .projects.json
 |   +-- init
-|   |   - download templates
+|   |   - download the templates
 |   |   +-- configure
 |   |   |   - merge the config files from templates
 |   |   +-- dump
 |   |   |   - merge the file systems from templates
-|   |   |   (but override files)
 |   +-- install:
 |   |   - install python and or node dependencies in each server
 |   |   - install node dependencies for frontend (if it exists)
@@ -32,7 +31,7 @@ We defined a set of methods splitting this workflow into small pieces of tasks (
 |   |   - start a web heroku dyno / start a docker container
 ```
 
-Note that each of them is callable by a command option. For instance, you can type `tpt install` or shorter `tpt -i`. you can look at the [commander config of the app](https://github.com/snipsco/teleport/blob/master/bin/index.js]) to know all the apis.
+Note that these methods are callable by a command option. For instance, you can type `tpt install` or shorter `tpt -i`. you can look at the commander config [there](https://github.com/snipsco/teleport/blob/master/bin/index.js]) to know the full api.
 
 Also you need to know what Teleport instances at any call of the binary:
   - it sets the app, project, backend, and the frontend environments. This essentially done by reading each `.teleport.json` config file that the app finds

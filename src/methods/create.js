@@ -1,11 +1,11 @@
 // CREATE TASK
-// this is the first task you can call from teleport to build  project.
+// this is the first task you can call from teleport to build project:
 // - it decides if the name of the project is good set
 // (and if not, it will give you one random)
-// - it checks if there is folder with the same project name here.
-// - it checks if there are no such project already refered into the .projects.json
-// of your teleport
-// - it create your folder that will contain the file system
+// - it checks if there is a folder with the same project name here
+// - it checks if there is no such project already refered into the .projects.json
+// of your teleport app
+// - it creates your folder that will contain the file system
 // - it calls the sub tasks init
 
 import childProcess from 'child_process'

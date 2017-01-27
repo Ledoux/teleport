@@ -16,6 +16,7 @@ export function toCapitalUnderscoreCase (string) {
   return string.replace( /([a-z])([A-Z])/g, '$1_$2' ).replace(/-/g, '_').toUpperCase()
 }
 
+// this method helps to have all the matches given a regexp and an input string
 export function getMatches (re, input) {
   let m
   const matches = []
@@ -138,11 +139,12 @@ export function getCartesianProduct (...args) {
   }, [ [] ])
 }
 
-export function id () {
-  function s4 () {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
+function s4 () {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+}
+
+export function getRandomId () {
   return s4() + s4()
 }

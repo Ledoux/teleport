@@ -43,16 +43,6 @@ export function getAppConfig (dir) {
   return JSON.stringify(this.getConfig(this.app.dir), null, 2)
 }
 
-export function getLevelMethod (command) {
-  const methodName = `${command}${toTitleCase(this.level)}`
-  const method = this[methodName]
-  if (typeof method === 'undefined') {
-    this.consoleError(`Sorry there is no such ${methodName} method`)
-    process.exit()
-  }
-  return method
-}
-
 export function getAvailablePorts (docker) {
   const { app, run } = this
   docker = docker || run.docker

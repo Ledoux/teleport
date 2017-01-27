@@ -9,7 +9,7 @@ export function getArrayFromArrayOrObject (value) {
   : values(value)
 }
 
-// this function is kind of usefult to apply a function among different
+// this method is kind of usefult to apply a function among different
 // set of program attributes, bases on some entities name different sets
 export function map () {
   const { program } = this
@@ -41,14 +41,6 @@ export function map () {
                 .slice(-1)[0] // take the last match
                 .slice(1, -1) // remove [ and ]
                 .split(',')
-        /*
-        return collectionSlug
-                      .split('[')
-                      .slice(-1)[0] // take last [content]
-                      .slice(0, -1) // remove ']'
-                      .split(',')
-                      // .map(key => getArrayFromArrayOrObject(get(this, key)))
-        */
       } else {
         // if not it is an all request
         // const key = `${collectionSlugs}ByName`
@@ -87,21 +79,18 @@ export function map () {
 
 export function mapInServers () {
   const { program } = this
-  // program.collections = 'project.config.backend.servers'
   program.collections = 'project.config.backend.serversByName'
   this.map()
 }
 
 export function mapInProviders () {
   const { program } = this
-  // program.collections = 'project.config.backend.providers'
   program.collections = 'project.config.backend.providersByName'
   this.map()
 }
 
 export function mapInTypesAndServers () {
   const { program } = this
-  // program.collections = 'project.config.types,project.config.backend.servers'
   program.collections = 'project.config.typesByName|project.config.backend.serversByName'
   this.map()
 }

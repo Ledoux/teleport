@@ -1,8 +1,8 @@
 // INSTALL SUB TASK
 // install is called at the create task time, but you can also call it in an already
-// created project if you want to reinstall things.
+// created project if you want to reinstall things:
 // - installScript method looks if there are no such global bin/install.sh script to be executed
-// - installKubernetes checks if your keubernetes config is okay for a potential deploy via this platform
+// - installKubernetes checks if your kubernetes config is okay for a potential deploy via this platform
 // - teleport have some python scripts therefore installAppRequirements makes sure that they
 // are installed in the bound venv
 // - installSecrets install empty json config file put in the server config folders
