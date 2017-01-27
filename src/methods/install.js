@@ -142,8 +142,7 @@ export function installServers () {
 export function installServer () {
   const { app, program, server } = this
   const commands = []
-  let fileName = 'install.sh'
-  fileName = `localhost_${fileName}`
+  let fileName = `localhost_install.sh`
   let fileDir = path.join(server.dir, 'scripts', fileName)
   if (!fs.existsSync(fileDir)) {
     fileName = 'install.sh'
