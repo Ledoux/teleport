@@ -16,24 +16,23 @@ import path from 'path'
 
 export function install () {
   const { backend, app, program, project } = this
-  // we may need to temp all the child process commands
-  // in an array in order to call them at once with
-  // a concurrently command
+  if (!backend) return
+  // normally the install commands run themselves,
+  // but when using a shell like concurrently we collect the commands
+  // in an array in order to call them at once
   if (program.shell === 'concurrently') {
     this.concurrentlyInstallCommands = []
   }
-  // check for backend install
   this.consoleInfo(`Let\'s install this project !`)
-  if (backend) {
-    this.installScript()
-    this.installKubernetes()
-    this.installAppRequirements()
-    this.installSecrets()
-    this.write(this.project)
-    this.replace()
-    this.installServers()
-  }
-  // now
+  // NOTE: this.concurrentlyInstallCommands is populated by the following commands
+  this.installScript()
+  this.installKubernetes()
+  this.installAppRequirements()
+  this.installSecrets()
+  this.write(this.project)
+  this.replace()
+  this.installServers()
+  // now execute the collected commands if shell is concurrently
   if (program.shell === 'concurrently') {
     const concurrentlyInstallCommandsString = this.concurrentlyInstallCommands
       .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
