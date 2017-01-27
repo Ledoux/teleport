@@ -46,7 +46,6 @@ export function getAppConfig (dir) {
 export function getAvailablePorts (docker) {
   const { app, run } = this
   docker = docker || run.docker
-  this.checkWeb()
   let command = `python ${app.pythonDir} ports --filter available --docker ${docker}`
   if (app.venvDir) {
     command = `source ${app.venvDir}/bin/activate && ${command}`

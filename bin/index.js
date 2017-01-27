@@ -54,7 +54,6 @@ program
   .option('--type [type]', 'Type', 'localhost')
   .option('--types [type]', 'Types')
   .option('--venv [type]', 'Venv', /^(true|false)$/i, 'true')
-  .option('--web [type]', 'Web', /^(true|false)$/i, 'true')
 
   .option('')
 

@@ -6,7 +6,6 @@ export function connect () {
 
 export function connectPorts () {
   this.checkProject()
-  this.checkWeb()
   const { project: { config, dir } } = this
   this.availablePortsBySubDomain = {}
   values(config.typesByName)
