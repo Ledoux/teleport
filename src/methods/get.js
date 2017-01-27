@@ -88,8 +88,9 @@ export function getDepTemplateNames (templateName, depTemplateNames = []) {
 
 export function getAllTemplateNames () {
   const { project: { config: { templateNames } } } = this
-  return _.uniq(_.flatten(templateNames.map(templateName =>
-  this.getDepTemplateNames(templateName))))
+  return _.uniq(_.flatten(
+    templateNames.map(templateName => this.getDepTemplateNames(templateName))
+  ))
 }
 
 export function getTemplateDependencies () {
