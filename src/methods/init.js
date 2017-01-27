@@ -30,8 +30,7 @@ export function init () {
     '*node_modules',
     '*.pyc',
     '*secret.json',
-    '*venv',
-    'yarn.lock'
+    '*venv'
   ]
   writeGitignore(project.dir, project.gitignores)
   // write a configure file

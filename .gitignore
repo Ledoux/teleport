@@ -5,5 +5,4 @@ node_modules/
 lib/
 npm-debug.log
 .projects.json
-yarn.lock
 yarn-error.log
