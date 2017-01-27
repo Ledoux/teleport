@@ -1,3 +1,10 @@
+// START SUB TASK
+// start is the task that will run your project locally.
+// - it goes to each server and execute their scripts/localhost_start.sh
+// script.
+// - it runs the server of assets and scripts that you may have if you have a frontend
+// bundler like webpack.
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
