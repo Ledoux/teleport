@@ -17,7 +17,6 @@ const methods = [
   'init',
   'install',
   'kill',
-  'log',
   'map',
   'push',
   'read',

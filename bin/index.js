@@ -23,7 +23,6 @@ program
   .option('-e, exec', 'Exec')
   .option('-g, get', 'Get')
   .option('-k, kill', 'Kill')
-  .option('-l, log', 'Log')
   .option('-m, map', 'Map')
   .option('-u, uninstall', 'Uninstall')
   .option('-z, zsh', 'Zsh')
