@@ -1,12 +1,12 @@
 // CREATE TASK
-// this is the first task you can call from teleport to build project:
-// - it decides if the name of the project is good set
-// (and if not, it will give you one random)
-// - it checks if there is a folder with the same project name here
-// - it checks if there is no such project already refered into the .projects.json
-// of your teleport app
-// - it creates your folder that will contain the file system
-// - it calls the sub tasks init
+// this is the first task you can call from teleport to build  project.
+// - it decides if the name of the project has been set
+// (and if not, it will give you a generated name)
+// - it checks that the project name is not already existing on the file system
+// - it checks that the project name is not already in the projects.json file
+// of your teleport
+// - it create your folder that will contain the file system
+// - it calls the sub tasks init method
 
 import childProcess from 'child_process'
 import fs from 'fs'
@@ -15,7 +15,7 @@ import path from 'path'
 export function create () {
   // unpack
   const { app, project, program } = this
-  // check if such a project exists already here
+  // check if such a project already exists here
   project.dir = path.join(this.currentDir, program.project)
   this.consoleInfo(`wait a second... We create your ${program.project} project !`)
   if (fs.existsSync(project.dir)) {
