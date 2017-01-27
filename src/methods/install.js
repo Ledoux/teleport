@@ -47,6 +47,8 @@ export function install () {
 
 export function installScript () {
   const { app, program } = this
+  // check if exists
+  if (!fs.existsSync(path.join(this.project.dir, 'bin/install.sh'))) return
   let command = `cd ${this.project.dir} && sh bin/install.sh`
   // if the shell is concurrently, we don't want actually to execute
   // the code directly but put it in the temp commands array
