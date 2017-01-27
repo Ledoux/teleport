@@ -1,17 +1,16 @@
 // REPLACE SUB TASK
 // replace is called at the install task time, but you can also call it in an already
 // created project if you want to recopy the placeholder files.
-// - replace goes to each server of the project and looks at all the placholder files found
-// at the same place in each template. Placeholder files are targeted
-// because of their prefix _p_ in their file name. The content of these files
-// is formated by replacing all the $[] values from the one it can get
-// dynamically from the this teleport object. You can check more precisely how
-// does the formatString function work in the ../utils/index.js. Note also that
-// the replace method will create for one _p_<file_name> placeholder file the equivalent
-// number of files that you have of types (localhost, staging and production
-// in the common case). Meaning that you will have localhost_<file_name>,
-// staging_<file_name>, production_<file_name> created.
-// - replace goes to your bundler folder and does the same thing task, except
+// - replace goes to each server of the project and looks at all the placholder files
+// for each template.
+// Placeholder files are matched via the _p_ prefix in their file name.
+// In these files all the $[] instances are replaced with values from this teleport object.
+// You can check more precisely how the formatString function works in the ../utils/index.js.
+// Note also that the replace method will for each _p_<file_name> placeholder file
+// create one file per type (localhost, staging and production in the common case).
+// Meaning that you will have localhost_<file_name>, staging_<file_name>,
+// production_<file_name> created.
+// - replace goes to your bundler folder and does the same thing, except
 // that it is not going to create one file per type, just only one.
 
 import fs from 'fs'
