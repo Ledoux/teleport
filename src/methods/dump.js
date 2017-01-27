@@ -1,9 +1,9 @@
 // DUMP SUB TASK
 // dump is called at the init sub task time, but you can also call it in an already
-// created project if you want to dump again things. Two things are to be understood here.
+// created project if you want to dump things again. Two things are to be understood here.
 // - dump looks first at all the boilerplate file systems contained in each
 // template of the app. These are reachable in the node_modules dir.
-// The app does an rsync of each of them with the actual file system of the project.
+// The app rsync's them to the project folder.
 // One important point is that dump does not rsync important dirs listed in
 // the 'excludedDirs' array global variable. Indeed some of them (essentially
 // the config files like package.json) has been already merged during the
@@ -12,11 +12,11 @@
 // time (which is a sub task of install).
 // - if you have a frontend bundling template, teleport has at this stage
 // created a temp server folder 'frontend-server' in your backend/servers dir.
-// Given the setting now on what should the server responsible to render the
-// html part of the app, the dump task will actually merge this phantom temp
-// server folder into the real one. Teleport finds the real html render server
-// by first looking at the first one that has a suffix server name ending by
-// 'webrouter', and if not, it will find one with a websocket prefix.
+// Given the setting now for how the server will render the html part of the app,
+// the dump task will actually merge this phantom temp server folder into the real one.
+// Teleport finds the real html render server by first looking at the first one
+// that has a suffix server name ending by 'webrouter', and if not,
+// it will find one with a websocket prefix.
 // After having merged the frontend-server folder into the <>-webrouter
 // or <>-websocket one, it removes the temp frontend-server folder.
 
@@ -42,6 +42,7 @@ export function dump () {
 
 export function getDumpProjectBoilerplateCommand () {
   const { app: { configFile }, project } = this
+  // exclude package.json and configFile because we want to merge them
   const excludedDirs = [
     'package.json',
     '.gitignore',
@@ -52,10 +53,8 @@ export function getDumpProjectBoilerplateCommand () {
   return project.config.templateNames
     .map(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
-      // we exclude package.json and config file because we want to merge them
-      // and we exclude also files mentionned in the excludes item of the template
-      // config
       const templateConfig = this.getConfig(templateDir)
+      // also exclute files from the templateConfig
       const totalExcludedDirs = (templateConfig.excludedDirs || [])
         .concat(excludedDirs)
       const excludeOption = totalExcludedDirs
@@ -74,9 +73,9 @@ export function dumpMergeFrontendServer () {
       this.setFrontendEnvironment()
       frontend = this.frontend
     }
-    this.consoleInfo('Let\'s move the frontend server in the appropriate place')
+    this.consoleInfo('Let\'s move the frontend server to the appropriate place')
     const frontendServerDir = path.join(serversDir, 'frontend-server')
-    // we actually move and merge the frontend server into the specified frontend server
+    // move and merge the frontend server to the specified frontend server
     let command = `rsync -rv ${frontendServerDir}/* ${serversDir}/${frontend.serverName}`
     command += `&& rm -rf ${frontendServerDir}`
     this.consoleLog(command)
@@ -90,10 +89,12 @@ export function dumpMergeFrontendServer () {
 
 export function dumpServerBaseRequirements () {
   const { project, server } = this
-  const allRequirements = uniq(flatten(reverse(project.allTemplateNames
-    .map(templateName => {
-      const fileDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name, 'config')
-      return getRequirements(fileDir, 'base')
-    }))))
+  const allRequirements = uniq(flatten(reverse(
+    project.allTemplateNames
+      .map(templateName => {
+        const fileDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name, 'config')
+        return getRequirements(fileDir, 'base')
+      })
+  )))
   writeRequirements(server.configDir, allRequirements, 'base')
 }

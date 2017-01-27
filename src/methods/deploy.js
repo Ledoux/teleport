@@ -1,10 +1,10 @@
 // DEPLOY TASK
-// deploy is the last task that you would have to call if you want
-// to push a project outside of your localhost environment, given a certain typed context.
+// deploy is the last task that to call when you want to push a project
+// outside of your localhost environment, given a certain typed context.
 // (Usually type can be "staging" or "production")
 // - it first checks if we need to bundle the frontend part.
-// - it then call for each server the deploy method that will execute their scripts/<type>_deploy.sh
-// a deploy consists mainly in a build, push and run sub tasks.
+// - it then calls, for each server, the deploy method that will execute their scripts/<type>_deploy.sh
+// a deploy consists mainly of build, push and run sub tasks.
 
 import childProcess from 'child_process'
 import fs from 'fs'

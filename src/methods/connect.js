@@ -30,7 +30,7 @@ export function connectPorts () {
           if (this.availablePortsBySubDomain[subDomain]) {
             const availablePorts = this.availablePortsBySubDomain[subDomain]
             if (availablePorts.length < 1) {
-              this.consoleWarn('Unfortunately, there are not enough available ports for your services... You need to get some as free before.')
+              this.consoleWarn('The required ports are unavailable. Free them up and retry.')
               process.exit()
             }
             run.port = availablePorts[0].toString()

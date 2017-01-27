@@ -18,11 +18,13 @@ export function exec () {
     let platform = program.platform
     let typedScript = script
 
-    if (platformScriptNames.includes(script) && platform &&
-      // NOTE : this is where we need to do a little hacky workaround
+    if (
+      platformScriptNames.includes(script) && platform &&
+      // NOTE : this is where we need to do a little hacky workaround.
       // our default platform value is heroku, but our scripts in our templates
       // are by default kubernetes if they don't have a prefix platform
-      platform !== 'kubernetes') {
+      platform !== 'kubernetes'
+    ) {
       typedScript = `${platform}_${script}`
     }
     if (type) {

@@ -39,10 +39,6 @@ export function getProjectsByName () {
   return JSON.parse(fs.readFileSync(fileDir))
 }
 
-export function getAppConfig (dir) {
-  return JSON.stringify(this.getConfig(this.app.dir), null, 2)
-}
-
 export function getAvailablePorts (docker) {
   const { app, run } = this
   docker = docker || run.docker
@@ -78,7 +74,6 @@ export function getDepTemplateNames (templateName, depTemplateNames = []) {
   depTemplateNames.push(templateName)
   const templateDir = path.join(project.dir, 'node_modules', templateName)
   let templateConfig = this.getConfig(templateDir)
-  templateConfig = this.getConfig(templateDir)
   const templatePackage = getPackage(templateDir)
   if (typeof templatePackage !== 'undefined' && typeof templateConfig !== 'undefined') {
     const dependencies = Object.assign({}, templatePackage.dependencies, templatePackage.devDependencies)
@@ -92,8 +87,9 @@ export function getDepTemplateNames (templateName, depTemplateNames = []) {
 
 export function getAllTemplateNames () {
   const { project: { config: { templateNames } } } = this
-  return _.uniq(_.flatten(templateNames.map(templateName =>
-  this.getDepTemplateNames(templateName))))
+  return _.uniq(_.flatten(
+    templateNames.map(templateName => this.getDepTemplateNames(templateName))
+  ))
 }
 
 export function getTemplateDependencies () {

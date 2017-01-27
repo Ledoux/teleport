@@ -11,9 +11,9 @@ export function init () {
   // dirs
   const binDir = path.join(project.dir, 'bin')
   const nodeModulesDir = path.join(project.dir, 'node_modules')
-  const yarnDir = path.join(project.dir, 'yarn.lock')
+  const yarnLockFile = path.join(project.dir, 'yarn.lock')
   // exec
-  childProcess.execSync(`mkdir -p ${binDir} && rm -rf ${nodeModulesDir} && rm -f ${yarnDir}`)
+  childProcess.execSync(`mkdir -p ${binDir} && rm -rf ${nodeModulesDir} && rm -f ${yarnLockFile}`)
   // package
   project.package = Object.assign({
     name,
@@ -30,8 +30,7 @@ export function init () {
     '*node_modules',
     '*.pyc',
     '*secret.json',
-    '*venv',
-    'yarn.lock'
+    '*venv'
   ]
   writeGitignore(project.dir, project.gitignores)
   // write a configure file

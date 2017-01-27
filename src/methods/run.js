@@ -7,9 +7,8 @@ export function run () {
   if (program.type === 'localhost') {
     program.type = 'staging'
   }
-  let commands = []
-  commands.push(`tpt -e --script run --type ${program.type} --platform ${program.platform} --servers all`)
-  let command = commands.join(' && ')
+
+  const command = `tpt -e --script push --type ${program.type} --platform ${program.platform} --servers all`
   // exec
   this.consoleLog(command)
   childProcess.execSync(command, { stdio: [0, 1, 2] })
