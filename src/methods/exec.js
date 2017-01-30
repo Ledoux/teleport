@@ -1,3 +1,13 @@
+// EXEC UTILITY
+// exec is not a task. But it is still a very useful command for quickly execute
+// any kind of the Teleport methods. Look at the jest tests.
+// - tpt -e --script build --type staging --server express-webrouter, for instance
+// will execute the scripts/staging_build.sh script found in your express webrouter server.
+// - if no script arg is specified, then you can mention a method, and Teleport will execute it
+// like for instance tpt -e --method getConfig
+// - you can also specify the python language '--lang py', and in that case, it will a python
+// method from the python teleport part that can be called
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
@@ -17,7 +27,6 @@ export function exec () {
   if (typeof script !== 'undefined' && server) {
     let platform = program.platform
     let typedScript = script
-
     if (
       platformScriptNames.includes(script) && platform &&
       // NOTE : this is where we need to do a little hacky workaround.
@@ -37,11 +46,15 @@ export function exec () {
   } else if (typeof program.method !== 'string') {
     console.log('You didn\'t specify a method to be called, please use the --method option for that')
     return
-  // execute a command
+  // check if it is a python command
+  } else if (program.lang === 'py') {
+    command = `python ${app.pythonDir} ${program.method.replace(/[ ]*,[ ]*|[ ]+/g, ' ')}`
   } else {
-    command = program.lang === 'py'
-    ? `python ${app.pythonDir} ${program.method.replace(/[ ]*,[ ]*|[ ]+/g, ' ')}`
-    : this[program.method]()
+    // then it is not a script or python command to process
+    // it is a node method to call
+    // we can return after
+    this[program.method]()
+    return
   }
   // venv check
   if (app.venvDir) {
