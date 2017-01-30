@@ -3,7 +3,6 @@
 // It is just here that you defined how to display your logs, warnings, errors
 // in the console thanks to the colors lib. Note that colors add methods to the
 // native string class.
-
 import 'colors'
 
 export function consoleLog (string) {

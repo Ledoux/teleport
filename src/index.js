@@ -118,8 +118,7 @@ class Teleport {
       }
       // if no collection, it is a simple unit call
       // call it
-      this[programmedMethod]()
-      return
+      return this[programmedMethod]()
     }
     // default return
     this.consoleWarn('Welcome to teleport... But you didn\'t specify any particular command !')

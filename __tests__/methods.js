@@ -18,16 +18,17 @@ test('create task', () => {
 })
 */
 
-// equivalent as 'tpt -e --method getConfig'
-test('execute utility method', () => {
+// equivalent as 'tpt -e --method getProjectsByName'
+test('execute utility method with getProjectsByName', () => {
   const testTeleport = new Teleport({
     dir: TEST_APP_DIR,
     exec: true,
-    method: 'getConfig'
+    method: 'getProjectsByName'
   }).launch()
+  // we expect that the test project is stored in the projects.json
+  expect(typeof testTeleport[TEST_APP_NAME]).toBe('object')
 })
 
-/*
 // equivalent as 'tpt -g --kwarg project.config'
 test('get utility method', () => {
   const testTeleport = new Teleport({
@@ -35,8 +36,10 @@ test('get utility method', () => {
     get: true,
     kwarg: 'project.config'
   }).launch()
+  console.log('testTeleport', testTeleport)
 })
 
+/*
 // equvalent as 'tpt map --method install --collections project.config.backend.serversByName'
 test('map utility method for installing', () => {
   const testTeleport = new Teleport({

@@ -53,8 +53,8 @@ export function exec () {
     // then it is not a script or python command to process
     // it is a node method to call
     // we can return after
-    this[program.method]()
-    return
+    this.consoleInfo(`Let\'s exec this method ${program.method}`)
+    return this[program.method]()
   }
   // venv check
   if (app.venvDir) {
