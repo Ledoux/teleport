@@ -3,7 +3,7 @@ import 'babel-polyfill'
 
 import { getRandomId } from './utils'
 
-const methods = [
+const mainMethods = [
   'build',
   'configure',
   'connect',
@@ -26,7 +26,7 @@ const methods = [
   'status',
   'write'
 ]
-const subModules = methods.map(method => require(`./methods/${method}`))
+const subModules = mainMethods.map(method => require(`./methods/${method}`))
 const collectionNames = ['servers', 'types']
 
 class Teleport {
@@ -93,8 +93,8 @@ class Teleport {
       ? JSON.parse(program.kwarg)
       : program.kwarg
     }
-    // it is maybe a generic global task
-    const programmedMethod = methods.find(method => program[method])
+    // it is maybe a call of a main mainMethods
+    const programmedMethod = mainMethods.find(method => program[method])
     if (this[programmedMethod]) {
       // check for mapping ? let's see if there is already a collections of arg defined
       if (typeof program.collections === 'undefined') {
@@ -113,7 +113,7 @@ class Teleport {
             }
           }
         })
-        const collections = collectionSlugs.join('|')
+        const collections = collectionSlugs.join(',')
         // if collections is not empty, so yes, it is mapping
         // method request, do it and return in that case
         if (collections !== '') {
