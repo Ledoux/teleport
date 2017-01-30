@@ -27,7 +27,7 @@ program
 
   // list all the options
   .option('--cache [type]', 'Cache', 'true')
-  .option('--collection [type]', 'Collection')
+  .option('--collections [type]', 'Collections')
   .option('--data [type]', 'Data', 'localhost')
   .option('--file [type]', 'file')
   .option('--folder [type]', 'Folder')
