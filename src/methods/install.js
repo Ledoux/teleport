@@ -44,7 +44,6 @@ export function installScript () {
   // if the shell is concurrently, we don't want actually to execute
   // the code directly but put it in the temp commands array
   if (typeof program.install === 'undefined' || program.shell !== 'concurrently') {
-    this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
@@ -119,7 +118,6 @@ export function installAppRequirements () {
   // if the shell is concurrently, we don't want actually to execute
   // the code directly but put it in the temp commands array
   if (typeof program.install === 'undefined' || program.shell !== 'concurrently') {
-    this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
@@ -160,7 +158,6 @@ export function installServer () {
   // if the shell is concurrently, we don't want actually to execute
   // the code directly but put it in the temp commands array
   if (typeof program.install === 'undefined' || program.shell !== 'concurrently') {
-    this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
