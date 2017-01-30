@@ -16,7 +16,6 @@ const methods = [
   'get',
   'init',
   'install',
-  'kill',
   'map',
   'push',
   'read',
@@ -25,9 +24,7 @@ const methods = [
   'set',
   'start',
   'status',
-  'uninstall',
-  'write',
-  'zsh'
+  'write'
 ]
 const subModules = methods.map(method => require(`./methods/${method}`))
 const collectionNames = ['servers', 'types']

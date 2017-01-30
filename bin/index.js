@@ -22,10 +22,7 @@ program
   // list all the utility commands
   .option('-e, exec', 'Exec')
   .option('-g, get', 'Get')
-  .option('-k, kill', 'Kill')
   .option('-m, map', 'Map')
-  .option('-u, uninstall', 'Uninstall')
-  .option('-z, zsh', 'Zsh')
   .option('status', 'Status')
 
   // list all the options
