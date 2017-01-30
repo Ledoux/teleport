@@ -1,3 +1,11 @@
+// GET UTILITY
+// You have here all the internal getter methods helping
+// the Teleport app to work. Also you the get utility
+// that helps you to console a variable of your project state.
+// For instance you can type 'tpt get --kwarg project.config'
+// (but see the tests for further example) to know the config
+// of your app. 
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import _ from 'lodash'
