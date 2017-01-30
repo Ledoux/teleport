@@ -1,3 +1,8 @@
+// WRITE
+// it is a method for concatenate in one method
+// all the instructions to write the config file
+// at a certain level (but level here can be only project for now)
+
 import fs from 'fs'
 import path from 'path'
 import stringify from 'json-stable-stringify'
