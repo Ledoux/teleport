@@ -24,5 +24,5 @@ test('execute utility method', () => {
     create: true,
     name: 'my-app',
     templates: 'teleport-express-webrouter,teleport-flask-websocket'
-  })
+  }).launch()
 })
