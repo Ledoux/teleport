@@ -1,3 +1,13 @@
+// MAP UTILITY
+// map is not a task. It helps to call a method of Teleport that will be applied
+// for each elements defined in the collections arguments.
+// For instance 'tpt map --method installServer --collections project.config.backend.serversByName'
+// will call the installServer method for each server of the project.
+// Going further, 'tpt map --method get --kwarg run --collections
+// project.config.typesByName,project.config.backend.serversByName'
+// will call the get to display the run object for each cartesian product result
+// of from the types and the server arrays
+
 import { get, values } from 'lodash'
 import pluralize from 'pluralize'
 
@@ -30,7 +40,7 @@ export function map () {
     return isDefined
   })
   // get the collection slugs
-  const collectionSlugs = program.collections.split('|')
+  const collectionSlugs = program.collections.split(',')
 
   // get the program singular names
   const singularNames = collectionSlugs.map(collectionSlug => {
@@ -95,6 +105,6 @@ export function mapInProviders () {
 
 export function mapInTypesAndServers () {
   const { program } = this
-  program.collections = 'project.config.typesByName|project.config.backend.serversByName'
+  program.collections = 'project.config.typesByName,project.config.backend.serversByName'
   this.map()
 }
