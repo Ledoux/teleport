@@ -11,7 +11,7 @@ the state of the .teleport.json into the `this.project.config` object, so as the
 package.json into `this.project.package` one.  
 
 ## backend
-Your project has always a backend since you always need to deploy at least one server.
+The backend is responsible for deploying your server(s).
 At the launch time, Teleport sets also `this.backend` object, composed by the parsing
 of this.project.config.backend plus some other context dependent variables.
 
