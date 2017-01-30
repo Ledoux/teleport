@@ -23,7 +23,6 @@ program
   .option('-e, exec', 'Exec')
   .option('-g, get', 'Get')
   .option('-m, map', 'Map')
-  .option('status', 'Status')
 
   // list all the options
   .option('--cache [type]', 'Cache', 'true')
