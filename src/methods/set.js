@@ -1,3 +1,8 @@
+// SET UTILITY
+// set file helps to gather all the setter methods of Teleport.
+// it follows the ontology of the app with a particualr method helping
+// to set variables in the different nested scope (app, project, backend, frontend, server...)
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import { merge } from 'lodash'
