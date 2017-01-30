@@ -1,3 +1,10 @@
+// RUN SUB TASK
+// run is called at the deploy task time, but you can also call it in an already
+// created project. It is here about to run the heroku dynos/docker container
+// of each server that will help then to deploy the whole project.
+// - run goes to each server and execute their scripts/<type>_<platform>_run.sh
+// script.
+
 import childProcess from 'child_process'
 
 export function run () {
