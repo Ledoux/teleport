@@ -14,7 +14,7 @@ We defined a set of methods splitting this workflow into small pieces of tasks (
 |   |   |   - merge the config files from templates
 |   |   +-- dump
 |   |   |   - merge the file systems from templates
-|   +-- install:
+|   +-- install
 |   |   - install python and or node dependencies in each server
 |   |   - install node dependencies for frontend (if it exists)
 |   |   +-- replace
