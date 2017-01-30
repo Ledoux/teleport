@@ -26,7 +26,11 @@ export function install () {
   this.write(project)
   this.replace()
   this.installServers()
-  this.installExecuteConcurrently()
+  if (program.shell === 'concurrently' && (
+    this.concurrentlyInstallCommands && this.concurrentlyInstallCommands.length > 0
+  )) {
+    this.installExecuteConcurrently()
+  }
   this.consoleInfo(`install was successful !`)
 }
 
@@ -190,12 +194,10 @@ export function installSecret () {
 export function installExecuteConcurrently () {
   const { app, program } = this
   // now execute the collected commands if shell is concurrently
-  if (program.shell === 'concurrently') {
-    const concurrentlyInstallCommandsString = this.concurrentlyInstallCommands
-      .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
-      .join(' ')
-    const command = `${app.concurrentlyDir} ${concurrentlyInstallCommandsString}`
-    this.consoleLog(command)
-    childProcess.execSync(command, { stdio: [0, 1, 2] })
-  }
+  const concurrentlyInstallCommandsString = this.concurrentlyInstallCommands
+    .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
+    .join(' ')
+  const command = `${app.concurrentlyDir} ${concurrentlyInstallCommandsString}`
+  this.consoleLog(command)
+  childProcess.execSync(command, { stdio: [0, 1, 2] })
 }
