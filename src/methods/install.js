@@ -15,32 +15,18 @@ import fs from 'fs'
 import path from 'path'
 
 export function install () {
-  const { backend, app, program, project } = this
+  const { backend, project } = this
   if (!backend) return
-  // normally the install commands run themselves,
-  // but when using a shell like concurrently we collect the commands
-  // in an array in order to call them at once
-  if (program.shell === 'concurrently') {
-    this.concurrentlyInstallCommands = []
-  }
   this.consoleInfo(`Let\'s install this project !`)
   // NOTE: this.concurrentlyInstallCommands is populated by the following commands
   this.installScript()
   this.installKubernetes()
   this.installAppRequirements()
   this.installSecrets()
-  this.write(this.project)
+  this.write(project)
   this.replace()
   this.installServers()
-  // now execute the collected commands if shell is concurrently
-  if (program.shell === 'concurrently') {
-    const concurrentlyInstallCommandsString = this.concurrentlyInstallCommands
-      .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
-      .join(' ')
-    const command = `${app.concurrentlyDir} ${concurrentlyInstallCommandsString}`
-    this.consoleLog(command)
-    childProcess.execSync(command, { stdio: [0, 1, 2] })
-  }
+  this.installExecuteConcurrently()
   this.consoleInfo(`install was successful !`)
 }
 
@@ -49,13 +35,21 @@ export function installScript () {
   // check if exists
   if (!fs.existsSync(path.join(this.project.dir, 'bin/install.sh'))) return
   let command = `cd ${this.project.dir} && sh bin/install.sh`
+  // if this is not an install task, it means we want to execute
+  // this single child process or
   // if the shell is concurrently, we don't want actually to execute
   // the code directly but put it in the temp commands array
-  if (program.shell !== 'concurrently') {
+  if (typeof program.install === 'undefined' || program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
+    // normally the install commands run themselves,
+    // but when using a shell like concurrently we collect the commands
+    // in an array in order to call them at once
+    if (typeof this.concurrentlyInstallCommands === 'undefined') {
+      this.concurrentlyInstallCommands = []
+    }
     this.concurrentlyInstallCommands.push(command)
   }
 }
@@ -120,11 +114,17 @@ export function installAppRequirements () {
   let command = `pip install ${app.requirements.join(' ')}`
   // if the shell is concurrently, we don't want actually to execute
   // the code directly but put it in the temp commands array
-  if (program.shell !== 'concurrently') {
+  if (typeof program.install === 'undefined' || program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
+    // normally the install commands run themselves,
+    // but when using a shell like concurrently we collect the commands
+    // in an array in order to call them at once
+    if (typeof this.concurrentlyInstallCommands === 'undefined') {
+      this.concurrentlyInstallCommands = []
+    }
     this.concurrentlyInstallCommands.push(command)
   }
 }
@@ -147,7 +147,7 @@ export function installServer () {
   if (!fs.existsSync(fileDir)) {
     fileName = 'install.sh'
   }
-  this.consoleInfo(`Let\'s launch the ${fileName} needed in the server... it will not take long`)
+  this.consoleInfo(`Let\'s launch the ${fileName} needed in the ${server.name} server... it will not take long`)
   // for now for settings like Xcode8 with ElCaptain uwsgi in venv install breaks, and only solution is
   // to do that with sudo
   commands.push(`cd ${server.dir}`)
@@ -155,11 +155,17 @@ export function installServer () {
   let command = commands.join(' && ')
   // if the shell is concurrently, we don't want actually to execute
   // the code directly but put it in the temp commands array
-  if (program.shell !== 'concurrently') {
+  if (typeof program.install === 'undefined' || program.shell !== 'concurrently') {
     this.consoleInfo('Let\'s install the project')
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else {
+    // normally the install commands run themselves,
+    // but when using a shell like concurrently we collect the commands
+    // in an array in order to call them at once
+    if (typeof this.concurrentlyInstallCommands === 'undefined') {
+      this.concurrentlyInstallCommands = []
+    }
     this.concurrentlyInstallCommands.push(command)
   }
 }
@@ -178,5 +184,18 @@ export function installSecret () {
   const secretDir = path.join(server.dir, 'config/secret.json')
   if (!fs.existsSync(secretDir)) {
     fs.writeFileSync(secretDir, '{}')
+  }
+}
+
+export function installExecuteConcurrently () {
+  const { app, program } = this
+  // now execute the collected commands if shell is concurrently
+  if (program.shell === 'concurrently') {
+    const concurrentlyInstallCommandsString = this.concurrentlyInstallCommands
+      .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
+      .join(' ')
+    const command = `${app.concurrentlyDir} ${concurrentlyInstallCommandsString}`
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
 }
