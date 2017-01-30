@@ -1,3 +1,10 @@
+// INIT TASK
+// init is a sub task of create.
+// - it inits a package for the project
+// - it writes an install file that will help to install the template modules
+// - it calls the configure sub task
+// - it calls the dump sub task 
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
