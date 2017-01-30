@@ -1,3 +1,8 @@
+// WRITE
+// it is a method for concatenate in one method
+// all the instructions to write the config file
+// at a certain level (but level here can be only project for now)
+
 import fs from 'fs'
 import path from 'path'
 import stringify from 'json-stable-stringify'
@@ -21,7 +26,7 @@ export function writeProjectsByName (projectsByName) {
 export function write (level) {
   if (level) {
     if (typeof level.dir !== 'string') {
-      this.consoleError('level.dir is not correct to write something !')
+      this.consoleError('level.dir is not of the right format, expected \'string\'')
       return
     }
     this.writeConfig(level.dir, level.config)

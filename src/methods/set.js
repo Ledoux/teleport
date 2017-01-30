@@ -1,3 +1,8 @@
+// SET UTILITY
+// set file helps to gather all the setter methods of Teleport.
+// it follows the ontology of the app with a particualr method helping
+// to set variables in the different nested scope (app, project, backend, frontend, server...)
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import { merge } from 'lodash'
@@ -263,10 +268,14 @@ export function setFrontendEnvironment () {
   }
   const frontend = this.frontend = project.config.frontend
   // we need to resolve the frontend server
+  if (typeof backend === 'undefined') {
+    this.setBackendEnvironment()
+  }
   const serverNames = Object.keys(backend.serversByName)
   frontend.serverName = frontend.serverName ||
     serverNames.find(serverName => /\w+-webrouter/.test(serverName)) ||
     serverNames.find(serverName => /\w+-websocket/.test(serverName))
+
 }
 
 export function getActivatedPythonVenvCommand () {

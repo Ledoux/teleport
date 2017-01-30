@@ -4,10 +4,3 @@ export function checkProject () {
     process.exit()
   }
 }
-
-export function checkWeb () {
-  if (this.program.web === 'off') {
-    this.consoleError('you need to have internet for this')
-    process.exit()
-  }
-}

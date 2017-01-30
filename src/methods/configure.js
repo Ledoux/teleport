@@ -1,3 +1,11 @@
+// CONFIGURE SUB TASK
+// configure is called at the init sub task time
+// - configureScript checks if there is no such global sh script bin/configure.sh
+// to execute
+// - configureProject merges all the config files (package.json, .teleport.json and gitignore)
+// found also in the templates and located at the first level of the project folder.
+// - configureServer does the same kind of task but in each server folder level.
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import { flatten, merge, uniq } from 'lodash'
@@ -99,28 +107,11 @@ export function configureProjectGitignore () {
 
 export function configureServer () {
   const { server } = this
-  // this.configureServerConfig()
   this.configureServerPackage()
   mkdirp.sync(server.dir)
   writePackage(server.dir, server.package)
   this.configureServerGitignore()
   writeGitignore(server.dir, server.gitignores)
-}
-
-export function configureServerConfig () {
-  // unpack
-  const { project, server } = this
-
-  // merge
-  server.config = merge(
-    server.config || {},
-    ...project.config.templateNames
-      .map(templateName => {
-        const templateDir = path.join(project.nodeModulesDir, templateName, 'backend/servers', server.name)
-        let templateConfig = this.getConfig(templateDir)
-        return templateConfig
-      })
-    )
 }
 
 export function configureServerPackage () {

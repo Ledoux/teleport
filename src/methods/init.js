@@ -1,3 +1,10 @@
+// INIT TASK
+// init is a sub task of create.
+// - it inits a package for the project
+// - it writes an install file that will help to install the template modules
+// - it calls the configure sub task
+// - it calls the dump sub task 
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
@@ -11,9 +18,9 @@ export function init () {
   // dirs
   const binDir = path.join(project.dir, 'bin')
   const nodeModulesDir = path.join(project.dir, 'node_modules')
-  const yarnDir = path.join(project.dir, 'yarn.lock')
+  const yarnLockFile = path.join(project.dir, 'yarn.lock')
   // exec
-  childProcess.execSync(`mkdir -p ${binDir} && rm -rf ${nodeModulesDir} && rm -f ${yarnDir}`)
+  childProcess.execSync(`mkdir -p ${binDir} && rm -rf ${nodeModulesDir} && rm -f ${yarnLockFile}`)
   // package
   project.package = Object.assign({
     name,
@@ -30,8 +37,7 @@ export function init () {
     '*node_modules',
     '*.pyc',
     '*secret.json',
-    '*venv',
-    'yarn.lock'
+    '*venv'
   ]
   writeGitignore(project.dir, project.gitignores)
   // write a configure file

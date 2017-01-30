@@ -74,3 +74,15 @@ tpt -d
 ```
 
 After that your app should be now on heroku :smiley: Enjoy !
+
+## Develop
+If you want to develop the Teleport app, you need to go to your cloned
+teleport repo and do first a new symlink for your tpt command:
+```
+npm run link
+```
+Then, you can develop the src files automatically compiled into the lib folder
+thanks to the watch command:
+```
+npm run watch
+```

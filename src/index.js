@@ -1,9 +1,9 @@
 // regeneratorRuntime is needed for async await
 import 'babel-polyfill'
 
-import { id } from './utils'
+import { getRandomId } from './utils'
 
-const methods = [
+const mainMethods = [
   'build',
   'configure',
   'connect',
@@ -16,8 +16,6 @@ const methods = [
   'get',
   'init',
   'install',
-  'kill',
-  'log',
   'map',
   'push',
   'read',
@@ -25,12 +23,9 @@ const methods = [
   'run',
   'set',
   'start',
-  'status',
-  'uninstall',
-  'write',
-  'zsh'
+  'write'
 ]
-const subModules = methods.map(method => require(`./methods/${method}`))
+const subModules = mainMethods.map(method => require(`./methods/${method}`))
 const collectionNames = ['servers', 'types']
 
 class Teleport {
@@ -43,11 +38,14 @@ class Teleport {
         this[key] = module[key].bind(this)
       })
     )
-    // call init
+    // bind program
     this.program = program
     const app = this.app = {}
     this.setAppEnvironment()
-    this.level = null // has to be after either scope or project
+    // level is saying
+    // if you are actually working in a project, the app itself,
+    // or in somewhere not defined yet
+    this.level = null
     const project = this.project = {}
     // determine where we are
     this.currentDir = process.cwd()
@@ -58,14 +56,14 @@ class Teleport {
       this.consoleWarn(`You are in the ${app.package.name} folder... Better is to exit :)`)
       process.exit()
     }
-    // if we want to create something, then we return because we are not in a scope or in a project yet
+    // if we want to create something, then we return because we are not in a project yet
     if (typeof program.create !== 'undefined') {
       // in the case where no project name was given, we need to invent one based on a uniq ID
       if (typeof program.project !== 'string') {
         this.consoleWarn('You didn\'t mention any particular name, we are going to give you one')
-        program.project = `app-${id()}`
+        program.project = `app-${getRandomId()}`
       }
-      this.level = ['project'].find(level => program[level])
+      this.level = 'project'
       return
     }
     // if it is not a create method, it means that we are either in a scope or in a
@@ -79,7 +77,6 @@ class Teleport {
     }
     // exit else
     if (!this.level) {
-      // this.consoleWarn('You neither are in a scope folder or in a project folder')
       this.consoleWarn('You are not in a project folder')
       process.exit()
     }
@@ -95,11 +92,10 @@ class Teleport {
       ? JSON.parse(program.kwarg)
       : program.kwarg
     }
-    // it is maybe a generic global task
-    const programmedMethod = methods.find(method => program[method])
+    // it is maybe a call of a main mainMethods
+    const programmedMethod = mainMethods.find(method => program[method])
     if (this[programmedMethod]) {
-      // check for mapping ? let's see if there is already a collections
-      // arg defined
+      // check for mapping ? let's see if there is already a collections of arg defined
       if (typeof program.collections === 'undefined') {
         // so there is no clear mapping to collections
         // but maybe there are some pluralized args
@@ -116,7 +112,7 @@ class Teleport {
             }
           }
         })
-        const collections = collectionSlugs.join('|')
+        const collections = collectionSlugs.join(',')
         // if collections is not empty, so yes, it is mapping
         // method request, do it and return in that case
         if (collections !== '') {

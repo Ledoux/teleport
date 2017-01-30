@@ -1,3 +1,11 @@
+// GET UTILITY
+// You have here all the internal getter methods helping
+// the Teleport app to work. Also you the get utility
+// that helps you to console a variable of your project state.
+// For instance you can type 'tpt get --kwarg project.config'
+// (but see the tests for further example) to know the config
+// of your app.
+
 import childProcess from 'child_process'
 import fs from 'fs'
 import _ from 'lodash'
@@ -39,24 +47,9 @@ export function getProjectsByName () {
   return JSON.parse(fs.readFileSync(fileDir))
 }
 
-export function getAppConfig (dir) {
-  return JSON.stringify(this.getConfig(this.app.dir), null, 2)
-}
-
-export function getLevelMethod (command) {
-  const methodName = `${command}${toTitleCase(this.level)}`
-  const method = this[methodName]
-  if (typeof method === 'undefined') {
-    this.consoleError(`Sorry there is no such ${methodName} method`)
-    process.exit()
-  }
-  return method
-}
-
 export function getAvailablePorts (docker) {
   const { app, run } = this
   docker = docker || run.docker
-  this.checkWeb()
   let command = `python ${app.pythonDir} ports --filter available --docker ${docker}`
   if (app.venvDir) {
     command = `source ${app.venvDir}/bin/activate && ${command}`
@@ -89,7 +82,6 @@ export function getDepTemplateNames (templateName, depTemplateNames = []) {
   depTemplateNames.push(templateName)
   const templateDir = path.join(project.dir, 'node_modules', templateName)
   let templateConfig = this.getConfig(templateDir)
-  templateConfig = this.getConfig(templateDir)
   const templatePackage = getPackage(templateDir)
   if (typeof templatePackage !== 'undefined' && typeof templateConfig !== 'undefined') {
     const dependencies = Object.assign({}, templatePackage.dependencies, templatePackage.devDependencies)
@@ -103,8 +95,9 @@ export function getDepTemplateNames (templateName, depTemplateNames = []) {
 
 export function getAllTemplateNames () {
   const { project: { config: { templateNames } } } = this
-  return _.uniq(_.flatten(templateNames.map(templateName =>
-  this.getDepTemplateNames(templateName))))
+  return _.uniq(_.flatten(
+    templateNames.map(templateName => this.getDepTemplateNames(templateName))
+  ))
 }
 
 export function getTemplateDependencies () {

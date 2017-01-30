@@ -1,3 +1,10 @@
+// CONNECT SUB TASK
+// connect is called at the replace sub task time, it is particularly related
+// to the docker deploy config.
+// - it looks if the ports for each of your server were specified. If not, it will then
+// give to them some that are available given the range of ports that your docker platform
+// can still share.
+
 import { values } from 'lodash'
 
 export function connect () {
@@ -6,7 +13,6 @@ export function connect () {
 
 export function connectPorts () {
   this.checkProject()
-  this.checkWeb()
   const { project: { config, dir } } = this
   this.availablePortsBySubDomain = {}
   values(config.typesByName)
@@ -31,7 +37,7 @@ export function connectPorts () {
           if (this.availablePortsBySubDomain[subDomain]) {
             const availablePorts = this.availablePortsBySubDomain[subDomain]
             if (availablePorts.length < 1) {
-              this.consoleWarn('Unfortunately, there are not enough available ports for your services... You need to get some as free before.')
+              this.consoleWarn('The required ports are unavailable. Free them up and retry.')
               process.exit()
             }
             run.port = availablePorts[0].toString()
