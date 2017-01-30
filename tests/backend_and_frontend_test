@@ -12,7 +12,7 @@ test_backend_and_frontend_templates() {
   clean_project $fake_folder
   create_fake_folder $fake_folder
   cd $fake_folder && venv_creation
-  tpt -c --project $PROJECT_NAME --templates $backend_template,$frontend_template,$platform_template && cd .. || exit 1
+  tpt -c --name $PROJECT_NAME --templates $backend_template,$frontend_template,$platform_template && cd .. || exit 1
   # deploy_template
   venv_remove
 }
