@@ -49,13 +49,6 @@ class Teleport {
     const project = this.project = {}
     // determine where we are
     this.currentDir = process.cwd()
-    // if we are inside of the app folder itself better is to leave, because
-    // we don't have anything to do here
-    this.isAppDir = this.currentDir === app.dir.replace(/\/$/, '')
-    if (this.isAppDir) {
-      this.consoleWarn(`You are in the ${app.package.name} folder... Better is to exit :)`)
-      process.exit()
-    }
     // if we want to create something, then we return because we are not in a project yet
     if (typeof program.create !== 'undefined') {
       // in the case where no project name was given, we need to invent one based on a uniq ID
