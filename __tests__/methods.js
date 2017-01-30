@@ -20,9 +20,10 @@ test('execute utility method', () => {
 */
 
 test('execute utility method', () => {
+  childProcess.execSync('rm -rf my-test-app')
   const testTeleport = new Teleport({
     create: true,
-    name: 'my-app',
+    name: 'my-test-app',
     templates: 'teleport-express-webrouter,teleport-flask-websocket'
   }).launch()
 })

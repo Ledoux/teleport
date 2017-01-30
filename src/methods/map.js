@@ -11,7 +11,7 @@
 import { get, values } from 'lodash'
 import pluralize from 'pluralize'
 
-import { getCartesianProduct, toTitleCase } from '../utils'
+import { getCartesianProduct, toTitleCase } from '../utils/functions'
 
 export function getArrayFromArrayOrObject (value) {
   return Array.isArray(value)

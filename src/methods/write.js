@@ -7,7 +7,7 @@ import fs from 'fs'
 import path from 'path'
 import stringify from 'json-stable-stringify'
 
-import { writeGitignore, writePackage, writeRequirements } from '../utils'
+import { writeGitignore, writePackage, writeRequirements } from '../utils/functions'
 
 export function writeConfig (dir, config) {
   const { app: { configFile } } = this

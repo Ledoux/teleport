@@ -9,7 +9,7 @@ import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
-import { writeGitignore, writePackage } from '../utils'
+import { writeGitignore, writePackage } from '../utils/functions'
 
 export function init () {
   const { program, project } = this

@@ -14,7 +14,7 @@ import { getPackage,
   getSecret,
   toCapitalUnderscoreCase,
   toDashCase
-} from '../utils'
+} from '../utils/functions'
 
 export function setAppEnvironment () {
   const { app } = this

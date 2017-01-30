@@ -1,7 +1,8 @@
 // regeneratorRuntime is needed for async await
 import 'babel-polyfill'
 
-import { getRandomId } from './utils'
+import { getRandomId } from './utils/functions'
+import program from './utils/program'
 
 const mainMethods = [
   'build',
@@ -29,7 +30,7 @@ const subModules = mainMethods.map(method => require(`./methods/${method}`))
 const collectionNames = ['servers', 'types']
 
 class Teleport {
-  constructor (program) {
+  constructor (extraProgram) {
     // welcome
     console.log('\n\n** Welcome to teleport node-side ! **\n'.bold)
     // bind methods from sub modules
@@ -39,7 +40,7 @@ class Teleport {
       })
     )
     // bind program
-    this.program = program
+    this.program = Object.assign(program, extraProgram)
     const app = this.app = {}
     this.setAppEnvironment()
     // level is saying

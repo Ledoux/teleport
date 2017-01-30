@@ -16,7 +16,7 @@ import { getGitignores,
   getPackage,
   writeGitignore,
   writePackage
-} from '../utils'
+} from '../utils/functions'
 
 export function configure () {
   const { project } = this
@@ -127,6 +127,8 @@ export function configureServerPackage () {
         return templatePackage
       })
     )
+  // prefix
+  server.package.name = `${project.name}-${server.package.name}`
 }
 
 export function configureServerGitignore () {

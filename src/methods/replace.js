@@ -5,7 +5,7 @@
 // for each template.
 // Placeholder files are matched via the _p_ prefix in their file name.
 // In these files all the $[] instances are replaced with values from this teleport object.
-// You can check more precisely how the formatString function works in the ../utils/index.js.
+// You can check more precisely how the formatString function works in the ../utils/functions.js.
 // Note also that the replace method will for each _p_<file_name> placeholder file
 // create one file per type (localhost, staging and production in the common case).
 // Meaning that you will have localhost_<file_name>, staging_<file_name>,
@@ -18,7 +18,7 @@ import glob from 'glob'
 import mkdirp from 'mkdirp'
 import path from 'path'
 
-import { formatString } from '../utils'
+import { formatString } from '../utils/functions'
 
 const dockerPlaceholderfiles = [
   'build.sh',

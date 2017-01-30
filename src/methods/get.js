@@ -12,7 +12,7 @@ import _ from 'lodash'
 import path from 'path'
 import stringify from 'json-stable-stringify'
 
-import { getPackage, toTitleCase } from '../utils'
+import { getPackage, toTitleCase } from '../utils/functions'
 
 export function get () {
   const getValue = this.kwarg === '.'

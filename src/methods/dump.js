@@ -25,7 +25,7 @@ import fs from 'fs'
 import { flatten, reverse, uniq } from 'lodash'
 import path from 'path'
 
-import { getRequirements, writeRequirements } from '../utils'
+import { getRequirements, writeRequirements } from '../utils/functions'
 
 export function dump () {
   const { project } = this
