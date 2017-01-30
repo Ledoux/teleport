@@ -14,28 +14,28 @@ import path from 'path'
 
 export function create () {
   // unpack
-  const { app, project, program } = this
+  const { app, project, program: { name } } = this
   // check if such a project already exists here
-  project.dir = path.join(this.currentDir, program.project)
-  this.consoleInfo(`wait a second... Creating your ${program.project} project !`)
+  project.dir = path.join(this.currentDir, name)
+  this.consoleInfo(`wait a second... Creating your ${name} project !`)
   if (fs.existsSync(project.dir)) {
-    this.consoleWarn(`Oops. There is already a ${program.project} here... Exiting.`)
+    this.consoleWarn(`Oops. There is already a ${name} here... Exiting.`)
     process.exit()
   }
   const projectsByName = app.projectsByName
-  const previousProject = projectsByName[program.project]
+  const previousProject = projectsByName[name]
   if (previousProject) {
-    this.consoleWarn(`Oops. There is already a ${program.project} here ${previousProject.dir}... Exiting`)
+    this.consoleWarn(`Oops. There is already a ${name} here ${previousProject.dir}... Exiting`)
     process.exit()
   }
-  projectsByName[program.project] = {
+  projectsByName[name] = {
     dir: project.dir
   }
   this.writeProjectsByName(projectsByName)
   // mkdir the folder app
-  childProcess.execSync(`mkdir -p ${program.project}`)
+  childProcess.execSync(`mkdir -p ${name}`)
   // write default package
   this.init()
   // info
-  this.consoleInfo(`Your ${program.project} was successfully created, go inside with \'cd ${program.project}\' !`)
+  this.consoleInfo(`Your ${name} was successfully created, go inside with \'cd ${name}\' !`)
 }

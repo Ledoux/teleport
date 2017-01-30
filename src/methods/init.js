@@ -3,7 +3,7 @@
 // - it inits a package for the project
 // - it writes an install file that will help to install the template modules
 // - it calls the configure sub task
-// - it calls the dump sub task 
+// - it calls the dump sub task
 
 import childProcess from 'child_process'
 import fs from 'fs'
@@ -14,7 +14,7 @@ import { writeGitignore, writePackage } from '../utils'
 export function init () {
   const { program, project } = this
   // name
-  const name = program.project || project.dir.split('/').slice(-1)[0]
+  const name = program.name || project.dir.split('/').slice(-1)[0]
   // dirs
   const binDir = path.join(project.dir, 'bin')
   const nodeModulesDir = path.join(project.dir, 'node_modules')
