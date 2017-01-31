@@ -22,11 +22,11 @@ Deployment configuration for [teleport](https://github.com/snipsco/teleport) in 
 ### typesByName
 - <key>
   - subDomain: prefix added to nodeDomain. Default to None. [REQUIRED]
-  - hasDns: TODO [REQUIRED]
+  - hasDns: does the app have a DNS? [REQUIRED]
   - abbreviation: special tag for containers. [REQUIRED]
 
 ## How to use it
 Simply add it to the list of templates. For instance:
 ```
-tpt -c --project my-app --templates teleport-flask-webrouter,teleport-docker
+tpt -c s--templates teleport-flask-webrouter,teleport-docker
 ```
