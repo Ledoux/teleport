@@ -23,7 +23,7 @@ export function writeProjectsByName (projectsByName) {
   if (fileString) {
     fs.writeFileSync(fileDir, fileString)
   } else {
-    this.consoleError('your projects to write is not correct')
+    this.consoleError(`your projects to write is not correct: ${fileString}`)
   }
 }
 

@@ -1,0 +1,1 @@
+export JEST_TESTER=jenkins && npm run test

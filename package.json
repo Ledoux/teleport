@@ -27,7 +27,7 @@
     "compile": "babel --presets latest -d lib/ src/",
     "postinstall": "rm -rf lib && mkdir -p lib && npm run compile",
     "link": "source bin/link.sh",
-    "test": "jest",
+    "test": "jest tests/create.test.js && jest tests/methods.test.js",
     "watch": "nodemon lib/index.js --watch src --exec \"npm run compile\""
   },
   "bin": {

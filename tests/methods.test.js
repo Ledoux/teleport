@@ -1,24 +1,10 @@
-const childProcess = require('child_process')
 const _ = require('lodash')
 const path = require('path')
 
 const Teleport = require('../lib').default
+const { TEST_APP_NAME, TEST_TEMPLATES, TEST_APP_DIR } = require('./test.config.js')
 
-const TEST_APP_NAME = 'my-test-app'
-const TEST_TEMPLATES = 'teleport-express-webrouter,teleport-flask-websocket,teleport-heroku'
-const TEST_APP_DIR = path.join(process.cwd(), TEST_APP_NAME)
-
-// equivalent as 'tpt -c --name ${TEST_APP_NAME} --templates ${TEST_TEMPLATES}'
-test('create task', () => {
-  childProcess.execSync(`rm -rf ${TEST_APP_NAME}`)
-  const testTeleport = new Teleport({
-    create: true,
-    name: TEST_APP_NAME,
-    templates: TEST_TEMPLATES
-  })
-  testTeleport.launch()
-})
-
+/*
 test('execute utility method with getProjectsByName', () => {
   // equivalent as 'tpt -e --method getProjectsByName'
   let testTeleport = new Teleport({
@@ -73,3 +59,26 @@ test('map utility method for getting the run infos', () => {
     `stg-${TEST_APP_NAME}-wbs`
   ])
 })
+*/
+
+// Here we stop the tests for the jenkins part
+// But for a user, it is still needed to test a start and a deploy
+// command
+if (process.env.JEST_TESTER !== 'jenkins') {
+  // equivalent as 'tpt -s'
+  /*
+  test('start task', () => {
+    const testTeleport = new Teleport({
+      start: true
+    })
+    testTeleport.launch()
+  })
+  */
+  // equivalent as 'tpt -d'
+  test('deploy task', () => {
+    const testTeleport = new Teleport({
+      deploy: true
+    })
+    testTeleport.launch()
+  })
+}

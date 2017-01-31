@@ -33,7 +33,7 @@ export function setAppEnvironment () {
     }
   })
   if (isRewritten) {
-    this.writeProjectsByName()
+    this.writeProjectsByName(app.projectsByName)
   }
   app.requirements = getRequirements(app.dir)
   app.concurrentlyDir = path.join(app.dir, 'node_modules/.bin/concurrently')
