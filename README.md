@@ -1,4 +1,6 @@
 # Teleport
+[![Build Status](https://jenkins2.snips.ai/buildStatus/icon?job=Snips Web/teleport/master)](https://jenkins2.snips.ai/job/Snips Web/teleport/master)
+[![npm version](https://badge.fury.io/js/teleport.js.svg)](https://badge.fury.io/js/teleport.js)
 
 <table>
   <td>
