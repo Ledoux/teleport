@@ -20,7 +20,9 @@ export function writeProjectsByName (projectsByName) {
   const { app: { dir } } = this
   const fileDir = path.join(dir, '.projects.json')
   const fileString = stringify(projectsByName, { space: '\t' })
-  fs.writeFileSync(fileDir, fileString)
+  if (fileString) {
+    fs.writeFileSync(fileDir, fileString)
+  }
 }
 
 export function write (level) {

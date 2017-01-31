@@ -4,59 +4,68 @@ const path = require('path')
 const Teleport = require('../lib').default
 
 const TEST_APP_NAME = 'my-test-app'
+const TEST_TEMPLATES = 'teleport-express-webrouter,teleport-flask-websocket,teleport-heroku'
 const TEST_APP_DIR = path.join(process.cwd(), TEST_APP_NAME)
 
-/*
-// equivalent as 'tpt -c --name my-test-app --templates teleport-express-webrouter,teleport-flask-websocket'
+// equivalent as 'tpt -c --name ${TEST_APP_NAME} --templates ${TEST_TEMPLATES}'
 test('create task', () => {
-  childProcess.execSync('rm -rf my-test-app')
+  childProcess.execSync(`rm -rf ${TEST_APP_NAME}`)
   const testTeleport = new Teleport({
     create: true,
-    name: 'my-test-app',
-    templates: 'teleport-express-webrouter,teleport-flask-websocket'
-  }).launch()
+    name: TEST_APP_NAME,
+    templates: TEST_TEMPLATES
+  })
+  testTeleport.launch()
 })
-*/
 
-// equivalent as 'tpt -e --method getProjectsByName'
+/*
 test('execute utility method with getProjectsByName', () => {
-  const testTeleport = new Teleport({
+  // equivalent as 'tpt -e --method getProjectsByName'
+  let testTeleport = new Teleport({
     dir: TEST_APP_DIR,
     exec: true,
     method: 'getProjectsByName'
-  }).launch()
+  })
+  let expectedValue = testTeleport.launch()
   // we expect that the test project is stored in the projects.json
-  expect(typeof testTeleport[TEST_APP_NAME]).toBe('object')
+  expect(typeof expectedValue[TEST_APP_NAME]).toBe('object')
 })
 
-// equivalent as 'tpt -g --kwarg project.config'
 test('get utility method', () => {
+  // equivalent as 'tpt -g --kwarg project.config'
   const testTeleport = new Teleport({
     dir: TEST_APP_DIR,
     get: true,
     kwarg: 'project.config'
-  }).launch()
-  console.log('testTeleport', testTeleport)
+  })
+  const expectedValue = testTeleport.launch()
+  // we expect the config to have the templateNames array with the good templates
+  expect(expectedValue.templateNames).toEqual(TEST_TEMPLATES.split(','))
 })
+
+test('map utility method for installing', () => {
+  // equvalent as 'tpt map --method install --collections project.config.backend.serversByName'
+  const testTeleport = new Teleport({
+    dir: TEST_APP_DIR,
+    collections: 'project.config.backend.serversByName',
+    map: true,
+    method: 'install'
+  }).launch()
+})
+*/
 
 /*
-// equvalent as 'tpt map --method install --collections project.config.backend.serversByName'
-test('map utility method for installing', () => {
-  const testTeleport = new Teleport({
-    dir: TEST_APP_DIR,
-    collections: 'project.config.backend.serversByName'
-    map: true
-  }).launch()
-})
-
-// equvalent as 'tpt map --method get --kwarg run --collections project.config.typesByName,project.config.backend.serversByName'
 test('map utility method for getting the run infos', () => {
+  // equvalent as 'tpt map --method get --kwarg run --collections project.config.typesByName,project.config.backend.serversByName'
   const testTeleport = new Teleport({
     dir: TEST_APP_DIR,
-    collections: 'project.config.typesByName,project.config.backend.serversByName'
+    collections: 'project.config.typesByName,project.config.backend.serversByName',
     map: true,
     method: 'get',
     kwarg: 'run'
-  }).launch()
+  })
+  const expectedValue = testTeleport.launch()
+  console.log("mmm", expectedValue)
+  // expect(expectedValue)
 })
 */

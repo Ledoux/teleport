@@ -40,7 +40,7 @@ class Teleport {
       })
     )
     // bind program
-    this.program = Object.assign(program, extraProgram)
+    this.program = Object.assign({}, program, extraProgram)
     const app = this.app = {}
     this.setAppEnvironment()
     // level is saying
