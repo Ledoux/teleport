@@ -1,10 +1,8 @@
 const _ = require('lodash')
-const path = require('path')
 
 const Teleport = require('../lib').default
 const { TEST_APP_NAME, TEST_TEMPLATES, TEST_APP_DIR } = require('./test.config.js')
 
-/*
 test('execute utility method with getProjectsByName', () => {
   // equivalent as 'tpt -e --method getProjectsByName'
   let testTeleport = new Teleport({
@@ -17,6 +15,7 @@ test('execute utility method with getProjectsByName', () => {
   expect(typeof expectedValue[TEST_APP_NAME]).toBe('object')
 })
 
+/*
 test('get utility method', () => {
   // equivalent as 'tpt -g --kwarg project.config'
   const testTeleport = new Teleport({
@@ -64,6 +63,7 @@ test('map utility method for getting the run infos', () => {
 // Here we stop the tests for the jenkins part
 // But for a user, it is still needed to test a start and a deploy
 // command
+console.log('process.env.JEST_TESTER', process.env.JEST_TESTER)
 if (process.env.JEST_TESTER !== 'jenkins') {
   // equivalent as 'tpt -s'
   /*
@@ -75,10 +75,12 @@ if (process.env.JEST_TESTER !== 'jenkins') {
   })
   */
   // equivalent as 'tpt -d'
+  /*
   test('deploy task', () => {
     const testTeleport = new Teleport({
       deploy: true
     })
     testTeleport.launch()
   })
+  */
 }
