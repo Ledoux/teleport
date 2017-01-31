@@ -1,7 +1,12 @@
+const childProcess = require('child_process')
 const _ = require('lodash')
 
 const Teleport = require('../lib').default
-const { TEST_APP_NAME, TEST_TEMPLATES, TEST_APP_DIR } = require('./test.config.js')
+const {
+  TEST_APP_NAME,
+  TEST_TEMPLATES,
+  TEST_APP_DIR
+} = require('./test.config.js')
 
 test('execute utility method with getProjectsByName', () => {
   // equivalent as 'tpt -e --method getProjectsByName'
@@ -63,24 +68,26 @@ test('map utility method for getting the run infos', () => {
 // Here we stop the tests for the jenkins part
 // But for a user, it is still needed to test a start and a deploy
 // command
-console.log('process.env.JEST_TESTER', process.env.JEST_TESTER)
 if (process.env.JEST_TESTER !== 'jenkins') {
   // equivalent as 'tpt -s'
   /*
   test('start task', () => {
     const testTeleport = new Teleport({
+      dir: TEST_APP_DIR,
       start: true
     })
     testTeleport.launch()
   })
   */
   // equivalent as 'tpt -d'
-  /*
   test('deploy task', () => {
     const testTeleport = new Teleport({
+      dir: TEST_APP_DIR,
       deploy: true
     })
     testTeleport.launch()
+    console.log(childProcess
+      .execSync(`heroku apps:destroy ${TEST_APP_NAME} --confirm ${TEST_APP_NAME}`)
+    )
   })
-  */
 }
