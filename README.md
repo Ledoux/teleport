@@ -10,8 +10,6 @@
 </table>
 
 ## Overview
-A node framework to quickly bootstrap and deploy applications on several platforms based on templates. 
-
 ![Teleport overview icon](docs/teleport_overview.png "Teleport overview")
 
 ### Templates
