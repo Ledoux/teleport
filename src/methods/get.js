@@ -19,6 +19,7 @@ export function get () {
   ? this
   : _.get(this, this.kwarg)
   console.log(stringify(getValue, {space: ' '}))
+  return getValue
 }
 
 export function getConfig (dir) {
