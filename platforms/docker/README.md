@@ -28,5 +28,5 @@ Deployment configuration for [teleport](https://github.com/snipsco/teleport) in 
 ## How to use it
 Simply add it to the list of templates. For instance:
 ```
-tpt -c s--templates teleport-flask-webrouter,teleport-docker
+tpt -c --templates teleport-flask-webrouter,teleport-docker
 ```
