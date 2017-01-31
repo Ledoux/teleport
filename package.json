@@ -6,6 +6,7 @@
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "json-stable-stringify": "^1.0.1",
+    "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
     "pluralize": "^3.0.0"
   },
@@ -14,10 +15,12 @@
     "babel-polyfill": "^6.16.0",
     "babel-preset-latest": "6.22.0",
     "concurrently": "^3.1.0",
-    "nodemon": "^1.11.0",
-    "jest": "18.1.0"
+    "jest": "18.1.0",
+    "nodemon": "^1.11.0"
   },
-  "engines": { "node": ">= 6.0" },
+  "engines": {
+    "node": ">= 6.0"
+  },
   "main": "lib/index.js",
   "name": "teleport.js",
   "scripts": {
