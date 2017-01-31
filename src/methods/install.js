@@ -21,6 +21,7 @@ export function install () {
   // NOTE: this.concurrentlyInstallCommands is populated by the following commands
   this.installScript()
   this.installKubernetes()
+  this.installHeroku()
   this.installAppRequirements()
   this.installSecrets()
   this.write(project)
@@ -58,22 +59,52 @@ export function installScript () {
 }
 
 export function installKubernetes () {
+  // unpack
   const { project } = this
-  if (!project.config.backend || !project.config.backend.kubernetes) {
+  // check that actually this project uses kubernetes
+  if (!project.config.backend || !project.config.backend.helpersByName.kubernetes) {
     return
   }
-  this.consoleInfo('Let\'s install kubernetes configs')
+  // get the command
   const command = this.getInstallKubernetesCommand()
-  this.consoleLog(command)
-  childProcess.execSync(command, { stdio: [0, 1, 2] })
-  this.consoleInfo('kubernetes configs are installed !')
+  // if this is not an install task, it means we want to execute
+  // this single child process or
+  // if the shell is concurrently, we don't want actually to execute
+  // the code directly but put it in the temp commands array
+  if (typeof program.install === 'undefined' || program.shell !== 'concurrently') {
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
+  } else {
+    // normally the install commands run themselves,
+    // but when using a shell like concurrently we collect the commands
+    // in an array in order to call them at once
+    if (typeof this.concurrentlyInstallCommands === 'undefined') {
+      this.concurrentlyInstallCommands = []
+    }
+    this.concurrentlyInstallCommands.push(command)
+  }
+}
+
+export function installHeroku () {
+  // unpack
+  const { project } = this
+  // check that actually this project uses kubernetes
+  if (!project.config.backend || !project.config.backend.helpersByName.heroku) {
+    return
+  }
+  const command = 'heroku'
+  try {
+    childProcess.execSync('which heroku')
+  } catch (e) {
+    this.consoleError('You need to install the heroku cli')
+  }
 }
 
 export function getInstallKubernetesCommand () {
   this.checkProject()
   const { kubernetes, project: { dir } } = this
   if (typeof kubernetes === 'undefined') {
-    this.consoleError('You must define a kubernetes config')
+    this.consoleWarn('You must define a kubernetes config')
     process.exit(1)
   }
   let commands = [`cd ${path.join(dir, 'bin')}`]

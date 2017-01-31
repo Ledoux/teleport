@@ -50,7 +50,6 @@ class Teleport {
     const project = this.project = {}
     // determine where we are
     this.currentDir = this.program.dir || process.cwd()
-    console.log('this.currentDir', this.currentDir)
     // if we want to create something, then we return because we are not in a project yet
     if (typeof this.program.create !== 'undefined') {
       // in the case where no project name was given, we need to invent one based on a uniq ID

@@ -128,7 +128,7 @@ export function configureServerPackage () {
       })
     )
   // prefix
-  server.package.name = `${project.name}-${server.package.name}`
+  server.package.name = `${project.package.name}-${server.package.name}`
 }
 
 export function configureServerGitignore () {
