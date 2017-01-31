@@ -1,4 +1,6 @@
 # teleport-docker
+[![npm version](https://badge.fury.io/js/teleport-docker.svg)](https://badge.fury.io/js/teleport-docker)
+
 Deployment configuration for [teleport](https://github.com/snipsco/teleport) in the case of a docker/kubernetes infrastructure.
 
 ## Ontology
