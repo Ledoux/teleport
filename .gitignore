@@ -4,6 +4,7 @@
 node_modules/
 lib/
 npm-debug.log
+my-test-app
 .projects.json
 yarn-error.log
 yarn.lock
