@@ -1,4 +1,5 @@
 const childProcess = require('child_process')
+const _ = require('lodash')
 const path = require('path')
 
 const Teleport = require('../lib').default
@@ -18,7 +19,6 @@ test('create task', () => {
   testTeleport.launch()
 })
 
-/*
 test('execute utility method with getProjectsByName', () => {
   // equivalent as 'tpt -e --method getProjectsByName'
   let testTeleport = new Teleport({
@@ -52,9 +52,7 @@ test('map utility method for installing', () => {
     method: 'install'
   }).launch()
 })
-*/
 
-/*
 test('map utility method for getting the run infos', () => {
   // equvalent as 'tpt map --method get --kwarg run --collections project.config.typesByName,project.config.backend.serversByName'
   const testTeleport = new Teleport({
@@ -65,7 +63,13 @@ test('map utility method for getting the run infos', () => {
     kwarg: 'run'
   })
   const expectedValue = testTeleport.launch()
-  console.log("mmm", expectedValue)
-  // expect(expectedValue)
+  // we expect to have all the tags for each type and each server
+  expect(_.flatten(expectedValue).map(run => run.tag)).toEqual([
+    `localhost-${TEST_APP_NAME}-wbr`,
+    `localhost-${TEST_APP_NAME}-wbs`,
+    `${TEST_APP_NAME}-wbr`,
+    `${TEST_APP_NAME}-wbs`,
+    `stg-${TEST_APP_NAME}-wbr`,
+    `stg-${TEST_APP_NAME}-wbs`
+  ])
 })
-*/
