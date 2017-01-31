@@ -83,8 +83,6 @@ export function map () {
     })
 
   const pairs = getCartesianProduct(...names)
-  console.log('pairs', pairs)
-
 
   // set the program for each case and call the method
   return pairs.map(pair => {
@@ -94,7 +92,6 @@ export function map () {
     })
     environmentMethods.forEach(environmentMethod => environmentMethod())
     // call the method
-    console.log('method', method)
     return methods.map(method => method())
   })
 }
