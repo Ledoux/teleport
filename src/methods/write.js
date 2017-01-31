@@ -22,6 +22,8 @@ export function writeProjectsByName (projectsByName) {
   const fileString = stringify(projectsByName, { space: '\t' })
   if (fileString) {
     fs.writeFileSync(fileDir, fileString)
+  } else {
+    this.consoleError('your projects to write is not correct')
   }
 }
 
