@@ -32,8 +32,6 @@ node {
               }
 
               stage('Install') {
-                  sh "npm set registry https://npm-registry.corp.snips.net"
-                  sh "npm set strict-ssl false"
                   sh "npm install && npm link"
               }
 

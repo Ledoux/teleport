@@ -20,9 +20,6 @@
   "engines": { "node": ">= 6.0" },
   "main": "lib/index.js",
   "name": "teleport.js",
-  "publishConfig": {
-    "registry": "https://npm-registry.corp.snips.net"
-  },
   "scripts": {
     "compile": "babel --presets latest -d lib/ src/",
     "postinstall": "rm -rf lib && mkdir -p lib && npm run compile",

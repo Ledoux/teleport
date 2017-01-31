@@ -1,4 +1,7 @@
 {
+  "author": "The Snips Tooling Team",
+  "license": "MIT",
+  "description": "Teleport platform template for kubernetes",
   "name": "teleport-docker",
   "version": "0.1.0"
 }

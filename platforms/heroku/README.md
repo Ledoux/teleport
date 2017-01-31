@@ -1,4 +1,6 @@
 # teleport-heroku
+[![npm version](https://badge.fury.io/js/teleport-heroku.svg)](https://badge.fury.io/js/teleport-heroku)
+
 Deployment configuration for [teleport](https://github.com/snipsco/teleport) in the case of heroku infrastructure.
 
 ## Ontology
@@ -9,11 +11,11 @@ Deployment configuration for [teleport](https://github.com/snipsco/teleport) in 
 
 ### typesByName
 - <key>
-  - hasDns: TODO [REQUIRED]
+  - hasDns: does the app have a DNS? Default to true (heroku provide it). [REQUIRED]
   - abbreviation: special tag for apps. [REQUIRED]
 
 ## How to use it
 Simply add it to the list of templates. For instance:
 ```
-tpt -c --project my-app --templates teleport-flask-webrouter,teleport-heroku
+tpt -c --templates teleport-flask-webrouter,teleport-heroku
 ```
