@@ -18,7 +18,11 @@ if (typeof TEST_RANDOM  === 'undefined') {
   }
 }
 const TEST_APP_NAME = `${TEST_PREFIX_APP_NAME}-${TEST_RANDOM}`
-const TEST_TEMPLATES = 'teleport-express-webrouter,teleport-flask-websocket,teleport-heroku'
+const TEST_TEMPLATES = [
+  'teleport-express-webrouter',
+  'teleport-flask-websocket',
+  'teleport-heroku'
+].join(',')
 const TEST_APP_DIR = path.join(process.cwd(), TEST_APP_NAME)
 
 module.exports = {
