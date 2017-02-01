@@ -20,7 +20,6 @@ test('execute utility method with getProjectsByName', () => {
   expect(typeof expectedValue[TEST_APP_NAME]).toBe('object')
 })
 
-/*
 test('get utility method', () => {
   // equivalent as 'tpt -g --kwarg project.config'
   const testTeleport = new Teleport({
@@ -63,31 +62,3 @@ test('map utility method for getting the run infos', () => {
     `stg-${TEST_APP_NAME}-wbs`
   ])
 })
-*/
-
-// Here we stop the tests for the jenkins part
-// But for a user, it is still needed to test a start and a deploy
-// command
-if (process.env.JEST_TESTER !== 'jenkins') {
-  // equivalent as 'tpt -s'
-  /*
-  test('start task', () => {
-    const testTeleport = new Teleport({
-      dir: TEST_APP_DIR,
-      start: true
-    })
-    testTeleport.launch()
-  })
-  */
-  // equivalent as 'tpt -d'
-  test('deploy task', () => {
-    const testTeleport = new Teleport({
-      dir: TEST_APP_DIR,
-      deploy: true
-    })
-    testTeleport.launch()
-    console.log(childProcess
-      .execSync(`heroku apps:destroy ${TEST_APP_NAME} --confirm ${TEST_APP_NAME}`)
-    )
-  })
-}
