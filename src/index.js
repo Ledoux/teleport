@@ -74,6 +74,15 @@ class Teleport {
       this.level = 'project'
       project.dir = this.currentDir
       this.setProjectEnvironment()
+      // if there is no deployment platform template, then we should escape if we want
+      // to do a build, push, run, deploy
+      const types = Object.keys(project.config.typesByName)
+      if (Object.keys(types).length === 1 &&
+      types[0] === 'localhost' &&
+      (program.build || program.push || program.run || program.deploy)) {
+        this.consoleError('You want to do a deploy task or sub-tasks, but you did not specified a platform template in this project')
+        process.exit(1)
+      }
     }
     // exit else
     if (!this.level && typeof this.program.check === 'undefined') {

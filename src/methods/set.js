@@ -205,7 +205,7 @@ export function setRunEnvironment () {
   // server.runsByTypeName[type.name] = run
   // set the docker image
   if (run.name !== 'localhost') {
-    if (backend.helpersByName.kubernetes) {
+    if (backend.helpersByName && backend.helpersByName.kubernetes) {
       run.nodeName = `${run.subDomain}.${backend.nodeDomain}`
       // special case where we give to the host just the name of the dockerHost
       if (!type.hasDns) {
