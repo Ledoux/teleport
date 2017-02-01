@@ -120,7 +120,7 @@ export function replaceServerPlaceholderFiles () {
       }
       // if we are not in the case of a docker deploy file
       // we can escape
-      if (typeof backend.helpersByName.docker === 'undefined' &&
+      if (type.name !== 'localhost' && typeof backend.helpersByName.docker === 'undefined' &&
         dockerPlaceholderfiles.includes(installedFileName)) {
         return
       }
