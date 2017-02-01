@@ -62,7 +62,7 @@ export function installKubernetes () {
   // unpack
   const { project } = this
   // check that actually this project uses kubernetes
-  if (!project.config.backend || !project.config.backend.helpersByName.kubernetes) {
+  if (!project.config.backend || !project.config.backend.helpersByName || !project.config.backend.helpersByName.kubernetes) {
     return
   }
   // get the command
@@ -89,7 +89,7 @@ export function installHeroku () {
   // unpack
   const { project } = this
   // check that actually this project uses kubernetes
-  if (!project.config.backend || !project.config.backend.helpersByName.heroku) {
+  if (!project.config.backend || !project.config.backend.helpersByName || !project.config.backend.helpersByName.heroku) {
     return
   }
   const command = 'heroku'
