@@ -6,7 +6,6 @@
 // - build goes to each server and execute their scripts/<type>_<platform>_build.sh
 // script.
 
-import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
@@ -17,13 +16,12 @@ export function build () {
   if (program.type === 'localhost') {
     program.type = 'staging'
   }
-  let commands = []
-  if (fs.existsSync(path.join(project.dir, 'bin/bundle.sh'))) {
-    commands.push(`cd ${project.dir} && sh bin/bundle.sh`)
-  }
-  commands.push(`tpt -e --script build --type ${program.type} --platform ${program.platform} --servers all`)
-  let command = commands.join(' && ')
-  // exec
-  this.consoleLog(command)
-  childProcess.execSync(command, { stdio: [0, 1, 2] })
+  this.setTypeEnvironment()
+  // we map the build for each server given the type
+  this.program = Object.assign(this.program, {
+    deploy: false,
+    method: 'exec',
+    script: 'build'
+  })
+  this.mapInServers()
 }
