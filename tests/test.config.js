@@ -21,8 +21,17 @@ const TEST_APP_NAME = `${TEST_PREFIX_APP_NAME}-${TEST_RANDOM}`
 const TEST_TEMPLATES = [
   'teleport-express-webrouter',
   'teleport-flask-websocket',
+  'teleport-webpack-react',
   'teleport-heroku'
 ].join(',')
+const tags = [
+  `localhost-${TEST_APP_NAME}-wbr`,
+  `localhost-${TEST_APP_NAME}-wbs`,
+  `${TEST_APP_NAME}-wbr`,
+  `${TEST_APP_NAME}-wbs`,
+  `stg-${TEST_APP_NAME}-wbr`,
+  `stg-${TEST_APP_NAME}-wbs`
+]
 const TEST_APP_DIR = path.join(process.cwd(), TEST_APP_NAME)
 
 module.exports = {

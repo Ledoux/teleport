@@ -11,7 +11,7 @@ const {
 // command
 if (process.env.JEST_TESTER !== 'jenkins') {
   // equivalent as 'tpt -d'
-  test('deploy task', () => {
+  test('deploy staging task', () => {
     const testTeleport = new Teleport({
       dir: TEST_APP_DIR,
       deploy: true
@@ -21,6 +21,22 @@ if (process.env.JEST_TESTER !== 'jenkins') {
       .execSync([
         `heroku apps:destroy staging-${TEST_APP_NAME} --confirm staging-${TEST_APP_NAME}`,
         `heroku apps:destroy staging-${TEST_APP_NAME}-wbs --confirm staging-${TEST_APP_NAME}-wbs`,
+      ].join(' && ')).toString('utf-8')
+    )
+  })
+
+  // equivalent as 'tpt -d --type production'
+  test('deploy production task', () => {
+    const testTeleport = new Teleport({
+      dir: TEST_APP_DIR,
+      deploy: true,
+      type: 'production'
+    })
+    testTeleport.launch()
+    console.log(childProcess
+      .execSync([
+        `heroku apps:destroy ${TEST_APP_NAME} --confirm ${TEST_APP_NAME}`,
+        `heroku apps:destroy ${TEST_APP_NAME}-wbs --confirm ${TEST_APP_NAME}-wbs`,
       ].join(' && ')).toString('utf-8')
     )
   })
