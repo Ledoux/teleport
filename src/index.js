@@ -43,6 +43,11 @@ class Teleport {
     this.program = Object.assign({}, program, extraProgram)
     const app = this.app = {}
     this.setAppEnvironment()
+    // check for a python venv
+    if (!app.venvDir) {
+      const warn = 'You did not defined a virtualenv... This may be not good for the pip install time'
+      this.consoleWarn(warn.toUpperCase())
+    }
     // level is saying
     // if you are actually working in a project, the app itself,
     // or in somewhere not defined yet
