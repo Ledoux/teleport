@@ -70,7 +70,10 @@ export function exec () {
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   } else if (script) {
     this.execAddConcurrently(script, command)
-    childProcess.execSync(this[`${script}ConcurrentlyCommands`], { stdio: [0, 1, 2] })
+    // execute the whole if it is the end of the combination
+    if (this.mapIndex === (this.mapLength -1)) {
+      this.execConcurrentlyOrDirectly(script)
+    }
   } else {
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
@@ -85,13 +88,24 @@ export function execAddConcurrently (script, command) {
 }
 
 export function execConcurrentlyOrDirectly(script) {
-  const { program } = this
+  const { app, program } = this
   if (program.shell !== 'concurrently') {
     this.consoleInfo(`Let\'s ${script}`)
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
   }
-  else {
+  else if (program.process === 'sync') {
+    // NOTE: unfortunately, when we need to deploy several servers,
+    // we cannot throw the heroku deploy commands
+    // into parallel concurrently processed.
+    // So we keep using concurrently to still display on the fly
+    // the logs from the child processes but they are still sync.
+    const command = this[`${script}ConcurrentlyCommands`]
+      .map(concurrentlyCommand => `${app.concurrentlyDir} \"${concurrentlyCommand}\"`)
+      .join(' && ')
+    this.consoleLog(command)
+    childProcess.execSync(command, { stdio: [0, 1, 2] })
+  } else {
     const concurrentlyCommandsString = this[`${script}ConcurrentlyCommands`]
       .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
       .join(' ')

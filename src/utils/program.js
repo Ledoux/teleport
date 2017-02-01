@@ -38,6 +38,7 @@ export default program
   .option('--permission [type]', 'Permission', '')
   .option('--pip [type]', 'Pip', /^(true|false)$/i, 'true')
   .option('--platform [type]', 'Platform', 'heroku')
+  .option('--process [type]', 'Process', /^(sync|async)$/i, 'sync')
   .option('--run [type]', 'Run')
   .option('--scope [type]', 'Scope')
   .option('--script [type]', 'Script')
