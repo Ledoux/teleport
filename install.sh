@@ -40,7 +40,9 @@ if which yarn > /dev/null ; then
     echo "yarn is installed, skipping..."
 else
     echo "yarn is not installed"
-    npm install -g yarn
+    echo "please install yarn on your computer"
+    echo "https://yarnpkg.com/"
+    exit 1
 fi
 
 ## virtualenv
@@ -71,9 +73,12 @@ if which tpt > /dev/null ; then
     echo "teleport is installed, skipping..."
 else
     echo "teleport is not installed"
-    npm install -g teleport.js
+    yarn global add teleport.js
+    ## then your teleport.js is stored in your ~/.config/yarn/global/node_modules/teleport.js folder
 fi
 
 ## python dependencies
 echo "installing python dependencies"
 sudo pip install -r requirements.txt
+
+echo "Your Teleport checking is good!"

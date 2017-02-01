@@ -6,6 +6,7 @@ import program from './utils/program'
 
 const mainMethods = [
   'build',
+  'check',
   'configure',
   'connect',
   'console',
@@ -75,7 +76,7 @@ class Teleport {
       this.setProjectEnvironment()
     }
     // exit else
-    if (!this.level) {
+    if (!this.level && typeof this.program.check === 'undefined') {
       this.consoleWarn('You are not in a project folder')
       process.exit()
     }

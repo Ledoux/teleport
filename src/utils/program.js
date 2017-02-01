@@ -4,6 +4,7 @@ import program from 'commander'
 export default program
   .version(require('../../package.json').version)
   // list first all the tasks and sub tasks
+  .option('check', 'Check')
   .option('configure', 'Configure')
   .option('-b, build', 'Build')
   .option('-c, create', 'Create')

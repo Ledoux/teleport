@@ -19,13 +19,36 @@
 
 ## Getting started
 ### Installation
-Dependencies:
-- Node version >= 6
-- Python 2.7 + pip >= v8
 
-You can install all dependencies and Teleport by typing
+1. Production
+  You want to use teleport as a pure user:
+  - make sure you have Node version >= 6 and Python 2.7 + pip >= v8
+  - install globally the npm package with yarn (https://yarnpkg.com/)
+  ```
+  yarn global add teleport.js
+  ```
+  The binary `tpt` CLI is available now!
+
+2. Development
+  You want to use and develop the app:
+  - clone the repository
+  ```
+  git clone git@github.com:snipsco/teleport.git
+  ```
+  - go to your cloned
+  teleport repo and symlink your tpt command to the bin/index of this folder:
+  ```
+  yarn run link
+  ```
+  - you can then develop the src files automatically compiled into the lib folder
+  thanks to the watch command:
+  ```
+  yarn run watch
+  ```
+
+NOTE: if you want to make sure that you have all the good configs for using the app, you can do:
 ```
-make install
+tpt check
 ```
 
 ## Setup backends
@@ -76,15 +99,3 @@ tpt -d
 ```
 
 After that your app should be now on heroku :smiley: Enjoy !
-
-## Develop
-If you want to develop the Teleport app, you need to go to your cloned
-teleport repo and do first a new symlink for your tpt command:
-```
-npm run link
-```
-Then, you can develop the src files automatically compiled into the lib folder
-thanks to the watch command:
-```
-npm run watch
-```

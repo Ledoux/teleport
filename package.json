@@ -22,6 +22,7 @@
   "main": "lib/index.js",
   "name": "teleport.js",
   "scripts": {
+    "check": "make install",
     "compile": "babel --presets latest -d lib/ src/",
     "postinstall": "rm -rf lib && mkdir -p lib && npm run compile",
     "link": "source bin/link.sh",
