@@ -86,12 +86,7 @@ class Teleport {
     // unpack
     const { program } = this
     // we can pass args to the cli, either object, or direct values or nothing
-    this.kwarg = null
-    if (typeof program.kwarg === 'string') {
-      this.kwarg = program.kwarg[0] === '{'
-      ? JSON.parse(program.kwarg)
-      : program.kwarg
-    }
+    this.setKwarg()
     // it is maybe a call of a main mainMethods
     const programmedMethod = mainMethods.find(method => program[method])
     if (this[programmedMethod]) {

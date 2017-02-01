@@ -31,4 +31,7 @@ export function deploy () {
     script: 'deploy'
   })
   this.mapInServers()
+  // display
+  console.log('You server urls are')
+  this.getUrls()
 }

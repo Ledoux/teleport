@@ -236,7 +236,8 @@ export function setRunEnvironment () {
     : `${type.name}-`
     // subdomain
     run.subDomain = `${dnsPrefix}${backend.dashSiteName}`
-    if (!server.isMain) {
+    // if this server is not the main (we need to add it a suffix to distinguish its specific url)
+    if (Object.keys(backend.serversByName) > 1 && !server.isMain) {
       run.subDomain = `${run.subDomain}-${server.abbreviation}`
     }
     // Note : we have to be careful that
@@ -297,5 +298,15 @@ export function setActivatedPythonVenv () {
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
     this.isPythonVenvActivated = true
+  }
+}
+
+export function setKwarg () {
+  const { program } = this
+  this.kwarg = null
+  if (typeof program.kwarg === 'string') {
+    this.kwarg = program.kwarg[0] === '{'
+    ? JSON.parse(program.kwarg)
+    : program.kwarg
   }
 }
