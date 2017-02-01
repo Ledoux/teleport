@@ -82,15 +82,20 @@ export function map () {
       }
     })
 
+  // pairs
   const pairs = getCartesianProduct(...names)
+  this.mapLength = pairs.length
 
   // set the program for each case and call the method
-  return pairs.map(pair => {
+  return pairs.map((pair, index) => {
+    // index
+    this.mapIndex = index
     // set env
     singularNames.forEach((singularName, index) => {
       program[singularName] = pair[index]
     })
     environmentMethods.forEach(environmentMethod => environmentMethod())
+
     // call the method
     return methods.map(method => method())
   })
