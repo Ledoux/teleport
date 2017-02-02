@@ -96,7 +96,7 @@ export function installHeroku () {
   try {
     childProcess.execSync('which heroku')
   } catch (e) {
-    this.consoleError('You need to install the heroku cli')
+    this.consoleWarn('You need to install the heroku cli')
   }
 }
 
