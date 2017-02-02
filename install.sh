@@ -37,9 +37,7 @@ if which yarn > /dev/null ; then
   echo "yarn is installed, skipping..."
 else
   echo "yarn is not installed"
-  echo "please install yarn on your computer"
-  echo "https://yarnpkg.com/"
-  exit 1
+  curl -o- -L https://yarnpkg.com/install.sh | bash
 fi
 
 ## virtualenv
