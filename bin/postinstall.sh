@@ -1,6 +1,6 @@
 if [ ! -f ".projects.json" ] ; then
   echo "{}" > .projects.json
-  chmod +wx .projects.json
+  chmod -r +wr ../teleport.js
 fi
 rm -rf lib
 mkdir -p lib
