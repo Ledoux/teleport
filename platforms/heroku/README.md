@@ -6,7 +6,7 @@
     <img src="../../icon.png" alt="icon" title="made by @cecilesnips"/>
   </td>
   <td>
-    <img src="teleport-heroku.png" alt="icon" title="made by @cecilesnips"/>
+    <img src="../../teleport-heroku.png" alt="icon" title="made by @cecilesnips"/>
   </td>
   <td>
     Deployment configuration for <a href="https://github.com/snipsco/teleport"> Teleport </a> in the case of heroku infrastructure.
