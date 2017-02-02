@@ -1,6 +1,8 @@
+const fetch = require('node-fetch')
 const childProcess = require('child_process')
 
 const Teleport = require('../lib').default
+
 const {
   TEST_APP_NAME,
   TEST_APP_DIR
@@ -17,15 +19,31 @@ if (process.env.JEST_TESTER !== 'jenkins') {
       deploy: true
     })
     testTeleport.launch()
-    console.log(childProcess
-      .execSync([
-        `heroku apps:destroy staging-${TEST_APP_NAME} --confirm staging-${TEST_APP_NAME}`,
-        `heroku apps:destroy staging-${TEST_APP_NAME}-wbs --confirm staging-${TEST_APP_NAME}-wbs`,
-      ].join(' && ')).toString('utf-8')
-    )
+    // the servers are now deployed so we need now to ping them
+    // to check their health
+    fetch(`https://staging-${TEST_APP_NAME}.herokuapp.com/ping`)
+      .then(function (res) {
+        return res.text()
+      }).then(function(body) {
+        expect(body).toBe('PING')
+        fetch(`https://staging-${TEST_APP_NAME}-wbs.herokuapp.com/ping`)
+          .then(function (res) {
+            return res.text()
+          }).then(function(body) {
+            expect(body).toBe('PING')
+            // once we have checked the pings
+            // we can delete these apps
+            console.log(childProcess
+              .execSync([
+                `heroku apps:destroy staging-${TEST_APP_NAME} --confirm staging-${TEST_APP_NAME}`,
+                `heroku apps:destroy staging-${TEST_APP_NAME}-wbs --confirm staging-${TEST_APP_NAME}-wbs`,
+              ].join(' && ')).toString('utf-8')
+            )
+          })
+      })
   })
-
   // equivalent as 'tpt -d --type production'
+  /*
   test('deploy production task', () => {
     const testTeleport = new Teleport({
       dir: TEST_APP_DIR,
@@ -33,13 +51,29 @@ if (process.env.JEST_TESTER !== 'jenkins') {
       type: 'production'
     })
     testTeleport.launch()
-    console.log(childProcess
-      .execSync([
-        `heroku apps:destroy ${TEST_APP_NAME} --confirm ${TEST_APP_NAME}`,
-        `heroku apps:destroy ${TEST_APP_NAME}-wbs --confirm ${TEST_APP_NAME}-wbs`,
-      ].join(' && ')).toString('utf-8')
-    )
-  })
+    // the servers are now deployed so we need now to ping them
+    // to check their health
+    fetch(`https://${TEST_APP_NAME}.herokuapp.com/ping`)
+      .then(function (res) {
+        return res.text()
+      }).then(function(body) {
+        expect(body).toBe('PING')
+        fetch(`https://${TEST_APP_NAME}-wbs.herokuapp.com/ping`)
+          .then(function (res) {
+            return res.text()
+          }).then(function(body) {
+            expect(body).toBe('PING')
+            // once we have checked the pings
+            // we can delete these apps
+            console.log(childProcess
+              .execSync([
+                `heroku apps:destroy ${TEST_APP_NAME} --confirm ${TEST_APP_NAME}`,
+                `heroku apps:destroy ${TEST_APP_NAME}-wbs --confirm ${TEST_APP_NAME}-wbs`,
+              ].join(' && ')).toString('utf-8')
+            )
+          })
+      })
+    */
 }
 
 // we need at least one test to make that jest passing
