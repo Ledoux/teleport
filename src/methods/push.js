@@ -5,8 +5,6 @@
 // - push goes to each server and execute their scripts/<type>_<platform>_push.sh
 // script.
 
-import childProcess from 'child_process'
-
 export function push () {
   const { program } = this
   // type is localhost by default, but here we want to deploy
@@ -14,8 +12,12 @@ export function push () {
   if (program.type === 'localhost') {
     program.type = 'staging'
   }
-  const command = `tpt -e --script push --type ${program.type} --platform ${program.platform} --servers all`
-  // exec
-  this.consoleLog(command)
-  childProcess.execSync(command, { stdio: [0, 1, 2] })
+  this.setTypeEnvironment()
+  // we map the build for each server given the type
+  this.program = Object.assign(this.program, {
+    deploy: false,
+    method: 'exec',
+    script: 'push'
+  })
+  this.mapInServers()
 }

@@ -17,13 +17,21 @@ export function deploy () {
   if (program.type === 'localhost') {
     program.type = 'staging'
   }
-  let commands = []
+  this.setTypeEnvironment()
+  // we need first to check if we need to bundle a frontend
   if (fs.existsSync(path.join(project.dir, 'bin/bundle.sh'))) {
-    commands.push(`cd ${project.dir} && sh bin/bundle.sh`)
+    const command = `cd ${project.dir} && sh bin/bundle.sh`
+    this.consoleLog(command)
+    console.log(childProcess.execSync(command).toString('utf-8'))
   }
-  commands.push(`tpt -e --script deploy --type ${program.type} --platform ${program.platform} --servers all`)
-  let command = commands.join(' && ')
-  // exec
-  this.consoleLog(command)
-  childProcess.execSync(command, { stdio: [0, 1, 2] })
+  // then we map the deploy for each server given the type
+  this.program = Object.assign(this.program, {
+    deploy: false,
+    method: 'exec',
+    script: 'deploy'
+  })
+  this.mapInServers()
+  // display
+  console.log('You server urls are')
+  this.getUrls()
 }

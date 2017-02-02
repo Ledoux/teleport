@@ -11,7 +11,7 @@
 import { get, values } from 'lodash'
 import pluralize from 'pluralize'
 
-import { getCartesianProduct, toTitleCase } from '../utils'
+import { getCartesianProduct, toTitleCase } from '../utils/functions'
 
 export function getArrayFromArrayOrObject (value) {
   return Array.isArray(value)
@@ -22,7 +22,12 @@ export function getArrayFromArrayOrObject (value) {
 // this method is kind of usefult to apply a function among different
 // set of program attributes, bases on some entities name different sets
 export function map () {
+  // unpack
   const { program } = this
+  // check
+  if (typeof program.method === 'undefined' || program.methods === 'undefined') {
+    this.consoleError('You need to define a method or methods')
+  }
   // get the method, either it is a string and we need to get it, either
   // it is already the method
   const methods = (
@@ -77,17 +82,22 @@ export function map () {
       }
     })
 
+  // pairs
   const pairs = getCartesianProduct(...names)
+  this.mapLength = pairs.length
 
   // set the program for each case and call the method
-  pairs.forEach(pair => {
+  return pairs.map((pair, index) => {
+    // index
+    this.mapIndex = index
     // set env
     singularNames.forEach((singularName, index) => {
       program[singularName] = pair[index]
     })
     environmentMethods.forEach(environmentMethod => environmentMethod())
+
     // call the method
-    methods.forEach(method => method())
+    return methods.map(method => method())
   })
 }
 

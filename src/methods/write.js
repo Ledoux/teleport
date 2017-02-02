@@ -7,7 +7,7 @@ import fs from 'fs'
 import path from 'path'
 import stringify from 'json-stable-stringify'
 
-import { writeGitignore, writePackage, writeRequirements } from '../utils'
+import { writeGitignore, writePackage, writeRequirements } from '../utils/functions'
 
 export function writeConfig (dir, config) {
   const { app: { configFile } } = this
@@ -20,7 +20,11 @@ export function writeProjectsByName (projectsByName) {
   const { app: { dir } } = this
   const fileDir = path.join(dir, '.projects.json')
   const fileString = stringify(projectsByName, { space: '\t' })
-  fs.writeFileSync(fileDir, fileString)
+  if (fileString) {
+    fs.writeFileSync(fileDir, fileString)
+  } else {
+    this.consoleError(`your projects to write is not correct: ${fileString}`)
+  }
 }
 
 export function write (level) {

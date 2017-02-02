@@ -4,6 +4,6 @@
 node_modules/
 lib/
 npm-debug.log
+t-*/
 .projects.json
 yarn-error.log
-yarn.lock

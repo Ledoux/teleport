@@ -14,7 +14,7 @@ import { getPackage,
   getSecret,
   toCapitalUnderscoreCase,
   toDashCase
-} from '../utils'
+} from '../utils/functions'
 
 export function setAppEnvironment () {
   const { app } = this
@@ -33,7 +33,7 @@ export function setAppEnvironment () {
     }
   })
   if (isRewritten) {
-    this.writeProjectsByName()
+    this.writeProjectsByName(app.projectsByName)
   }
   app.requirements = getRequirements(app.dir)
   app.concurrentlyDir = path.join(app.dir, 'node_modules/.bin/concurrently')
@@ -44,6 +44,13 @@ export function setAppEnvironment () {
   app.venvDir = virtualEnvDir !== ''
   ? virtualEnvDir
   : null
+  // check if yarn is there or either use npm
+  app.isYarn = true
+  try {
+    childProcess.execSync('which yarn')
+  } catch (e) {
+    app.isYarn = false
+  }
 }
 
 export function setProjectEnvironment () {
@@ -205,7 +212,7 @@ export function setRunEnvironment () {
   // server.runsByTypeName[type.name] = run
   // set the docker image
   if (run.name !== 'localhost') {
-    if (backend.helpersByName.kubernetes) {
+    if (backend.helpersByName && backend.helpersByName.kubernetes) {
       run.nodeName = `${run.subDomain}.${backend.nodeDomain}`
       // special case where we give to the host just the name of the dockerHost
       if (!type.hasDns) {
@@ -236,7 +243,8 @@ export function setRunEnvironment () {
     : `${type.name}-`
     // subdomain
     run.subDomain = `${dnsPrefix}${backend.dashSiteName}`
-    if (!server.isMain) {
+    // if this server is not the main (we need to add it a suffix to distinguish its specific url)
+    if (Object.keys(backend.serversByName).length > 1 && !server.isMain) {
       run.subDomain = `${run.subDomain}-${server.abbreviation}`
     }
     // Note : we have to be careful that
@@ -297,5 +305,15 @@ export function setActivatedPythonVenv () {
     this.consoleLog(command)
     childProcess.execSync(command, { stdio: [0, 1, 2] })
     this.isPythonVenvActivated = true
+  }
+}
+
+export function setKwarg () {
+  const { program } = this
+  this.kwarg = null
+  if (typeof program.kwarg === 'string') {
+    this.kwarg = program.kwarg[0] === '{'
+    ? JSON.parse(program.kwarg)
+    : program.kwarg
   }
 }

@@ -1,10 +1,12 @@
 // regeneratorRuntime is needed for async await
 import 'babel-polyfill'
 
-import { getRandomId } from './utils'
+import { getRandomId } from './utils/functions'
+import program from './utils/program'
 
 const mainMethods = [
   'build',
+  'check',
   'configure',
   'connect',
   'console',
@@ -29,7 +31,7 @@ const subModules = mainMethods.map(method => require(`./methods/${method}`))
 const collectionNames = ['servers', 'types']
 
 class Teleport {
-  constructor (program) {
+  constructor (extraProgram) {
     // welcome
     console.log('\n\n** Welcome to teleport node-side ! **\n'.bold)
     // bind methods from sub modules
@@ -39,29 +41,27 @@ class Teleport {
       })
     )
     // bind program
-    this.program = program
+    this.program = Object.assign({}, program, extraProgram)
     const app = this.app = {}
     this.setAppEnvironment()
+    // check for a python venv
+    if (!app.venvDir) {
+      const warn = 'You did not defined a virtualenv... This may be not good for the pip install time'
+      this.consoleWarn(warn.toUpperCase())
+    }
     // level is saying
     // if you are actually working in a project, the app itself,
     // or in somewhere not defined yet
     this.level = null
     const project = this.project = {}
     // determine where we are
-    this.currentDir = process.cwd()
-    // if we are inside of the app folder itself better is to leave, because
-    // we don't have anything to do here
-    this.isAppDir = this.currentDir === app.dir.replace(/\/$/, '')
-    if (this.isAppDir) {
-      this.consoleWarn(`You are in the ${app.package.name} folder... Better is to exit :)`)
-      process.exit()
-    }
+    this.currentDir = this.program.dir || process.cwd()
     // if we want to create something, then we return because we are not in a project yet
-    if (typeof program.create !== 'undefined') {
+    if (typeof this.program.create !== 'undefined') {
       // in the case where no project name was given, we need to invent one based on a uniq ID
-      if (typeof program.name !== 'string') {
+      if (typeof this.program.name !== 'string') {
         this.consoleWarn('You didn\'t mention any particular name, we are going to give you one')
-        program.name = `app-${getRandomId()}`
+        this.program.name = `app-${getRandomId()}`
       }
       this.level = 'project'
       return
@@ -74,9 +74,18 @@ class Teleport {
       this.level = 'project'
       project.dir = this.currentDir
       this.setProjectEnvironment()
+      // if there is no deployment platform template, then we should escape if we want
+      // to do a build, push, run, deploy
+      const types = Object.keys(project.config.typesByName)
+      if (Object.keys(types).length === 1 &&
+      types[0] === 'localhost' &&
+      (program.build || program.push || program.run || program.deploy)) {
+        this.consoleError('You want to do a deploy task or sub-tasks, but you did not specified a platform template in this project')
+        process.exit(1)
+      }
     }
     // exit else
-    if (!this.level) {
+    if (!this.level && typeof this.program.check === 'undefined') {
       this.consoleWarn('You are not in a project folder')
       process.exit()
     }
@@ -86,12 +95,7 @@ class Teleport {
     // unpack
     const { program } = this
     // we can pass args to the cli, either object, or direct values or nothing
-    this.kwarg = null
-    if (typeof program.kwarg === 'string') {
-      this.kwarg = program.kwarg[0] === '{'
-      ? JSON.parse(program.kwarg)
-      : program.kwarg
-    }
+    this.setKwarg()
     // it is maybe a call of a main mainMethods
     const programmedMethod = mainMethods.find(method => program[method])
     if (this[programmedMethod]) {
@@ -124,8 +128,7 @@ class Teleport {
       }
       // if no collection, it is a simple unit call
       // call it
-      this[programmedMethod]()
-      return
+      return this[programmedMethod]()
     }
     // default return
     this.consoleWarn('Welcome to teleport... But you didn\'t specify any particular command !')

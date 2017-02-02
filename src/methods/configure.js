@@ -16,7 +16,7 @@ import { getGitignores,
   getPackage,
   writeGitignore,
   writePackage
-} from '../utils'
+} from '../utils/functions'
 
 export function configure () {
   const { project } = this
@@ -69,6 +69,14 @@ export function configureProjectConfig () {
         return templateConfig
       })
     )
+
+  // add a default localhost type if there was not a platfomr template
+  // that did taht already
+  if (typeof project.config.typesByName === 'undefined') {
+    project.config.typesByName = {
+      localhost: {}
+    }
+  }
 }
 
 export function configureProjectPackage () {
@@ -127,6 +135,8 @@ export function configureServerPackage () {
         return templatePackage
       })
     )
+  // prefix
+  server.package.name = `${project.package.name}-${server.package.name}`
 }
 
 export function configureServerGitignore () {

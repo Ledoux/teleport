@@ -3,32 +3,37 @@
   "license": "MIT",
   "description": "Node framework to bootstrap and deploy web applications based on templates",
   "dependencies": {
-    "colors": "^1.1.2",
-    "commander": "^2.9.0",
-    "json-stable-stringify": "^1.0.1",
-    "mkdirp": "^0.5.1",
-    "pluralize": "^3.0.0"
-  },
-  "devDependencies": {
     "babel-cli": "^6.16.0",
     "babel-polyfill": "^6.16.0",
     "babel-preset-latest": "6.22.0",
+    "colors": "^1.1.2",
     "concurrently": "^3.1.0",
+    "commander": "^2.9.0",
+    "glob": "^7.1.1",
+    "jest": "18.1.0",
+    "json-stable-stringify": "^1.0.1",
+    "lodash": "^4.17.4",
+    "mkdirp": "^0.5.1",
+    "node-fetch": "^1.6.3",
     "nodemon": "^1.11.0",
-    "jest": "18.1.0"
+    "pluralize": "^3.0.0"
   },
-  "engines": { "node": ">= 6.0" },
+  "engines": {
+    "node": ">= 6.0"
+  },
   "main": "lib/index.js",
   "name": "teleport.js",
   "scripts": {
+    "check": "make install",
     "compile": "babel --presets latest -d lib/ src/",
-    "postinstall": "rm -rf lib && mkdir -p lib && npm run compile",
+    "postinstall": "sh bin/postinstall.sh",
     "link": "source bin/link.sh",
-    "test": "jest",
+    "test": "export TEST_RANDOM=$RANDOM && jest tests/create.test.js && jest tests/utility_methods.test.js && jest tests/deploy_methods.test.js",
+    "test-jenkins": "export TEST_RANDOM=$RANDOM && jest tests/create.test.js && jest tests/utility_methods.test.js",
     "watch": "nodemon lib/index.js --watch src --exec \"npm run compile\""
   },
   "bin": {
     "tpt": "bin/index.js"
   },
-  "version": "0.1.1"
+  "version": "0.1.15"
 }

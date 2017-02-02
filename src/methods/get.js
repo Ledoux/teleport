@@ -12,13 +12,16 @@ import _ from 'lodash'
 import path from 'path'
 import stringify from 'json-stable-stringify'
 
-import { getPackage, toTitleCase } from '../utils'
+import { getPackage, toTitleCase } from '../utils/functions'
 
 export function get () {
+  this.setKwarg()
   const getValue = this.kwarg === '.'
   ? this
   : _.get(this, this.kwarg)
-  console.log(stringify(getValue, {space: ' '}))
+  this.getString = stringify(getValue, {space: ' '})
+  console.log(this.getString)
+  return getValue
 }
 
 export function getConfig (dir) {
@@ -109,4 +112,24 @@ export function getTemplateDependencies () {
       templateVersion = templateVersion || getPackage(templateDir).version
       return [templateName, templateVersion]
     }))
+}
+
+export function getUrls () {
+  this.program = Object.assign(this.program, {
+    get: true,
+    kwarg: 'run.url',
+    method: 'get'
+  })
+  this.mapInServers()
+  return this.getString
+}
+
+export function getAllUrls () {
+  this.program = Object.assign(this.program, {
+    get: true,
+    kwarg: 'run.url',
+    method: 'get'
+  })
+  this.mapInTypesAndServers()
+  return this.getString
 }

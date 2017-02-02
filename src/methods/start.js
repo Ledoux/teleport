@@ -9,7 +9,7 @@ import childProcess from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
-import { sleep } from '../utils'
+import { sleep } from '../utils/functions'
 
 export function start () {
   const { app, program } = this
