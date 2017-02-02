@@ -24,7 +24,7 @@ const TEST_TEMPLATES = [
   'teleport-webpack-react',
   'teleport-heroku'
 ].join(',')
-const tags = [
+const TAGS = [
   `localhost-${TEST_APP_NAME}-wbr`,
   `localhost-${TEST_APP_NAME}-wbs`,
   `${TEST_APP_NAME}-wbr`,
@@ -35,6 +35,7 @@ const tags = [
 const TEST_APP_DIR = path.join(process.cwd(), TEST_APP_NAME)
 
 module.exports = {
+  TAGS,
   TEST_PREFIX_APP_NAME,
   TEST_APP_NAME,
   TEST_TEMPLATES,

@@ -3,7 +3,7 @@ const _ = require('lodash')
 
 const Teleport = require('../lib').default
 const {
-  tags,
+  TAGS,
   TEST_APP_NAME,
   TEST_TEMPLATES,
   TEST_APP_DIR
@@ -54,5 +54,5 @@ test('map utility method for getting the run infos', () => {
   })
   const expectedValue = testTeleport.launch()
   // we expect to have all the tags for each type and each server
-  expect(_.flatten(expectedValue).map(run => run.tag)).toEqual(tags)
+  expect(_.flatten(expectedValue).map(run => run.tag)).toEqual(TAGS)
 })
