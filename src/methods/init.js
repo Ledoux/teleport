@@ -12,7 +12,7 @@ import path from 'path'
 import { writeGitignore, writePackage } from '../utils/functions'
 
 export function init () {
-  const { program, project } = this
+  const { app, program, project } = this
   // name
   const name = program.name || project.dir.split('/').slice(-1)[0]
   // dirs
@@ -44,12 +44,14 @@ export function init () {
   const configureFileDir = path.join(binDir, 'configure.sh')
   const configureFileString = templatesOption !== ''
   // ? `npm install --save-dev ${templatesOption}`
-  ? `yarn add --dev ${templatesOption}`
-  : ''
+  ? ( app.isYarn
+    ? `yarn add --dev ${templatesOption}`
+    : `npm install --dev ${templatesOption}`
+  ) : ''
   fs.writeFileSync(configureFileDir, configureFileString)
   // write an install file
   const installFileDir = path.join(binDir, 'install.sh')
-  const installFileString = 'yarn'
+  const installFileString = app.isYarn ? 'yarn' : 'npm install'
   fs.writeFileSync(installFileDir, installFileString)
   // configure
   this.setProjectEnvironment()

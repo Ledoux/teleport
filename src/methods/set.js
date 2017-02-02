@@ -44,6 +44,13 @@ export function setAppEnvironment () {
   app.venvDir = virtualEnvDir !== ''
   ? virtualEnvDir
   : null
+  // check if yarn is there or either use npm
+  app.isYarn = true
+  try {
+    childProcess.execSync('which yarn')
+  } catch (e) {
+    app.isYarn = false
+  }
 }
 
 export function setProjectEnvironment () {
