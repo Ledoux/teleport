@@ -3,7 +3,7 @@
 
 <table>
   <td>
-    <img src="../icon.png" alt="icon" title="made by @cecilesnips"/>
+    <img src="../../icon.png" alt="icon" title="made by @cecilesnips"/>
   </td>
   <td>
     <img src="teleport-heroku.png" alt="icon" title="made by @cecilesnips"/>
