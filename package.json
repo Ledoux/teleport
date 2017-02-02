@@ -25,7 +25,7 @@
   "scripts": {
     "check": "make install",
     "compile": "babel --presets latest -d lib/ src/",
-    "postinstall": "chmod +wx .projects.json && rm -rf lib && mkdir -p lib && npm run compile",
+    "postinstall": "sh bin/postinstall.sh",
     "link": "source bin/link.sh",
     "test": "export TEST_RANDOM=$RANDOM && jest tests/create.test.js && jest tests/utility_methods.test.js && jest tests/deploy_methods.test.js",
     "test-jenkins": "export TEST_RANDOM=$RANDOM && jest tests/create.test.js && jest tests/utility_methods.test.js",
@@ -34,5 +34,5 @@
   "bin": {
     "tpt": "bin/index.js"
   },
-  "version": "0.1.11"
+  "version": "0.1.12"
 }
