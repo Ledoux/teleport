@@ -1,1 +1,0 @@
-export TEST_RANDOM=$RANDOM && jest tests/create.test.js && jest tests/utility_methods.test.js
