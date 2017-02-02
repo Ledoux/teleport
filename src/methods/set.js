@@ -244,7 +244,7 @@ export function setRunEnvironment () {
     // subdomain
     run.subDomain = `${dnsPrefix}${backend.dashSiteName}`
     // if this server is not the main (we need to add it a suffix to distinguish its specific url)
-    if (Object.keys(backend.serversByName) > 1 && !server.isMain) {
+    if (Object.keys(backend.serversByName).length > 1 && !server.isMain) {
       run.subDomain = `${run.subDomain}-${server.abbreviation}`
     }
     // Note : we have to be careful that
