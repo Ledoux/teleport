@@ -1,1 +1,1 @@
-export JEST_TESTER=jenkins && npm run test
+export TEST_RANDOM=$RANDOM && jest tests/create.test.js && jest tests/utility_methods.test.js
