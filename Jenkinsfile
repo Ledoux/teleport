@@ -18,7 +18,7 @@ def cmds = [
 'express-webrouter-webpack-react':BACKEND_AND_FRONTEND_TEST + ' ewbr teleport-express-webrouter teleport-webpack-react teleport-heroku',
 'flask-webrouter-webpack-angular':BACKEND_AND_FRONTEND_TEST + ' fwbr teleport-flask-webrouter teleport-webpack-angular teleport-heroku',
 'express-webrouter-webpack-angular':BACKEND_AND_FRONTEND_TEST + ' ewbr teleport-express-webrouter teleport-webpack-angular teleport-heroku',
-'jests': 'npm run test-jenkins'
+'jests': 'virtualenv venv && . venv/bin/activate && npm run test-jenkins'
 ]
 def builders = [:]
 node {
