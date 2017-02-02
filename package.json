@@ -18,7 +18,7 @@
     "pluralize": "^3.0.0"
   },
   "engines": {
-    "node": ">= 4.0"
+    "node": ">= 6.0"
   },
   "main": "lib/index.js",
   "name": "teleport.js",
@@ -34,5 +34,5 @@
   "bin": {
     "tpt": "bin/index.js"
   },
-  "version": "0.1.12"
+  "version": "0.1.13"
 }
