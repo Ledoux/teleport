@@ -40,7 +40,7 @@ if which yarn > /dev/null ; then
     echo "yarn is installed, skipping..."
 else
     echo "yarn is not installed"
-    npm install -g yarn
+    curl -o- -L https://yarnpkg.com/install.sh | bash
 fi
 
 ## virtualenv
@@ -71,7 +71,7 @@ if which tpt > /dev/null ; then
     echo "teleport is installed, skipping..."
 else
     echo "teleport is not installed"
-    npm install -g teleport.js
+    yarn global add teleport.js
 fi
 
 ## python dependencies
