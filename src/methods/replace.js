@@ -76,9 +76,22 @@ export function replaceServerPlaceholderFiles () {
   const templates = allTemplateNames
     .map(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
+      let templateConfig = this.getConfig(templateDir)
+      if (typeof config === 'undefined') {
+        this.consoleWarn(`this template ${templateName} has no config`)
+        templateConfig = {}
+      }
+      const templatePackage = getPackage(templateDir)
+      let templateRepository = templatePackage.repository
+      if (typeof templateRepository === 'undefined') {
+        if (typeof config === 'undefined') {
+          this.consoleWarn(`this template ${templateName} has no repository in package`)
+        }
+        templateRepository = {}
+      }
       return {
-        iconUrl: (this.getConfig(templateDir) || {}).iconUrl,
-        gitUrl: (getPackage(templateDir) || {}).repository.url,
+        iconUrl: templateConfig.iconUrl,
+        gitUrl: templateRepository.url,
         name: templateName
       }})
   // prepare the extraConfig
