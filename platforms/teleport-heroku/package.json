@@ -5,7 +5,7 @@
   "name": "teleport-heroku",
   "repository": {
     "type": "git",
-    "url": "https://github.com/snipsco/teleport-heroku"
+    "url": "https://github.com/snipsco/teleport/tree/master/platforms/teleport-heroku"
   },
-  "version": "0.1.2"
+  "version": "0.1.3"
 }
