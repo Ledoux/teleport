@@ -21,7 +21,11 @@ export function writeProjectsByName (projectsByName) {
   const fileDir = path.join(dir, '.projects.json')
   const fileString = stringify(projectsByName, { space: '\t' })
   if (fileString) {
-    fs.writeFileSync(fileDir, fileString)
+    try {
+      fs.writeFileSync(fileDir, fileString)
+    } catch (e) {
+      this.consoleWarn(e)
+    }
   } else {
     this.consoleError(`your projects to write is not correct: ${fileString}`)
   }

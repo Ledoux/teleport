@@ -18,7 +18,7 @@ import glob from 'glob'
 import mkdirp from 'mkdirp'
 import path from 'path'
 
-import { formatString } from '../utils/functions'
+import { formatString, getPackage } from '../utils/functions'
 
 const dockerPlaceholderfiles = [
   'build.sh',
@@ -71,12 +71,22 @@ export function replaceServerPlaceholderFiles () {
   }
   // add types
   project.typeNames = Object.keys(project.config.typesByName)
+  // add templateUrls in the context
+  const allTemplateNames = this.getAllTemplateNames()
+  const templates = allTemplateNames
+    .map(templateName => {
+      const templateDir = path.join(project.nodeModulesDir, templateName)
+      return {
+        iconUrl: this.getConfig(templateDir).iconUrl,
+        gitUrl: getPackage(templateDir).repository.url,
+        name: templateName
+      }})
   // prepare the extraConfig
   const extraConfig = Object.assign(
     {
       'SITE_NAME': backend.siteName,
-      'TYPE': type.name,
-      'WEB': 'on'
+      'TEMPLATES': `'${JSON.stringify(templates)}'`,
+      'TYPE': type.name
     },
     backend.dockerEnv,
     server.dockerEnv
@@ -96,7 +106,7 @@ export function replaceServerPlaceholderFiles () {
     this.manageExtraConfig = `${this.manageExtraConfig} &&`
   }
   // for each template replace
-  this.getAllTemplateNames().forEach(templateName => {
+  allTemplateNames.forEach(templateName => {
     const templateDir = path.join(project.nodeModulesDir, templateName)
     // replace at the server scope
     const templateServerDir = path.join(templateDir, 'backend/servers', server.name)

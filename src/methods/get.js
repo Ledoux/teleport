@@ -36,6 +36,8 @@ export function getConfig (dir) {
   const configDir = path.join(dir, configFile)
   if (fs.existsSync(configDir)) {
     config = _.merge(config, JSON.parse(fs.readFileSync(configDir)))
+  } else {
+    this.consoleInfo(`You have no such config file here ${configDir}`)
   }
   // return
   return config
