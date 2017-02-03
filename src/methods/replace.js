@@ -77,8 +77,8 @@ export function replaceServerPlaceholderFiles () {
     .map(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
       return {
-        iconUrl: this.getConfig(templateDir).iconUrl,
-        gitUrl: getPackage(templateDir).repository.url,
+        iconUrl: (this.getConfig(templateDir) || {}).iconUrl,
+        gitUrl: (getPackage(templateDir) || {}).repository.url,
         name: templateName
       }})
   // prepare the extraConfig
