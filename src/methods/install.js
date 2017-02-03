@@ -60,7 +60,7 @@ export function installScript () {
 
 export function installKubernetes () {
   // unpack
-  const { project } = this
+  const { project, program } = this
   // check that actually this project uses kubernetes
   if (!project.config.backend || !project.config.backend.helpersByName || !project.config.backend.helpersByName.kubernetes) {
     return
