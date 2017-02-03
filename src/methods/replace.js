@@ -77,7 +77,7 @@ export function replaceServerPlaceholderFiles () {
     .map(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
       let templateConfig = this.getConfig(templateDir)
-      if (typeof config === 'undefined') {
+      if (typeof templateConfig === 'undefined') {
         this.consoleWarn(`this template ${templateName} has no config`)
         templateConfig = {}
       }
