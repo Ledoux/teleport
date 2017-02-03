@@ -1,6 +1,8 @@
 {
   "author": "The Snips Tooling Team",
-  "license": "MIT",
+  "bin": {
+    "tpt": "bin/index.js"
+  },
   "description": "Node framework to bootstrap and deploy web applications based on templates",
   "dependencies": {
     "babel-cli": "^6.16.0",
@@ -21,6 +23,7 @@
   "engines": {
     "node": ">= 6.0"
   },
+  "license": "MIT",
   "main": "lib/index.js",
   "name": "teleport.js",
   "scripts": {
@@ -32,8 +35,9 @@
     "test-jenkins": "export TEST_RANDOM=$RANDOM && jest tests/create.test.js && jest tests/utility_methods.test.js",
     "watch": "nodemon lib/index.js --watch src --exec \"npm run compile\""
   },
-  "bin": {
-    "tpt": "bin/index.js"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snipsco/teleport"
   },
   "version": "0.1.15"
 }
