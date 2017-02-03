@@ -3,5 +3,9 @@
   "license": "MIT",
   "description": "Teleport platform template for kubernetes",
   "name": "teleport-docker",
-  "version": "0.1.0"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snipsco/teleport-docker"
+  },
+  "version": "0.1.1"
 }
