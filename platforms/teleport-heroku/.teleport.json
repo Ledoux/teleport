@@ -6,6 +6,7 @@
 			}
 		}
 	},
+	"iconUrl": "https://raw.githubusercontent.com/snipsco/teleport/master/platforms/heroku/teleport-heroku.png",
 	"typesByName": {
 		"localhost": {
 		},
