@@ -105,6 +105,14 @@ export function getAllTemplateNames () {
   ))
 }
 
+export function getPlatformTemplates () {
+  const { project: { config, dir } } = this
+  return config.templateNames.filter(templateName => {
+    const templateDir = path.join(project.nodeModulesDir, templateName)
+    return this.getConfig(templateDir).isPlatform
+  })
+}
+
 export function getTemplateDependencies () {
   const { project: { config, dir } } = this
   return _.fromPairs(config.templateNames

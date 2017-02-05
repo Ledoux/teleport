@@ -20,19 +20,27 @@ const platformScriptNames = [
 ]
 
 export function exec () {
-  const { app, program, server, type } = this
+  const { app, program, project, server, type } = this
   let command, scriptFile
   // execute a script
   const script = program.script
   if (typeof script !== 'undefined' && server) {
     let platform = program.platform
     let typedScript = script
+    // look how many platforms we have
+    if (typeof project.platformTemplateNames === 'undefined') {
+      project.platformTemplateNames = this.getPlatformTemplates()
+    }
+    if (project.platformTemplateNames.length === 1 && platform !== 'heroku') {
+      platform = project.platformTemplateNames[0]
+    }
+    // check
     if (
       platformScriptNames.includes(script) && platform &&
       // NOTE : this is where we need to do a little hacky workaround.
       // our default platform value is heroku, but our scripts in our templates
       // are by default kubernetes if they don't have a prefix platform
-      platform !== 'kubernetes'
+      platform !== 'teleport-snips'
     ) {
       typedScript = `${platform}_${script}`
     }
