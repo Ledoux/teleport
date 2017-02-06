@@ -7,7 +7,8 @@
 // One important point is that dump does not rsync important dirs listed in
 // the 'excludedDirs' array global variable. Indeed some of them (essentially
 // the config files like package.json) has been already merged during the
-// configure time (a previous init sub task). Others that are prefixed by _p_
+// configure time (a previous init sub task). Others that are prefixed by
+// <REPLACE>, <REPLACE_FOR_EACH_TYPE>_
 // are placeholder files that will be actually added at the replace
 // time (which is a sub task of install).
 // - if you have a frontend bundling template, teleport has at this stage
@@ -25,6 +26,7 @@ import fs from 'fs'
 import { flatten, reverse, uniq } from 'lodash'
 import path from 'path'
 
+import { templatePrefixes } from '../utils/constants'
 import { getRequirements, writeRequirements } from '../utils/functions'
 
 export function dump () {
@@ -48,8 +50,10 @@ export function getDumpProjectBoilerplateCommand () {
     '.gitignore',
     'README.md',
     configFile,
-    '\'_p_*\''
-  ]
+  // ignore also all the placeholder files because they are going
+  //to be created at the replace time
+  ].concat(templatePrefixes
+    .map(templatePrefix => `\'${templatePrefix}*\'`))
   return project.config.templateNames
     .map(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)

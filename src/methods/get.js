@@ -84,11 +84,11 @@ export function getTemplateNames () {
 
 export function getDepTemplateNames (templateName, depTemplateNames = []) {
   const { project } = this
-  depTemplateNames.push(templateName)
   const templateDir = path.join(project.dir, 'node_modules', templateName)
   let templateConfig = this.getConfig(templateDir)
   const templatePackage = getPackage(templateDir)
-  if (typeof templatePackage !== 'undefined' && typeof templateConfig !== 'undefined') {
+  if (templatePackage && templateConfig) {
+    depTemplateNames.push(templateName)
     const dependencies = Object.assign({}, templatePackage.dependencies, templatePackage.devDependencies)
     Object.keys(dependencies)
       .forEach(depTemplateName =>

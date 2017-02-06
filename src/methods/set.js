@@ -54,7 +54,7 @@ export function setAppEnvironment () {
 }
 
 export function setProjectEnvironment () {
-  const { project } = this
+  const { project, program } = this
   this.read(project)
   // dirs
   project.nodeModulesDir = path.join(project.dir, 'node_modules')
@@ -63,6 +63,7 @@ export function setProjectEnvironment () {
     this.setTypeEnvironment()
     this.setBackendEnvironment()
     this.setFrontendEnvironment()
+    this.setWelcomeEnvironment()
   }
 }
 
@@ -102,7 +103,6 @@ export function setBackendEnvironment () {
   }
   this.setDockerEnvironment()
   this.setKubernetesEnvironment()
-  this.setProviderEnvironment()
   this.setServersEnvironment()
   this.setServerEnvironment()
 }
@@ -147,21 +147,62 @@ export function setKubernetesEnvironment () {
   this.kubernetes = this.backend.helpersByName.kubernetes
 }
 
-export function setProviderEnvironment () {
-  const { backend, program } = this
-  if (typeof program.provider !== 'string') {
-    this.provider = null
-    return
-  }
-  const provider = this.provider = Object.assign({}, backend.providersByName[program.provider])
-  provider.name = program.provider
-  provider.dataDir = path.join(backend.dataDir, `${program.provider}_data`)
-  provider.startDir = path.join(provider.dataDir, 'start.sh')
-}
-
 export function setServersEnvironment () {
   const { backend } = this
   this.serversByName = Object.assign({}, backend.serversByName)
+}
+
+export function setWelcomeEnvironment () {
+  const { program, project } = this
+  const welcome = this.welcome = {}
+  // we compute a summary of the templates info into a JSON format
+  // that is used only at the replace time to write a json file in the config
+  // of each server in order to make them a bit aware to where they come from:
+  // what are the templates that made the project and the other servers deployed by the
+  // project
+  if (program.create || program.install || program.replace ||
+    program.method === 'replaceServerPlaceholderFiles' || program.method ===
+  'replaceBundlerPlaceholderFiles') {
+    // For having already full information on all the servers
+    // we need to make a loop on each of them to complete their config info
+    this.setAllTypesAndServersEnvironment()
+    // get info on the templates
+    welcome.allTemplateNames = this.getAllTemplateNames()
+    welcome.templatesJSON = JSON.stringify(welcome.allTemplateNames
+      .map(templateName => {
+        const templateDir = path.join(project.nodeModulesDir, templateName)
+        let templateConfig = this.getConfig(templateDir)
+        if (typeof templateConfig === 'undefined') {
+          this.consoleWarn(`this template ${templateName} has no config`)
+          templateConfig = {}
+        }
+        let templatePackage = getPackage(templateDir)
+        if (typeof templatePackage === 'undefined') {
+          this.consoleWarn(`this template ${templateName} has no package`)
+          templatePackage = {}
+        }
+        let templateRepository = templatePackage.repository
+        if (typeof templateRepository === 'undefined') {
+          this.consoleWarn(`this template ${templateName} has no repository in package`)
+          templateRepository = {}
+        }
+        return {
+          iconUrl: templateConfig.iconUrl,
+          gitUrl: templateRepository.url,
+          name: templateName
+        }}), null, 2)
+    }
+    // get also info on the servers
+    welcome.serversJSON = JSON.stringify(Object.keys(this.serversByName)
+      .map(serverName => {
+        const server = this.serversByName[serverName]
+        return {
+          name: serverName,
+          types: Object.keys(server.runsByTypeName)
+                .map(type => server.runsByTypeName[type])
+                .map(({url}) => { return { url } })
+        }
+      }), null, 2)
 }
 
 export function setServerEnvironment () {
@@ -209,7 +250,7 @@ export function setRunEnvironment () {
   const run = this.run = Object.assign({}, type, server.runsByTypeName[type.name])
   // here we want to mutate the server.runsByTypeName[type.name] to keep the settings
   // that are done here
-  // server.runsByTypeName[type.name] = run
+  server.runsByTypeName[type.name] = run
   // set the docker image
   if (run.name !== 'localhost') {
     if (backend.helpersByName && backend.helpersByName.kubernetes) {
