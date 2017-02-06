@@ -67,7 +67,7 @@ That's it! You are all set! :smiley:
 ### Kubernetes
 Not well supported yet... We are fixing this :construction:
 
-[Additional setup](app_database.md) to the Kubernetes cluster.
+[Additional setup](docs/app_database.md) to the Kubernetes cluster.
 
 ## Start a new project
 As an example let's create a web app on Heroku platform with the following components:
