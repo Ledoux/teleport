@@ -193,7 +193,7 @@ export function setWelcomeEnvironment () {
         }}), null, 2)
     }
     // get also info on the servers
-    welcome.serversJSON = JSON.stringify(Object.keys(this.serversByName)
+    welcome.serversJSON = JSON.stringify(Object.keys(this.serversByName || {})
       .map(serverName => {
         const server = this.serversByName[serverName]
         return {
