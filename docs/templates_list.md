@@ -10,5 +10,5 @@
 - [Webpack Angular](https://github.com/snipsco/teleport-webpack-angular)
 
 ## Platforms
-- [Heroku](../platforms/heroku/)
-- [Docker + Kubernetes](../platforms/docker/)
+- [Heroku](../platforms/teleport-heroku/)
+- [Docker + Kubernetes](../platforms/teleport-docker/)
