@@ -18,7 +18,7 @@ clang: error: linker command failed with exit code 1 (use -v to see invocation)
 
 The issue seems to be related to `libxml2` where a symlink is missing.
 
-## Solver
+## Solution
 We unlink and uninstall `libxml2` then reinstall it with option `--with-python` to get the proper symlinks.
 ```
 brew unlink libxml2
