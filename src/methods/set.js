@@ -63,7 +63,6 @@ export function setProjectEnvironment () {
     this.setTypeEnvironment()
     this.setBackendEnvironment()
     this.setFrontendEnvironment()
-    this.setWelcomeEnvironment()
   }
 }
 
