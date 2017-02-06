@@ -159,49 +159,52 @@ export function setWelcomeEnvironment () {
   // of each server in order to make them a bit aware to where they come from:
   // what are the templates that made the project and the other servers deployed by the
   // project
-  if (program.create || program.install || program.replace ||
-    program.method === 'replaceServerPlaceholderFiles' || program.method ===
-  'replaceBundlerPlaceholderFiles') {
-    // For having already full information on all the servers
-    // we need to make a loop on each of them to complete their config info
-    this.setAllTypesAndServersEnvironment()
-    // get info on the templates
-    welcome.allTemplateNames = this.getAllTemplateNames()
-    welcome.templatesJSON = JSON.stringify(welcome.allTemplateNames
-      .map(templateName => {
-        const templateDir = path.join(project.nodeModulesDir, templateName)
-        let templateConfig = this.getConfig(templateDir)
-        if (typeof templateConfig === 'undefined') {
-          this.consoleWarn(`this template ${templateName} has no config`)
-          templateConfig = {}
-        }
-        let templatePackage = getPackage(templateDir)
-        if (typeof templatePackage === 'undefined') {
-          this.consoleWarn(`this template ${templateName} has no package`)
-          templatePackage = {}
-        }
-        let templateRepository = templatePackage.repository
-        if (typeof templateRepository === 'undefined') {
-          this.consoleWarn(`this template ${templateName} has no repository in package`)
-          templateRepository = {}
-        }
-        return {
-          iconUrl: templateConfig.iconUrl,
-          gitUrl: templateRepository.url,
-          name: templateName
-        }}), null, 2)
-    }
-    // get also info on the servers
-    welcome.serversJSON = JSON.stringify(Object.keys(this.serversByName || {})
-      .map(serverName => {
-        const server = this.serversByName[serverName]
-        return {
-          name: serverName,
-          types: Object.keys(server.runsByTypeName)
-                .map(type => server.runsByTypeName[type])
-                .map(({url}) => { return { url } })
-        }
-      }), null, 2)
+
+  // For having already full information on all the servers
+  // we need to make a loop on each of them to complete their config info
+  const oldMethod = program.method
+  const oldMethods = program.methods
+  program.method = 'pass'
+  program.methods = null
+  this.setAllTypesAndServersEnvironment()
+  program.method = oldMethod
+  program.methods = oldMethods
+  // get info on the templates
+  welcome.allTemplateNames = this.getAllTemplateNames()
+  welcome.templatesJSON = JSON.stringify(welcome.allTemplateNames
+    .map(templateName => {
+      const templateDir = path.join(project.nodeModulesDir, templateName)
+      let templateConfig = this.getConfig(templateDir)
+      if (typeof templateConfig === 'undefined') {
+        this.consoleWarn(`this template ${templateName} has no config`)
+        templateConfig = {}
+      }
+      let templatePackage = getPackage(templateDir)
+      if (typeof templatePackage === 'undefined') {
+        this.consoleWarn(`this template ${templateName} has no package`)
+        templatePackage = {}
+      }
+      let templateRepository = templatePackage.repository
+      if (typeof templateRepository === 'undefined') {
+        this.consoleWarn(`this template ${templateName} has no repository in package`)
+        templateRepository = {}
+      }
+      return {
+        iconUrl: templateConfig.iconUrl,
+        gitUrl: templateRepository.url,
+        name: templateName
+      }}), null, 2)
+  // get also info on the servers
+  welcome.serversJSON = JSON.stringify(Object.keys(this.serversByName || {})
+    .map(serverName => {
+      const server = this.serversByName[serverName]
+      return {
+        name: serverName,
+        types: Object.keys(server.runsByTypeName)
+              .map(type => server.runsByTypeName[type])
+              .map(({url}) => { return { url } })
+      }
+    }), null, 2)
 }
 
 export function setServerEnvironment () {
@@ -299,9 +302,10 @@ export function setRunEnvironment () {
 }
 
 export function setAllTypesAndServersEnvironment () {
+  const { program } = this
   if (this.allTypesAndProjets !== true) {
-    if (typeof this.program.method === 'undefined') {
-      this.program.method = 'pass'
+    if (typeof program.method === 'undefined') {
+      program.method = 'pass'
     }
     this.mapInTypesAndServers()
     this.allTypesAndProjets = true

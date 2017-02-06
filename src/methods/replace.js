@@ -59,10 +59,12 @@ export function replace () {
 
 export function replaceServerPlaceholderFiles () {
   // unpack
-  const { backend, project, program, type, run, server, welcome } = this
+  let { welcome } = this
+  const { backend, project, program, type, run, server } = this
   // check
   if (typeof welcome === 'undefined') {
     this.setWelcomeEnvironment()
+    welcome = this.welcome
   }
   // connect if no port was set here
   if (type.name !== 'localhost' && typeof run.port === 'undefined') {
@@ -162,10 +164,12 @@ export function replaceServerPlaceholderFiles () {
 
 export function replaceBundlerPlaceholderFiles () {
   // unpack
-  const { project, welcome } = this
+  let { welcome } = this
+  const { project } = this
   // check
   if (typeof welcome === 'undefined') {
     this.setWelcomeEnvironment()
+    welcome = this.welcome
   }
   // replace
   welcome.allTemplateNames.forEach(templateName => {
