@@ -14,8 +14,8 @@ Here are some additional informations about frontend templates architecture. As 
 |   +-- bundle.sh
 |   +-- localhost_bundle.sh
 +-- bundler
-|   +-- _p_config.js
-|   +-- _p_hotAssetsServer.js
+|   +-- <REPLACE>config.js
+|   +-- <REPLACE>hotAssetsServer.js
 |   +-- dev.config.js
 |   +-- prod.config.js
 +-- frontend
@@ -51,4 +51,4 @@ In this folder we should have the frontend application. The architecture should 
 
 Nb: The app should be loaded into a single div container with the ID `app_div`. Remember that this is the ID we gave into our backend templates for the `index.html`.
 
-If the frontend failed to load (bundle not working or app not loaded properly...) then we fallback on the backend api and server the index template of the backend. 
+If the frontend failed to load (bundle not working or app not loaded properly...) then we fallback on the backend api and server the index template of the backend.

@@ -11,7 +11,7 @@ Here are some additional informations about backend templates architecture. As a
 |   +-- .dockerignore
 |   +-- express-webrouter
 |   |   +-- Procfile
-|   |   +-- _p_Dockerfile
+|   |   +-- <REPLACE_FOR_EACH_TYPE>_Dockerfile
 |   |   +-- package.json
 |   |   +-- app
 |   |   |   +-- index.js
@@ -19,15 +19,15 @@ Here are some additional informations about backend templates architecture. As a
 |   |   |   +-- static
 |   |   |   +-- ...
 |   |   +-- scripts
-|   |   |   +-- _p_heroku_run.sh
-|   |   |   +-- _p_run.sh
-|   |   |   +-- _p_heroku_build.sh
-|   |   |   +-- _p_build.sh
+|   |   |   +-- <REPLACE_FOR_EACH_TYPE>_heroku_run.sh
+|   |   |   +-- <REPLACE_FOR_EACH_TYPE>_run.sh
+|   |   |   +-- <REPLACE_FOR_EACH_TYPE>_heroku_build.sh
+|   |   |   +-- <REPLACE_FOR_EACH_TYPE>_build.sh
 |   |   |   +-- ...
 |   |   +-- config
-|   |   |   +-- _p_controller.yaml
-|   |   |   +-- _p_service.yaml
-|   |   |   +-- _p_uwsgi.ini
+|   |   |   +-- <REPLACE_FOR_EACH_TYPE>_controller.yaml
+|   |   |   +-- <REPLACE_FOR_EACH_TYPE>_service.yaml
+|   |   |   +-- <REPLACE_FOR_EACH_TYPE>_uwsgi.ini
 |   |   |   +-- heroku_uwsgi.ini
 ```
 
@@ -41,7 +41,7 @@ NB: the name of the folder should match the `serversByName` first key into the `
 
 ### Into express-webrouter
 - *Procfile*: define commands that will run on the deployed app. It's specific to Heroku platform (see https://devcenter.heroku.com/articles/procfile).
-- *_p_Dockerfile*: define the application image. It's specific to Docker.
+- *<REPLACE_FOR_EACH_TYPE>_Dockerfile*: define the application image. It's specific to Docker.
 - *package.json*: define requirements for the deployed application. It's necessary for the Heroku app to have it at this level, moreover it's specific to our case (nodejs express), for a python app it should be a `requirements.txt` (see https://devcenter.heroku.com/articles/python-pip).
 
 #### app
