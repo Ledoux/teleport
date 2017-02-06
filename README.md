@@ -75,7 +75,13 @@ As an example let's create a web app on Heroku platform with the following compo
 - A Webpack React frontend on top of the server  
 
 ### Creation
-We first create the app by typing
+We **highly recommend to create a teleport application within a python virtual environment** as it will install some python dependencies. Before creating your application just type
+```bash
+virtualenv venv
+source venv/bin/activate # On Linux . venv/bin/activate
+```
+
+We then create the app by typing
 ```
 tpt -c --templates teleport-flask-webrouter,teleport-webpack-react,teleport-heroku
 ```
@@ -85,6 +91,8 @@ You can have more informations about those templates by checking their repos:
 - [Flask webrouter](https://github.com/snipsco/teleport-flask-webrouter)
 - [Webpack React](https://github.com/snipsco/teleport-webpack-react)
 - [Heroku](platforms/heroku/)
+
+:exclamation: Help I have some issues with uwsgi on MacOS when creating an app! No panic, just follow [this link](docs/uwsgi_issues.md).
 
 ### Run locally
 If you want to test the app locally you can type
