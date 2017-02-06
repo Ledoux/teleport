@@ -1,4 +1,5 @@
 # Uwsgi issues with MacOS 10.11 El Capitan
+https://github.com/unbit/uwsgi/issues/1364
 
 ## Environment
 - MacOS 10.11 El Capitan
