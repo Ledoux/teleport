@@ -87,6 +87,8 @@ tpt -c --templates teleport-flask-webrouter,teleport-webpack-react,teleport-hero
 ```
 :warning: Please ensure that the options listed after the --templates flag are separated just by a single comma, as above - without any extra spaces - otherwise it will not work properly.
 
+By default Teleport generates a random app name for you (like `app-685af6ba`). To specify your own app name, use `--name my-app-name`.
+
 You can have more informations about those templates by checking their repos:
 - [Flask webrouter](https://github.com/snipsco/teleport-flask-webrouter)
 - [Webpack React](https://github.com/snipsco/teleport-webpack-react)
