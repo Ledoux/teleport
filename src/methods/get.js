@@ -66,13 +66,13 @@ export function getAvailablePorts (docker) {
 
 export function getTemplatesOption () {
   const { project, program } = this
-  let templatesOption = ''
+  let templatesOptions = []
   if (typeof program.templates !== 'undefined' && program.templates.trim() !== '') {
-    templatesOption = program.templates.split(',').join(' ')
+    templatesOptions = program.templates.split(',')
   } else if (project.config && project.config.templateNames) {
-    templatesOption = project.config.templateNames.join(' ')
+    templatesOptions = project.config.templateNames
   }
-  return templatesOption
+  return templatesOptions.join(' ')
 }
 
 export function getTemplateNames () {
