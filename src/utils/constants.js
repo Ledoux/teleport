@@ -1,4 +1,4 @@
 export const templatePrefixes = [
   '<REPLACE>',
-  '<REPLACE_FOR_EACH_TYPE>'
+  '<REPLACE_FOR_EACH_TYPE>_'
 ]
