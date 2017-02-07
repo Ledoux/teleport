@@ -14,11 +14,11 @@ export function connect () {
 export function connectPorts () {
   this.checkProject()
   const { project: { config, dir } } = this
-  this.availablePortsBySubDomain = {}
+  this.availablePortsByInfraName = {}
   values(config.typesByName)
   .forEach(type => {
-    if (type.subDomain) {
-      this.availablePortsBySubDomain[type.subDomain] = this.getAvailablePorts(type.subDomain)
+    if (type.infraName) {
+      this.availablePortsByInfraName[type.infraName] = this.getAvailablePorts(type.infraName)
     }
   })
   if (config.backend && config.backend.serversByName) {
@@ -30,18 +30,18 @@ export function connectPorts () {
           if (typeof run === 'undefined') {
             run = server.runsByTypeName[typeName] = {}
           }
-          const subDomain = run.subDomain || config.typesByName[typeName].subDomain
-          if (typeof subDomain === 'undefined') {
+          const infraName = run.infraName || config.typesByName[typeName].infraName
+          if (typeof infraName === 'undefined') {
             return
           }
-          if (this.availablePortsBySubDomain[subDomain]) {
-            const availablePorts = this.availablePortsBySubDomain[subDomain]
+          if (this.availablePortsByInfraName[infraName]) {
+            const availablePorts = this.availablePortsByInfraName[infraName]
             if (availablePorts.length < 1) {
               this.consoleWarn('The required ports are unavailable. Free them up and retry.')
               process.exit()
             }
             run.port = availablePorts[0].toString()
-            this.availablePortsBySubDomain[subDomain] = availablePorts.slice(1)
+            this.availablePortsByInfraName[infraName] = availablePorts.slice(1)
           }
         })
       })
