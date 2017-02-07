@@ -124,7 +124,7 @@ export function replaceServerPlaceholderFiles () {
         }
         // no need also to replace and write when actually there is already the
         // locahost placeholder file
-        const localhostTemplateDir = `${templatePathDir}/__localhost_${installedFileName}`
+        const localhostTemplateDir = `${templatePathDir}/<REPLACE>localhost_${installedFileName}`
         if (fs.existsSync(localhostTemplateDir)) {
           return
         }
