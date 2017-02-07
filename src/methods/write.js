@@ -24,6 +24,7 @@ export function writeProjectsByName (projectsByName) {
     try {
       fs.writeFileSync(fileDir, fileString)
     } catch (e) {
+      this.consoleWarn('Apparently you cannot write into your .projects.json located in your teleport folder app!')
       this.consoleWarn(e)
     }
   } else {
