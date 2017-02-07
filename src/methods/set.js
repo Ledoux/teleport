@@ -159,16 +159,9 @@ export function setWelcomeEnvironment () {
   // of each server in order to make them a bit aware to where they come from:
   // what are the templates that made the project and the other servers deployed by the
   // project
-
-  // For having already full information on all the servers
+  // For having already full information on all the servers and all types
   // we need to make a loop on each of them to complete their config info
-  const oldMethod = program.method
-  const oldMethods = program.methods
-  program.method = 'pass'
-  program.methods = null
   this.setAllTypesAndServersEnvironment()
-  program.method = oldMethod
-  program.methods = oldMethods
   // get info on the templates
   welcome.allTemplateNames = this.getAllTemplateNames()
   welcome.templatesJSON = JSON.stringify(welcome.allTemplateNames
@@ -304,10 +297,20 @@ export function setRunEnvironment () {
 export function setAllTypesAndServersEnvironment () {
   const { program } = this
   if (this.allTypesAndProjets !== true) {
-    if (typeof program.method === 'undefined') {
-      program.method = 'pass'
-    }
+    // NOTE HERE !! Maybe we are already in a map thread that
+    // uses the program.method or program.methods already.
+    // so for this possible nested map in types and servers
+    // we want to just to set the environments (and not calling method)
+    // so we keep in buffer the method and methods just during the
+    // mapInTypesAndServers
+    const oldMethod = program.method
+    const oldMethods = program.methods
+    program.method = 'pass'
+    program.methods = null
     this.mapInTypesAndServers()
+    // and we set it again here to make continue the process
+    program.method = oldMethod
+    program.methods = oldMethods
     this.allTypesAndProjets = true
   }
 }
