@@ -4,7 +4,7 @@
 
 <table>
   <td>
-    <img src="icon.png" alt="icon" title="made by @cecilesnips"/>
+    <img src="icons/icon.png" alt="icon" title="made by @cecilesnips"/>
   </td>
   <td>
     A node framework to quickly bootstrap and deploy applications based on templates
