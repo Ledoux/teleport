@@ -34,7 +34,7 @@ export function exec () {
     // if there is only one platform to deploy, then necessary force
     // the deploy on that one
     if (project.platformTemplateNames.length === 1) {
-      platform = project.platformTemplateNames[0]
+      platform = project.platformTemplateNames[0].replace('teleport-', '')
     }
     // check
     if (
