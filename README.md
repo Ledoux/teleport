@@ -123,7 +123,6 @@ Note you need to specify an option if you want to deploy in production:
 ```
 tpt -d --type production
 ```
-![alt text](https://raw.githubusercontent.com/snipsco/teleport/master/gifs/tpt-d.gif)
 
 Note that you can isplay all your urls with
 ```
