@@ -107,6 +107,13 @@ tpt -s
 ```
 ![alt text](https://raw.githubusercontent.com/snipsco/teleport/master/gifs/tpt-s.gif)
 
+:warning: You can meet this possible issue:
+```
+Error: EACCES: permission denied, open '/Users/<whoami>/.config/configstore/update-notifier-nodemon.json'
+[0] [0] You don't have access to this file.
+```
+Go [there](https://slack-redir.net/link?url=https%3A%2F%2Fgithub.com%2Fremy%2Fnodemon%2Fissues%2F254) to see the fix.
+
 ### Deploy the app
 Let's now deploy it directly on Heroku as we choose this platform template.
 ```
