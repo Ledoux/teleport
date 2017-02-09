@@ -12,7 +12,10 @@ import path from 'path'
 import { writeGitignore, writePackage } from '../utils/functions'
 
 export function init () {
+  // unpack
   const { app, program, project } = this
+  // log
+  this.consoleInfo('Let\'s init the project')
   // name
   const name = program.name || project.dir.split('/').slice(-1)[0]
   // dirs

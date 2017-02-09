@@ -86,7 +86,7 @@ export function dumpMergeFrontendServer () {
     const buffer = childProcess.execSync(command)
     console.log(buffer.toString('utf-8'))
   }
-  if (program.create) {
+  if (program.create || program.init) {
     this.install()
   }
 }
