@@ -286,7 +286,7 @@ export function setRunEnvironment () {
     // Note : we have to be careful that
     // the tag length is smaller than 24 characters
     if (run.subDomain.length > 24) {
-      this.consoleError(`this sub domain name ${run.subDomain} is too long, you need to make it shorter than 24 characters`)
+      this.consoleWarn(`this sub domain name ${run.subDomain} is too long, you need to make it shorter than 24 characters if you want to deploy on that sub domain`)
       process.exit()
     }
     run.host = server.host || `${run.subDomain}.${backend.domain}`
