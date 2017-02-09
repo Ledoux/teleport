@@ -25,6 +25,7 @@ const mainMethods = [
   'run',
   'set',
   'start',
+  'version',
   'write'
 ]
 const subModules = mainMethods.map(method => require(`./methods/${method}`))

@@ -16,6 +16,7 @@ export default program
   .option('replace', 'Replace')
   .option('-r, run', 'Run')
   .option('-s, start', 'Start')
+  .option('-v, version', 'Version')
 
   // list all the utility commands
   .option('-e, exec', 'Exec')
