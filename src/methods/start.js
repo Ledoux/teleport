@@ -22,6 +22,10 @@ export function start () {
   // this.concurrentlyCommands array, and executed together below
   this.backendStart()
   this.bundlerStart()
+  // display
+  console.log('You server urls are')
+  this.getUrls()
+  console.log('\n\n')
   if (program.shell === 'concurrently') {
     const concurrentlyCommandsString = this.concurrentlyCommands
       .map(concurrentlyCommand => `\"${concurrentlyCommand}\"`)
