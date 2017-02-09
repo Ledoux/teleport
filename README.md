@@ -71,8 +71,9 @@ Not well supported yet... We are fixing this :construction:
 
 ## Start a new project
 As an example let's create a web app on Heroku platform with the following components:
-- A Python Flask server
+- An Express Flask server
 - A Webpack React frontend on top of the server  
+- A Python Flask websockets server
 
 ### Creation
 We **highly recommend to create a teleport application within a python virtual environment** as it will install some python dependencies. Before creating your application just type
@@ -81,17 +82,20 @@ virtualenv venv
 source venv/bin/activate # On Linux . venv/bin/activate
 ```
 
-We then create the app by typing
+We then create a project by typing
 ```
-tpt -c --templates teleport-flask-webrouter,teleport-webpack-react,teleport-heroku
+tpt -c --templates teleport-webpack-react,teleport-express-webrouter, teleport-flask-websocket,teleport-heroku
 ```
+![alt text](https://raw.githubusercontent.com/snipsco/teleport/master/gifs/tpt-c.gif)
+
 :warning: Please ensure that the options listed after the --templates flag are separated just by a single comma, as above - without any extra spaces - otherwise it will not work properly.
 
 By default Teleport generates a random app name for you (like `app-685af6ba`). To specify your own app name, use `--name my-app-name`.
 
 You can have more informations about those templates by checking their repos:
-- [Flask webrouter](https://github.com/snipsco/teleport-flask-webrouter)
 - [Webpack React](https://github.com/snipsco/teleport-webpack-react)
+- [Express webrouter](https://github.com/snipsco/teleport-express-webrouter)
+- [Flask websocket](https://github.com/snipsco/teleport-flask-websocket)
 - [Heroku](platforms/heroku/)
 
 :exclamation: Help I have some issues with uwsgi on MacOS when creating an app! No panic, just follow [this link](docs/uwsgi_issues.md).
@@ -101,31 +105,24 @@ If you want to test the app locally you can type
 ```
 tpt -s
 ```
-Note that
-```
-tpt -e --method getUrls
-```
+![alt text](https://raw.githubusercontent.com/snipsco/teleport/master/gifs/tpt-s.gif)
 
 ### Deploy the app
 Let's now deploy it directly on Heroku as we choose this platform template.
 ```
 tpt -d
 ```
-The default deployment setting is a staging type. If you check the urls of your deployed servers:
-```
-tpt -e --method getUrls --type staging
-```
-But you can of course deploy in production by specifying:
+![alt text](https://raw.githubusercontent.com/snipsco/teleport/master/gifs/tpt-s.gif)
+
+Note you need to specify an option if you want to deploy in production:
 ```
 tpt -d --type production
 ```
-In a summary, all your urls are available here
+![alt text](https://raw.githubusercontent.com/snipsco/teleport/master/gifs/tpt-d.gif)
+
+Note that you can isplay all your urls with
 ```
 tpt -g --kwarg run.url --servers all --types all
-```
-Or
-```
-tpt -e --method getAllUrls
 ```
 
 :smiley: Enjoy !
