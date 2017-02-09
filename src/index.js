@@ -75,6 +75,13 @@ class Teleport {
       this.level = 'project'
       project.dir = this.currentDir
       this.setProjectEnvironment()
+      if (typeof project.config === 'undefined') {
+        project.config = {
+          typesByName: {
+            localhost: {}
+          }
+        }
+      }
       // if there is no deployment platform template, then we should escape if we want
       // to do a build, push, run, deploy
       const types = Object.keys(project.config.typesByName)

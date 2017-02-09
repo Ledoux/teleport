@@ -71,7 +71,7 @@ export function configureProjectConfig () {
       })
     )
 
-  // add a default localhost type if there was not a platfomr template
+  // add a default localhost type if there was not a platform template
   // that did taht already
   if (typeof project.config.typesByName === 'undefined') {
     project.config.typesByName = {
