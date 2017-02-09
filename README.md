@@ -86,7 +86,6 @@ We then create a project by typing
 ```
 tpt -c --templates teleport-webpack-react,teleport-express-webrouter, teleport-flask-websocket,teleport-heroku
 ```
-![alt text](https://raw.githubusercontent.com/snipsco/teleport/master/gifs/tpt-c.gif)
 
 :warning: Please ensure that the options listed after the --templates flag are separated just by a single comma, as above - without any extra spaces - otherwise it will not work properly.
 
@@ -119,7 +118,6 @@ Let's now deploy it directly on Heroku as we choose this platform template.
 ```
 tpt -d
 ```
-![alt text](https://raw.githubusercontent.com/snipsco/teleport/master/gifs/tpt-s.gif)
 
 Note you need to specify an option if you want to deploy in production:
 ```
