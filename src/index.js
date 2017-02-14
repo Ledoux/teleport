@@ -13,6 +13,7 @@ const mainMethods = [
   'check',
   'create',
   'deploy',
+  'dev',
   'dump',
   'exec',
   'get',
@@ -82,14 +83,16 @@ class Teleport {
           }
         }
       }
-      // if there is no deployment platform template, then we should escape if we want
-      // to do a build, push, run, deploy
-      const types = Object.keys(project.config.typesByName)
-      if (Object.keys(types).length === 1 &&
-      types[0] === 'localhost' &&
-      (program.build || program.push || program.run || program.deploy)) {
-        this.consoleError('You want to do a deploy task or sub-tasks, but you did not specified a platform template in this project')
-        process.exit(1)
+      if (project.config.typesByName) {
+        // if there is no deployment platform template, then we should escape if we want
+        // to do a build, push, run, deploy
+        const types = Object.keys(project.config.typesByName)
+        if (Object.keys(types).length === 1 &&
+        types[0] === 'localhost' &&
+        (program.build || program.push || program.run || program.deploy)) {
+          this.consoleError('You want to do a deploy task or sub-tasks, but you did not specified a platform template in this project')
+          process.exit(1)
+        }
       }
     }
     // exit else
@@ -97,6 +100,8 @@ class Teleport {
       this.consoleWarn('You are not in a project folder')
       process.exit()
     }
+    // bind
+    this.Teleport = Teleport
   }
 
   launch () {

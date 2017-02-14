@@ -9,6 +9,7 @@ export default program
   .option('-b, build', 'Build')
   .option('-c, create', 'Create')
   .option('-d, deploy', 'Deploy')
+  .option('dev', 'Dev')
   .option('dump', 'Dump')
   .option('init', 'Init')
   .option('-i, install', 'Install')

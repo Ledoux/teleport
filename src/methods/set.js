@@ -325,11 +325,17 @@ export function setFrontendEnvironment () {
   if (typeof backend === 'undefined') {
     this.setBackendEnvironment()
   }
-  const serverNames = Object.keys(backend.serversByName)
-  frontend.serverName = frontend.serverName ||
-    serverNames.find(serverName => /\w+-webrouter/.test(serverName)) ||
-    serverNames.find(serverName => /\w+-websocket/.test(serverName))
-
+  if (backend) {
+    // we need to resolve what is going to be the server that will receive
+    // the bundle of the frontend
+    // we do it here by looking at the one specified at the forntend.serverName
+    // key or by looking at the first found server with a webrouter prefix
+    // if not we find the first one with the websocket prefix
+    const serverNames = Object.keys(backend.serversByName)
+    frontend.serverName = frontend.serverName ||
+      serverNames.find(serverName => /\w+-webrouter/.test(serverName)) ||
+      serverNames.find(serverName => /\w+-websocket/.test(serverName))
+  }
 }
 
 export function getActivatedPythonVenvCommand () {

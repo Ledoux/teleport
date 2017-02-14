@@ -46,6 +46,7 @@ export function getDumpProjectBoilerplateCommand () {
   const { app: { configFile }, project } = this
   // exclude package.json and configFile because we want to merge them
   const excludedDirs = [
+    'devs',
     'package.json',
     '.gitignore',
     'README.md',
