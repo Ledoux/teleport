@@ -42,7 +42,7 @@ export function exec () {
       // NOTE : this is where we need to do a little hacky workaround.
       // our default platform value is heroku, but our scripts in our templates
       // are by default kubernetes if they don't have a prefix platform
-      platform !== 'kubernetes' && platform !== 'teleport-snips'
+      platform !== 'kubernetes' && platform !== 'snips'
     ) {
       typedScript = `${platform}_${script}`
     }
