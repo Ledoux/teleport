@@ -93,7 +93,7 @@ export function watchAndStartProjectDev() {
   const devProject = project.config.development.projectsByTemplateOptions[program.templates]
   const devsDir = path.join(project.dir, 'devs')
   const nodemonDir = path.join(app.dir, 'node_modules/.bin/nodemon')
-  const watchCommand = `${nodemonDir} --watch ${project.dir} --ignore ${devsDir} --exec \'cd ${devProject.dir} && tpt dump && tpt configure && tpt replace\'`
+  const watchCommand = `${nodemonDir} -e js,html --watch ${project.dir} --ignore ${devsDir} --exec \'cd ${devProject.dir} && tpt dump && tpt configure && tpt replace\'`
   const startCommand = `cd ${devProject.dir} && tpt -s`
   const totalCommand = `${app.concurrentlyDir} \"${watchCommand}\" \"${startCommand}\"`
   this.consoleLog(totalCommand)
