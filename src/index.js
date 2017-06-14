@@ -5,6 +5,7 @@ import { getRandomId } from './utils/functions'
 import program from './utils/program'
 
 const mainMethods = [
+  'bundle',
   'build',
   'check',
   'configure',

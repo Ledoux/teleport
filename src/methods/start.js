@@ -1,9 +1,10 @@
 // START SUB TASK
 // start is the task that will run your project locally.
-// - it goes to each server and execute their scripts/localhost_start.sh
+// - it goes to each server and execute their scripts/$TYPE_start.sh
 // script.
-// - it runs the server of assets and scripts that you may have if you have a frontend
-// bundler like webpack.
+// - if $TYPE is localhost, it runs the server of assets and scripts that you may have if you have a frontend
+// bundler like webpack, otherwise it triggers a bundle prod
+
 
 import childProcess from 'child_process'
 import fs from 'fs'
@@ -41,7 +42,6 @@ export function backendStart () {
   const { backend, program } = this
   if (!backend) return
   this.startProviders()
-  program.type = 'localhost'
   this.startServers()
 }
 
@@ -103,7 +103,7 @@ export function getStartServerCommand () {
   const { app, program, server, type } = this
   const commands = []
   const fileName = 'localhost_start.sh'
-  commands.push(`export MODE=${type.name}`)
+  commands.push(`export TYPE=${type.name}`)
   commands.push(`cd ${server.dir}`)
   commands.push(`sh scripts/${fileName}`)
   let command = commands.join(' && ')
@@ -116,8 +116,11 @@ export function getStartServerCommand () {
 export function bundlerStart () {
   const { app, program, project } = this
   if (!fs.existsSync(path.join(project.dir, 'bundler'))) return
-  let command = `cd ${project.dir} && sh bin/localhost_bundle.sh`
-  if (program.shell === 'concurrently') {
+  let command = `cd ${project.dir} && sh bin/`
+  command = program.type === 'development'
+  ? `${command}development_bundle.sh`
+  : `${command}bundle.sh`
+  if (program.type === 'development' && program.shell === 'concurrently') {
     this.concurrentlyCommands.push(command)
   } else {
     this.consoleInfo('Let\'s start the bundler')

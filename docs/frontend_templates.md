@@ -15,7 +15,7 @@ Here are some additional informations about frontend templates architecture. As 
 |   +-- localhost_bundle.sh
 +-- bundler
 |   +-- <REPLACE>config.js
-|   +-- <REPLACE>hotAssetsServer.js
+|   +-- <REPLACE>webpackDevServer.js
 |   +-- dev.config.js
 |   +-- prod.config.js
 +-- frontend

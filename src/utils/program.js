@@ -4,6 +4,7 @@ import program from 'commander'
 export default program
   .version(require('../../package.json').version)
   // list first all the tasks and sub tasks
+  .option('bundle', 'Bundle')
   .option('check', 'Check')
   .option('configure', 'Configure')
   .option('-b, build', 'Build')
@@ -48,7 +49,7 @@ export default program
   .option('--servers [type]', 'Servers')
   .option('--shell [type]', 'Shell', /^(concurrently|sync)$/i, 'concurrently')
   .option('--templates [type]', 'Templates')
-  .option('--type [type]', 'Type', 'localhost')
+  .option('--type [type]', 'Type', 'development')
   .option('--types [type]', 'Types')
   .option('--venv [type]', 'Venv', /^(true|false)$/i, 'true')
 
