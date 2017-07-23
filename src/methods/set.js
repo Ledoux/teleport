@@ -75,7 +75,7 @@ export function setTypeEnvironment () {
   if (typesByName) {
     const type = this.type = Object.assign({}, typesByName[program.type])
     type.name = program.type
-    type.pip = type.name === 'localhost'
+    type.pip = type.name === 'development'
     ? pip
     : 'pip'
   }
@@ -247,7 +247,7 @@ export function setRunEnvironment () {
   // that are done here
   server.runsByTypeName[type.name] = run
   // set the docker image
-  if (run.name !== 'localhost') {
+  if (run.name !== 'development') {
     if (backend.helpersByName && backend.helpersByName.kubernetes) {
       run.nodeName = `${run.infraName}.${backend.helpersByName.kubernetes.nodeDomain}`
       // special case where we give to the host just the name of the dockerHost
@@ -263,12 +263,12 @@ export function setRunEnvironment () {
     : `${type.abbreviation.toUpperCase()}_`
     run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.abbreviation.toUpperCase()}_SERVICE_HOST`
   } else {
-    run.tag = `localhost-${server.tag}`
+    run.tag = `development-${server.tag}`
   }
   // set the url
   run.url = run.host
   ? `http://${run.host}`
-  : (run.name === 'localhost' ? 'http://localhost' : `https://${backend.siteName}.${backend.domain}`)
+  : (run.name === 'development' ? 'http://localhost' : `https://${backend.siteName}.${backend.domain}`)
   if (run.port) {
     run.url += ':' + run.port
   }

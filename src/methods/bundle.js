@@ -2,7 +2,7 @@
 // bundle is the task that will bundle your project locally.
 // - it goes to each server and execute their scripts/$TYPE_bundle.sh
 // script.
-// - if $TYPE is localhost, it runs the server of assets and scripts that you may have if you have a frontend
+// - if $TYPE is development, it runs the server of assets and scripts that you may have if you have a frontend
 // bundler like webpack, otherwise it triggers a bundle prod
 
 import childProcess from 'child_process'

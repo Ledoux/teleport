@@ -2,7 +2,7 @@
 // start is the task that will run your project locally.
 // - it goes to each server and execute their scripts/$TYPE_start.sh
 // script.
-// - if $TYPE is localhost, it runs the server of assets and scripts that you may have if you have a frontend
+// - if $TYPE is development, it runs the server of assets and scripts that you may have if you have a frontend
 // bundler like webpack, otherwise it triggers a bundle prod
 
 
@@ -102,7 +102,7 @@ export function startServer () {
 export function getStartServerCommand () {
   const { app, program, server, type } = this
   const commands = []
-  const fileName = 'localhost_start.sh'
+  const fileName = 'development_start.sh'
   commands.push(`export TYPE=${type.name}`)
   commands.push(`cd ${server.dir}`)
   commands.push(`sh scripts/${fileName}`)

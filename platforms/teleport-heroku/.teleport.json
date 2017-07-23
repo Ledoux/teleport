@@ -9,7 +9,7 @@
 	"iconUrl": "https://raw.githubusercontent.com/snipsco/teleport/master/platforms/teleport-heroku/teleport-heroku.png",
 	"isPlatform": true,
 	"typesByName": {
-		"localhost": {
+		"development": {
 		},
 		"production": {
 			"abbreviation": "prod",

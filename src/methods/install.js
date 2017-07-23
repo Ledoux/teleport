@@ -167,7 +167,7 @@ export function installServers () {
   program.image = undefined
   program.method = 'installServer'
   program.methods = null
-  program.type = 'localhost'
+  program.type = 'development'
   this.setTypeEnvironment()
   this.mapInServers()
 }
@@ -175,7 +175,7 @@ export function installServers () {
 export function installServer () {
   const { app, program, server } = this
   const commands = []
-  let fileName = `localhost_install.sh`
+  let fileName = `development_install.sh`
   let fileDir = path.join(server.dir, 'scripts', fileName)
   if (!fs.existsSync(fileDir)) {
     fileName = 'install.sh'
