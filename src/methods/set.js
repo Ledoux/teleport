@@ -255,12 +255,13 @@ export function setRunEnvironment () {
         run.host = run.nodeName
       }
     }
+    const typeAbbreviation = type.abbreviation || ''
     run.tag = type.name === 'production'
     ? server.tag
-    : `${type.abbreviation}-${server.tag}`
+    : `${typeAbbreviation}-${server.tag}`
     const virtualNamePrefix = type.name === 'production'
     ? ''
-    : `${type.abbreviation.toUpperCase()}_`
+    : `${typeAbbreviation}_`
     run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.abbreviation.toUpperCase()}_SERVICE_HOST`
   } else {
     run.tag = `development-${server.tag}`
