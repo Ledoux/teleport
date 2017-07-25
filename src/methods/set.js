@@ -326,10 +326,12 @@ export function setFrontendEnvironment () {
     this.setBackendEnvironment()
   }
   const serverNames = Object.keys(backend.serversByName)
-  frontend.serverName = frontend.serverName ||
+  const frontendServerName = frontend.serverName ||
     serverNames.find(serverName => /\w+-webrouter/.test(serverName)) ||
     serverNames.find(serverName => /\w+-websocket/.test(serverName))
-
+  const frontendServer = backedn.serversByName[frontendServerName]
+  frontend.serverName = frontendServerName
+  frontend.serverHost = frontendServer.host
 }
 
 export function getActivatedPythonVenvCommand () {
