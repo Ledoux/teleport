@@ -102,7 +102,17 @@ export function startServer () {
 export function getStartServerCommand () {
   const { app, program, server, type } = this
   const commands = []
-  const fileName = 'development_start.sh'
+  let fileName
+  // for old versions of templates, development type is named
+  // as localhost... so we need to keep that as a break guard
+  if (program.type === 'development') {
+    fileName = 'development_start.sh'
+    if (!fs.existsSync(path.join(server.dir, 'scripts', fileName))) {
+      fileName = 'localhost_start.sh'
+    }
+  } else {
+    fileName = 'bundle.sh'
+  }
   commands.push(`export TYPE=${type.name}`)
   commands.push(`cd ${server.dir}`)
   commands.push(`sh scripts/${fileName}`)
@@ -114,12 +124,8 @@ export function getStartServerCommand () {
 }
 
 export function bundlerStart () {
-  const { app, program, project } = this
-  if (!fs.existsSync(path.join(project.dir, 'bundler'))) return
-  let command = `cd ${project.dir} && sh bin/`
-  command = program.type === 'development'
-  ? `${command}development_bundle.sh`
-  : `${command}bundle.sh`
+  const { program } = this
+  const command = this.getBundleCommand()
   if (program.type === 'development' && program.shell === 'concurrently') {
     this.concurrentlyCommands.push(command)
   } else {
