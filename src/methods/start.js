@@ -1,9 +1,10 @@
 // START SUB TASK
 // start is the task that will run your project locally.
-// - it goes to each server and execute their scripts/localhost_start.sh
+// - it goes to each server and execute their scripts/$TYPE_start.sh
 // script.
-// - it runs the server of assets and scripts that you may have if you have a frontend
-// bundler like webpack.
+// - if $TYPE is development, it runs the server of assets and scripts that you may have if you have a frontend
+// bundler like webpack, otherwise it triggers a bundle prod
+
 
 import childProcess from 'child_process'
 import fs from 'fs'
@@ -41,7 +42,6 @@ export function backendStart () {
   const { backend, program } = this
   if (!backend) return
   this.startProviders()
-  program.type = 'localhost'
   this.startServers()
 }
 
@@ -102,8 +102,18 @@ export function startServer () {
 export function getStartServerCommand () {
   const { app, program, server, type } = this
   const commands = []
-  const fileName = 'localhost_start.sh'
-  commands.push(`export MODE=${type.name}`)
+  let fileName
+  // for old versions of templates, development type is named
+  // as localhost... so we need to keep that as a break guard
+  if (program.type === 'development') {
+    fileName = 'development_start.sh'
+    if (!fs.existsSync(path.join(server.dir, 'scripts', fileName))) {
+      fileName = 'localhost_start.sh'
+    }
+  } else {
+    fileName = 'bundle.sh'
+  }
+  commands.push(`export TYPE=${type.name}`)
   commands.push(`cd ${server.dir}`)
   commands.push(`sh scripts/${fileName}`)
   let command = commands.join(' && ')
@@ -114,10 +124,9 @@ export function getStartServerCommand () {
 }
 
 export function bundlerStart () {
-  const { app, program, project } = this
-  if (!fs.existsSync(path.join(project.dir, 'bundler'))) return
-  let command = `cd ${project.dir} && sh bin/localhost_bundle.sh`
-  if (program.shell === 'concurrently') {
+  const { program } = this
+  const command = this.getBundleCommand()
+  if (program.type === 'development' && program.shell === 'concurrently') {
     this.concurrentlyCommands.push(command)
   } else {
     this.consoleInfo('Let\'s start the bundler')

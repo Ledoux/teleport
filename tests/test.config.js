@@ -25,8 +25,8 @@ const TEST_TEMPLATES = [
   'teleport-heroku'
 ].join(',')
 const TAGS = [
-  `localhost-${TEST_APP_NAME}-wbr`,
-  `localhost-${TEST_APP_NAME}-wbs`,
+  `development-${TEST_APP_NAME}-wbr`,
+  `development-${TEST_APP_NAME}-wbs`,
   `${TEST_APP_NAME}-wbr`,
   `${TEST_APP_NAME}-wbs`,
   `stg-${TEST_APP_NAME}-wbr`,

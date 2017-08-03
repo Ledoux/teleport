@@ -32,7 +32,7 @@
 		}
 	},
 	"typesByName": {
-		"localhost": {
+		"development": {
 		},
 		"production": {
 			"subDomain": "",

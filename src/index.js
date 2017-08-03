@@ -5,6 +5,7 @@ import { getRandomId } from './utils/functions'
 import program from './utils/program'
 
 const mainMethods = [
+  'bundle',
   'build',
   'check',
   'configure',
@@ -78,7 +79,7 @@ class Teleport {
       if (typeof project.config === 'undefined') {
         project.config = {
           typesByName: {
-            localhost: {}
+            development: {}
           }
         }
       }
@@ -86,7 +87,7 @@ class Teleport {
       // to do a build, push, run, deploy
       const types = Object.keys(project.config.typesByName)
       if (Object.keys(types).length === 1 &&
-      types[0] === 'localhost' &&
+      types[0] === 'development' &&
       (program.build || program.push || program.run || program.deploy)) {
         this.consoleError('You want to do a deploy task or sub-tasks, but you did not specified a platform template in this project')
         process.exit(1)

@@ -12,10 +12,10 @@ Here are some additional informations about frontend templates architecture. As 
 |   +-- static
 +-- bin
 |   +-- bundle.sh
-|   +-- localhost_bundle.sh
+|   +-- development_bundle.sh
 +-- bundler
 |   +-- <REPLACE>config.js
-|   +-- <REPLACE>hotAssetsServer.js
+|   +-- <REPLACE>webpackDevServer.js
 |   +-- dev.config.js
 |   +-- prod.config.js
 +-- frontend

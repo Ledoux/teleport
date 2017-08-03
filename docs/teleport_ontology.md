@@ -30,7 +30,7 @@ and also sets other dynamic variables.
 
 ## type
 A type is the object that defines a certain environment for deployment.
-It is typically sets of parameters specific to a localhost, or a staging or a
+It is typically sets of parameters specific to a development, or a staging or a
 production use (like the host, port values). You can ask Teleport to do something
 for a particular type with the --type option.
 

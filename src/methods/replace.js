@@ -7,8 +7,8 @@
 // In these files all the $[] instances are replaced with values from this teleport object.
 // You can check more precisely how the formatString function works in the ../utils/functions.js.
 // Note also that the replace method will for each <REPLACE_FOR_EACH_TYPE>_<file_name> placeholder file
-// create one file per type (localhost, staging and production in the common case).
-// Meaning that you will have localhost_<file_name>, staging_<file_name>,
+// create one file per type (development, staging and production in the common case).
+// Meaning that you will have development_<file_name>, staging_<file_name>,
 // production_<file_name> created.
 // - replace goes to your bundler folder and does the same thing
 
@@ -32,7 +32,7 @@ const dockerPlaceholderfiles = [
   'start.sh'
 ]
 
-const notLocalhostPlaceholderFiles = [
+const notDevelopmentPlaceholderFiles = [
   /.*push.sh$/,
   /.*controller.sh$/,
   /.*build.sh$/,
@@ -67,7 +67,7 @@ export function replaceServerPlaceholderFiles () {
     welcome = this.welcome
   }
   // connect if no port was set here
-  if (type.name !== 'localhost' && typeof run.port === 'undefined') {
+  if (type.name !== 'development' && type.name !== 'localhost' && typeof run.port === 'undefined') {
     this.connect()
   }
   // add types
@@ -114,28 +114,32 @@ export function replaceServerPlaceholderFiles () {
       const templatePathDir = dirChunks.slice(0, -1).join('/')
       let installedFileName = dirChunks.slice(-1)[0]
                                 .replace(templatePrefix, '')
-      if (type.name === 'localhost') {
+      if (type.name === 'development' || type.name === 'localhost') {
         // we know that there are some script and config files dedicated to the deploy step
-        // so we don't have actually to write them for the localhost type case
-        if (notLocalhostPlaceholderFiles.some(notLocalhostPlaceholderFile => {
-          return notLocalhostPlaceholderFile.test(installedFileName)
+        // so we don't have actually to write them for the development type case
+        if (notDevelopmentPlaceholderFiles.some(notDevelopmentPlaceholderFile => {
+          return notDevelopmentPlaceholderFile.test(installedFileName)
         })) {
           return
         }
         // no need also to replace and write when actually there is already the
-        // locahost placeholder file
+        // development placeholder file
+        const developmentTemplateDir = `${templatePathDir}/<REPLACE>development_${installedFileName}`
+        if (fs.existsSync(developmentTemplateDir)) {
+          return
+        }
         const localhostTemplateDir = `${templatePathDir}/<REPLACE>localhost_${installedFileName}`
         if (fs.existsSync(localhostTemplateDir)) {
           return
         }
-      } else if (installedFileName.split('_')[0] === 'localhost') {
-        // also we have some specific placeholder files dedicated to localhost
-        // so if we are not to the localhost case we have to leave
+      } else if (installedFileName.split('_')[0] === 'development' || installedFileName.split('_')[0] === 'localhost') {
+        // also we have some specific placeholder files dedicated to development
+        // so if we are not to the development case we have to leave
         return
       }
       // if we are not in the case of a deploy file
       // we can escape
-      if (type.name !== 'localhost' && typeof backend.helpersByName.docker === 'undefined' &&
+      if (type.name !== 'development' && type.name !== 'localhost' && typeof backend.helpersByName.docker === 'undefined' &&
         dockerPlaceholderfiles.includes(installedFileName)) {
         return
       }

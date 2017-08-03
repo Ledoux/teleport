@@ -7,9 +7,9 @@
 
 export function push () {
   const { program } = this
-  // type is localhost by default, but here we want to deploy
+  // type is development by default, but here we want to deploy
   // so we set actually the default to staging here
-  if (program.type === 'localhost') {
+  if (program.type === 'development') {
     program.type = 'staging'
   }
   this.setTypeEnvironment()
