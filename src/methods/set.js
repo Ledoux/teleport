@@ -333,7 +333,7 @@ export function setFrontendEnvironment () {
   const frontendServer = backend.serversByName[frontendServerName]
   frontend.serverName = frontendServerName
   frontend.server = frontendServer
-  frontend.run = frontendServer.runsByTypeName[type.name]
+  frontend.run = frontendServer.runsByTypeName.development || frontendServer.runsByTypeName.localhost
 }
 
 export function getActivatedPythonVenvCommand () {
