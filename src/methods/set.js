@@ -315,7 +315,7 @@ export function setAllTypesAndServersEnvironment () {
 }
 
 export function setFrontendEnvironment () {
-  const { backend, project } = this
+  const { backend, project, type } = this
   if (typeof project.config.frontend === 'undefined') {
     this.frontend = null
     return
@@ -329,9 +329,10 @@ export function setFrontendEnvironment () {
   const frontendServerName = frontend.serverName ||
     serverNames.find(serverName => /\w+-webrouter/.test(serverName)) ||
     serverNames.find(serverName => /\w+-websocket/.test(serverName))
-  const frontendServer = backedn.serversByName[frontendServerName]
+  const frontendServer = backend.serversByName[frontendServerName]
   frontend.serverName = frontendServerName
-  frontend.serverHost = frontendServer.host
+  frontend.server = frontendServer
+  frontend.run = frontendServer.runsByTypeName[type.name]
 }
 
 export function getActivatedPythonVenvCommand () {
