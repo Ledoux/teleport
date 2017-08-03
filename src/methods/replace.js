@@ -67,7 +67,7 @@ export function replaceServerPlaceholderFiles () {
     welcome = this.welcome
   }
   // connect if no port was set here
-  if (type.name !== 'development' && typeof run.port === 'undefined') {
+  if (type.name !== 'development' && type.name !== 'localhost' && typeof run.port === 'undefined') {
     this.connect()
   }
   // add types
@@ -114,7 +114,7 @@ export function replaceServerPlaceholderFiles () {
       const templatePathDir = dirChunks.slice(0, -1).join('/')
       let installedFileName = dirChunks.slice(-1)[0]
                                 .replace(templatePrefix, '')
-      if (type.name === 'development') {
+      if (type.name === 'development' || type.name === 'localhost') {
         // we know that there are some script and config files dedicated to the deploy step
         // so we don't have actually to write them for the development type case
         if (notDevelopmentPlaceholderFiles.some(notDevelopmentPlaceholderFile => {
@@ -128,14 +128,18 @@ export function replaceServerPlaceholderFiles () {
         if (fs.existsSync(developmentTemplateDir)) {
           return
         }
-      } else if (installedFileName.split('_')[0] === 'development') {
+        const localhostTemplateDir = `${templatePathDir}/<REPLACE>localhost_${installedFileName}`
+        if (fs.existsSync(localhostTemplateDir)) {
+          return
+        }
+      } else if (installedFileName.split('_')[0] === 'development' || installedFileName.split('_')[0] === 'localhost') {
         // also we have some specific placeholder files dedicated to development
         // so if we are not to the development case we have to leave
         return
       }
       // if we are not in the case of a deploy file
       // we can escape
-      if (type.name !== 'development' && typeof backend.helpersByName.docker === 'undefined' &&
+      if (type.name !== 'development' && type.name !== 'localhost' && typeof backend.helpersByName.docker === 'undefined' &&
         dockerPlaceholderfiles.includes(installedFileName)) {
         return
       }
