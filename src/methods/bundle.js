@@ -25,7 +25,7 @@ export function getBundleCommand () {
   // localhost... so we need to keep that as a break guard
   if (program.type === 'development') {
     fileName = 'development_bundle.sh'
-    if (!fs.existsSync(path.join(project.dir, 'bundler', fileName))) {
+    if (!fs.existsSync(path.join(project.dir, 'bin', fileName))) {
       fileName = 'localhost_bundle.sh'
     }
   } else {
