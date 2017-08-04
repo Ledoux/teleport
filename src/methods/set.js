@@ -264,6 +264,11 @@ export function setRunEnvironment () {
     : `${typeAbbreviation}_`
     run.virtualName = `${virtualNamePrefix}${backend.capitalUnderscoreSiteName}_${server.abbreviation.toUpperCase()}_SERVICE_HOST`
   } else {
+    // special adapting case where we need to make at the same type old
+    // localhost and development template work together
+    if (server.runsByTypeName.localhost) {
+      Object.assign(run, server.runsByTypeName.localhost)
+    }
     run.tag = `development-${server.tag}`
   }
   // set the url

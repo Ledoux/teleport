@@ -4,7 +4,7 @@
 // to execute
 // - configureProject merges all the config files (package.json, .teleport.json and gitignore)
 // found also in the templates and located at the first level of the project folder.
-// Note thaty for the package case, merge is only done for these items: babel, dependencies, devDependencies, peerDependencies
+// Note that for the package case, merge is only done for these items: babel, dependencies, devDependencies, peerDependencies
 // - configureServer does the same kind of task but in each server folder level.
 
 import childProcess from 'child_process'

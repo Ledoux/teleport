@@ -56,6 +56,8 @@ export function init () {
   // configure
   this.setProjectEnvironment()
   this.configure()
+  // reset the project given the fact that configure has now set new things 
+  this.setProjectEnvironment()
   // dump
   this.dump()
 }
