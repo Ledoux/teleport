@@ -35,6 +35,7 @@ export function exec () {
     // the deploy on that one
     if (project.platformTemplateNames.length === 1) {
       platform = project.platformTemplateNames[0].replace('teleport-', '')
+        .replace('-rc', '')
     }
     // check
     if (

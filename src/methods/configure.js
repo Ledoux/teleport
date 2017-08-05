@@ -61,7 +61,7 @@ export function configureProjectConfig () {
     ...project.config.templateNames
       .map(templateName => {
         const templateDir = path.join(project.nodeModulesDir, templateName)
-        let templateConfig = this.getConfig(templateDir)
+        let templateConfig = this.getConfig(templateDir) || {}
         // remove attributes that are specific to the project
         delete templateConfig.templateNames
         if (templateConfig.backend) {

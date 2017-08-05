@@ -57,7 +57,7 @@ export function getDumpProjectBoilerplateCommand () {
   return project.config.templateNames
     .map(templateName => {
       const templateDir = path.join(project.nodeModulesDir, templateName)
-      const templateConfig = this.getConfig(templateDir)
+      const templateConfig = this.getConfig(templateDir) || {}
       // also exclute files from the templateConfig
       const totalExcludedDirs = (templateConfig.excludedDirs || [])
         .concat(excludedDirs)
