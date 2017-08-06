@@ -111,7 +111,7 @@ export function getStartServerCommand () {
       fileName = 'localhost_start.sh'
     }
   } else {
-    fileName = 'bundle.sh'
+    fileName = 'start.sh'
   }
   commands.push(`export TYPE=${type.name}`)
   commands.push(`cd ${server.dir}`)
