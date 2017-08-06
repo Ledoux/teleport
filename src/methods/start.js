@@ -22,7 +22,9 @@ export function start () {
   // but for the concurrently shell they are instead pushed to the
   // this.concurrentlyCommands array, and executed together below
   this.backendStart()
-  this.bundlerStart()
+  if (program.type === 'development' || program.type === 'localhost') {
+    this.bundlerStart()
+  }
   // display
   console.log('You server urls are')
   this.getUrls()
@@ -111,7 +113,7 @@ export function getStartServerCommand () {
       fileName = 'localhost_start.sh'
     }
   } else {
-    fileName = 'start.sh'
+    fileName = 'sandbox_start.sh'
   }
   commands.push(`export TYPE=${type.name}`)
   commands.push(`cd ${server.dir}`)

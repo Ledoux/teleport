@@ -10,14 +10,14 @@ import fs from 'fs'
 import path from 'path'
 
 export function bundle () {
-  const command = getBundleCommand()
+  const command = this.getBundleCommand()
   this.consoleInfo('Let\'s bundle')
   this.consoleLog(command)
   childProcess.execSync(command, { stdio: [0, 1, 2] })
 }
 
 export function getBundleCommand () {
-  const { app, program, project } = this
+  const { program, project } = this
   if (!fs.existsSync(path.join(project.dir, 'bundler'))) return
   let command = `cd ${project.dir} && sh bin/`
   let fileName
