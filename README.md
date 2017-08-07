@@ -91,6 +91,11 @@ tpt -c --templates teleport-webpack-react,teleport-express-webrouter, teleport-f
 
 By default Teleport generates a random app name for you (like `app-685af6ba`). To specify your own app name, use `--name my-app-name`.
 
+Also, you could have already created a project folder, and in that case you could have just to type inside the folder for doing the same thing:
+```
+tpt -i --templates teleport-webpack-react,teleport-express-webrouter, teleport-flask-websocket,teleport-heroku
+```
+
 You can have more informations about those templates by checking their repos:
 - [Webpack React](https://github.com/snipsco/teleport-webpack-react)
 - [Express webrouter](https://github.com/snipsco/teleport-express-webrouter)

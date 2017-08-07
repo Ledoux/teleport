@@ -21,6 +21,8 @@ import { getGitignores,
 
 export function configure () {
   const { project } = this
+  // log
+  this.consoleInfo('Let\'s configure the project')
   // script
   if (fs.existsSync(path.join(this.project.dir, 'bin/configure.sh'))) {
     this.configureScript()
@@ -36,7 +38,6 @@ export function configure () {
 
 export function configureScript () {
   const command = `cd ${this.project.dir} && sh bin/configure.sh`
-  this.consoleInfo('Let\'s configure the project')
   this.consoleLog(command)
   childProcess.execSync(command, { stdio: [0, 1, 2] })
 }

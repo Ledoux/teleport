@@ -15,8 +15,10 @@ import fs from 'fs'
 import path from 'path'
 
 export function install () {
+  // unpack
   const { backend, program, project } = this
   if (!backend) return
+  // log
   this.consoleInfo(`Let\'s install this project !`)
   // NOTE: this.concurrentlyInstallCommands is populated by the following commands
   this.installScript()
